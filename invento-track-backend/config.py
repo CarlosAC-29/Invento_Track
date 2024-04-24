@@ -1,7 +1,7 @@
 import os
 os.urandom(24)
 
-#cambiar username y password según tu bd
+#cambiar username y password según tu bd. Lo ideal seria lo mismo usuario postgrest y contraseña postgres
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'Esto-es-una-clave-secretaxde'
     
