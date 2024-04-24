@@ -1,10 +1,10 @@
 import os
+os.urandom(24)
 
-
-#cambiar la secret, username y password
+#cambiar username y password según tu bd
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your_secret_key_here'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'Esto-es-una-clave-secretaxde'
     
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'postgresql://username:password@localhost:5432/inventoTrack'
+        'postgresql://postgres:postgres@localhost:5432/inventotrack'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
