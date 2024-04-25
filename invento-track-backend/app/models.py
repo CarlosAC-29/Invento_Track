@@ -18,7 +18,7 @@ class Vendedor(db.Model):
     nombre = db.Column(db.String(128))
     apellido = db.Column(db.String(128))
     email = db.Column(db.String(128), unique=True)
-    estado = db.Column(db.String(128))
+    estado = db.Column(db.String(128), default='ACTIVO')
     password = db.Column(db.String(128))
     role = db.Column(db.String(128), default='vendedor')
 

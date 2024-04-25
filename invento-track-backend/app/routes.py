@@ -1,4 +1,4 @@
-from flask import jsonify
+from flask import request, jsonify
 from app import app, db
 from app.models import Cliente, Vendedor
 
@@ -44,3 +44,39 @@ def list_sellers():
 
     return jsonify(vendedores_json)
 
+@app.route('clientes', methods=['POST'])
+def agregar_cliente():
+    data = request.json()
+
+    nuevo_cliente = Cliente(
+        nombre=data['nombre'],
+        apellido=data['apellido'],
+        email=data['email'],
+        direccion=data['direccion'],
+        telefono=data['telefono']
+    )
+
+    db.session.add(nuevo_cliente)
+    db.session.commit()
+
+    return jsonify({
+        'mensaje': 'Cliente agregado exitosamente!'
+    }), 201
+
+@app.route('vendedores', methods=['POST'])
+def agregar_vendedor():
+    data = request.json()
+
+    nuevo_vendedor = Vendedor(
+        nombre=data['nombre'],
+        apellido=data['apellido'],
+        email=data['email'],
+        password=data['password']
+    )
+
+    db.session.add(nuevo_vendedor)
+    db.session.commit()
+
+    return jsonify({
+        'mensaje': 'Vendedor agregado exitosamente!'
+    }), 201
