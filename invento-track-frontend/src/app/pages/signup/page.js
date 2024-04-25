@@ -16,6 +16,21 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import InventoryIcon from '@mui/icons-material/Inventory';
 
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
+    authDomain: "logininventotrack.firebaseapp.com",
+    projectId: "logininventotrack",
+    storageBucket: "logininventotrack.appspot.com",
+    messagingSenderId: "692002139318",
+    appId: "1:692002139318:web:c627ac41ca3cc4b1d64a17"
+};
+  
+const app = initializeApp(firebaseConfig);
+
+
 function Copyright(props) {
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -34,13 +49,30 @@ function Copyright(props) {
 const defaultTheme = createTheme();
 
 export default function SignUp() {
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
+        console.log('HandleSubmit')
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        console.log({
-            email: data.get('email'),
-            password: data.get('password'),
-        });
+        const email = data.get('email');
+        const password = data.get('password');
+        try {
+            await register(email, password);
+        } catch (error) {
+            console.error('Error durante el registro:', error.message);
+        }
+    };
+
+    const register = async (email, password) => {
+        const auth = getAuth();
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            // Usuario registrado con éxito
+            console.log('Usuario registrado: ', userCredential.user);
+            // Aquí puedes redirigir a otra página o realizar otras acciones después del registro exitoso
+        } catch (error) {
+            // Si hay un error durante el registro
+            console.error('Error de registro:', error.message);
+        }
     };
 
     return (
