@@ -1,5 +1,5 @@
 import React from 'react'
-import '../styles.css'
+import './styles.css'
 import Box from '@mui/material/Box';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, TextField } from '@mui/material';
