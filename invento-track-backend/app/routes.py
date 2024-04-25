@@ -38,8 +38,7 @@ def list_sellers():
         'nombre': vendedor.nombre,
         'apellido': vendedor.apellido,
         'email': vendedor.email,
-        'estado': vendedor.estado,
-        'password': vendedor.password
+        'estado': vendedor.estado
     } for vendedor in vendedores]
 
     return jsonify(vendedores_json)

@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import './styles.css'
 import Box from '@mui/material/Box';
@@ -8,9 +9,9 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import {useEffect, useState} from 'react'
 
 function ListaVendedores() {
-  
 
   return (
     <>
