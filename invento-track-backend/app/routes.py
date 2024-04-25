@@ -1,6 +1,6 @@
 from flask import jsonify
 from app import app, db
-from app.models import Cliente
+from app.models import Cliente, Vendedor
 
 @app.route('/')
 def index():
@@ -29,3 +29,18 @@ def list_clients():
     } for cliente in clientes]
     
     return jsonify(clientes_json)
+
+@app.route('/vendedores', methods=['GET'])
+def list_sellers():
+    vendedores = Vendedor.get_all_sellers()
+    vendedores_json = [{
+        'id': vendedor.id,
+        'nombre': vendedor.nombre,
+        'apellido': vendedor.apellido,
+        'email': vendedor.email,
+        'estado': vendedor.estado,
+        'password': vendedor.password
+    } for vendedor in vendedores]
+
+    return jsonify(vendedores_json)
+
