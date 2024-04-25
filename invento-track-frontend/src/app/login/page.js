@@ -18,33 +18,26 @@ import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
-import firebase, {initializeApp} from 'firebase/app'
-import {getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from 'firebase/auth'
-// import  serviceAccountKey  from "../serviceAccountKey.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
+  authDomain: "logininventotrack.firebaseapp.com",
+  projectId: "logininventotrack",
+  storageBucket: "logininventotrack.appspot.com",
+  messagingSenderId: "692002139318",
+  appId: "1:692002139318:web:c627ac41ca3cc4b1d64a17"
+};
 
+const app = initializeApp(firebaseConfig);
 
 
 export default function Login() {
-  
-  const firebaseConfig = {
-    apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
-    authDomain: "logininventotrack.firebaseapp.com",
-    projectId: "logininventotrack",
-    storageBucket: "logininventotrack.appspot.com",
-    messagingSenderId: "692002139318",
-    appId: "1:692002139318:web:c627ac41ca3cc4b1d64a17"
-  };
-  
-  const app = initializeApp(
-    firebaseConfig
-  );
-  
-  const auth = getAuth(app);
-
   const [theme, setTheme] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -52,18 +45,20 @@ export default function Login() {
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
   };
+  const handleEmailChange = (event) => {
+    setEmail(event.target.value);
+  };
 
   useEffect(() => {
     setTheme(createTheme());
   }, []);
 
-const handleSubmit = (event) => {
+  const handleSubmit = (event) => {
     const auth = getAuth(app);
     event.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        var user = userCredential.user;
-        console.log("con éxito",user);
+        console.log("con éxito",userCredential.user);
       })
       .catch((error) => {
         var errorCode = error.code;
@@ -129,6 +124,7 @@ const handleSubmit = (event) => {
                 name="email"
                 autoComplete="email"
                 autoFocus
+                onChange={handleEmailChange}
                 sx={{
                   "& .MuiOutlinedInput-root": {
                     "& fieldset": {
@@ -176,6 +172,7 @@ const handleSubmit = (event) => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2, borderRadius: "20px" }}
+                onClick={handleSubmit}
               >
                 Sign In
               </Button>
