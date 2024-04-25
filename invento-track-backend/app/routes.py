@@ -44,7 +44,7 @@ def list_sellers():
 
     return jsonify(vendedores_json)
 
-@app.route('clientes', methods=['POST'])
+@app.route('/clientes', methods=['POST'])
 def agregar_cliente():
     data = request.json()
 
@@ -63,7 +63,7 @@ def agregar_cliente():
         'mensaje': 'Cliente agregado exitosamente!'
     }), 201
 
-@app.route('vendedores', methods=['POST'])
+@app.route('/vendedores', methods=['POST'])
 def agregar_vendedor():
     data = request.json()
 
