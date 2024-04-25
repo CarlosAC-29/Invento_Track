@@ -41,14 +41,14 @@ export default function Login() {
   };
 
   return (
-    <Grid container justify="center">
+    <Grid container justify="center" sx={{height: "100vh" }}>
       <Grid
         container
         justify="center"
         alignItems="center"
         xs={false}
-        sm={4}
-        md={7}
+        sm={false}
+        md={6}
         sx={{
           backgroundImage: `url(/images/bg.png)`,
           backgroundRepeat: "no-repeat",
@@ -65,8 +65,8 @@ export default function Login() {
         <Grid
           item
           xs={12}
-          sm={4}
-          md={6}
+          sm={8}
+          md={7}
           sx={{
             borderRadius: "20px",
             backdropFilter: "blur(10px)",
@@ -102,10 +102,10 @@ export default function Login() {
       <Grid
         item
         xs={12}
-        sm={8}
-        md={5}
+        sm={12}
+        md={6}
         component={Paper}
-        sx={{ borderRadius: "10px" }}
+        sx={{ borderRadius: "10px"}}
       >
         <Box
           sx={{
@@ -114,6 +114,7 @@ export default function Login() {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            
           }}
         >
           <Typography
@@ -142,7 +143,7 @@ export default function Login() {
             component="form"
             noValidate
             onSubmit={handleSubmit}
-            sx={{ mt: 1 }}
+            sx={{ mt: 1 , paddingLeft: "80px", paddingRight: "80px"}}
           >
             <TextField
               margin="normal"
