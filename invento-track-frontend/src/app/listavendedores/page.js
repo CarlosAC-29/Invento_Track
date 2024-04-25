@@ -1,5 +1,5 @@
 import React from 'react'
-import '../styles.css'
+import './styles.css'
 import Box from '@mui/material/Box';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { Button, TextField } from '@mui/material';
@@ -18,16 +18,19 @@ function ListaVendedores() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
+        <Box id="toolbar">
+          <ArrowBackIosIcon id='backIcon'/>
+          <h3>Lista de Vendedores</h3>
+          <h4>Bienvenido, admin</h4>
+        </Box>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-
-          <div id="atras" style={{ display: 'flex', alignItems: 'center' }}>
+          {/* <div id="atras" style={{ display: 'flex', alignItems: 'center' }}>
             <ArrowBackIosIcon id='backIcon'/>
-            <h2 style={{color: '#F6AE2D'}}> Atrás </h2>
-          </div>
+            <h2 style={{color: '#1D35F7'}}> Atrás </h2>
+          </div> */}
 
-          <Box className="tarjetas" id='bienvenidaUser'>
-            <h2>Bienvenido, admin</h2>
-          </Box>
+          {/*<Box className="tarjetas" id='bienvenidaUser'>
+          </Box>*/}
         </div>
 
         <div id='operaciones'> 
