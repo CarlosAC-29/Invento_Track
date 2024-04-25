@@ -121,11 +121,14 @@ export default function EditarVendedor() {
                 <Box
                     sx={{
                         bgcolor: 'white',
-                        width: '40%',
+                        
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
                         marginBottom: '1rem'
                     }}
+                    xs={12}
+                    sm={12}
+                    md={10}
                 >
                     <form onSubmit={handleSubmit(processForm)}>
                         <Stack
