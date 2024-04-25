@@ -79,3 +79,37 @@ def agregar_vendedor():
     return jsonify({
         'mensaje': 'Vendedor agregado exitosamente!'
     }), 201
+
+@app.route('/clientes/<int:id>', methods=['PUT'])
+def editar_cliente(id):
+    data = request.json
+
+    cliente = Cliente.query.get(id)
+    cliente.nombre = data['nombre']
+    cliente.apellido = data['apellido']
+    cliente.email = data['email']
+    cliente.direccion = data['direccion']
+    cliente.telefono = data['telefono']
+
+    db.session.commit()
+
+    return jsonify({
+        'mensaje': 'Cliente actualizado exitosamente!'
+    })
+
+@app.route('/vendedores/<int:id>', methods=['PUT'])
+def editar_vendedor(id):
+    data = request.json
+
+    vendedor = Vendedor.query.get(id)
+    vendedor.nombre = data['nombre']
+    vendedor.apellido = data['apellido']
+    vendedor.email = data['email']
+    vendedor.password = data['password']
+
+    db.session.commit()
+
+    return jsonify({
+        'mensaje': 'Vendedor actualizado exitosamente!'
+    })
+
