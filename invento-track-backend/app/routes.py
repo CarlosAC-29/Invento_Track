@@ -46,7 +46,7 @@ def list_sellers():
 
 @app.route('/clientes', methods=['POST'])
 def agregar_cliente():
-    data = request.json()
+    data = request.json
 
     nuevo_cliente = Cliente(
         nombre=data['nombre'],
@@ -65,7 +65,7 @@ def agregar_cliente():
 
 @app.route('/vendedores', methods=['POST'])
 def agregar_vendedor():
-    data = request.json()
+    data = request.json
 
     nuevo_vendedor = Vendedor(
         nombre=data['nombre'],
