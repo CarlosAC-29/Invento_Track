@@ -109,20 +109,23 @@ export default function EditarVendedor() {
             spacing={2}
             sx={{
                 width: '100%',
+                height: '100vh',
             }}
             >
                 <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
                     <Box sx={{cursor: 'pointer', display: 'flex'}}>
                     <ArrowBackIosIcon id='backIcon' />
-                    <h2 style={{ color: '#F6AE2D' }}> Atrás </h2>
+                    <h2 style={{ color: 'white' }}> Atrás </h2>
                     </Box>
                 </Box>
                 <Box
                     sx={{
-                        bgcolor: '#F6AE2D',
+                        bgcolor: "white",
+                        color: 'white',
                         width: '40%',
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
+                        marginBottom: '1rem'
                     }}
                 >
                     <form onSubmit={handleSubmit(processForm)}>
@@ -131,12 +134,12 @@ export default function EditarVendedor() {
                             alignItems="center"
                             justifyContent="center"
                             spacing={2}
-                            sx={{ height: '100%', padding: '2rem 0' }}
+                            sx={{ height: '100%', padding: '1rem 0'}}
                         >
                             <Box sx={{ display: 'flex' }}>
                                 <Image src={vendorIcon} width={32} />
                                 <Typography sx={{
-                                    color: '#000000',
+                                    color: "#090069",
                                     fontSize: '1.8rem',
                                     marginLeft: '1rem',
                                     fontWeight: 'bold',
@@ -205,7 +208,10 @@ export default function EditarVendedor() {
                             <Button
                                 type='submit'
                                 variant="contained"
-                                sx={{ bgcolor: '#86BBD8', color: '#1E1E1E' }}
+                                sx={{ backgroundColor: "#090069",
+                                "&:hover": {
+                                  backgroundColor: "#1d35f7",
+                                }, color: 'white' }}
                             >
                                 Guardar
                             </Button>
