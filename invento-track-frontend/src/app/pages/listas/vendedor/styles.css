@@ -37,22 +37,32 @@ body {
 
 #toolbar {
     display: flex;
-    background-color: #7BAFFB;
+    background-color: #090069;
     margin-bottom:20px;
-    height: 40px;
+    height: 50px;
     align-items: center;
     padding-left: 1.2%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.29);
 }#toolbar h4 {
     display: flex;
     margin-left: auto;
     color: #ffffff;
     margin-right: 1.2%;
     /* color: #1D35F7; */
-}#toolbar h3 {
-    display: flex;
-    margin-left: auto;
+}#toolbar h2 {
+    position: absolute;
     color: #ffffff;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+#iconoUsuario {
+    display: flex;
+    color: #ffffff;
+    margin-right: 1.2%;
+    scale: 1.4;
 }
 
 #bienvenidaUser {
@@ -86,7 +96,7 @@ body {
 }
 
 #operaciones {
-    margin-top: 7%;
+    margin-top: 4%;
     margin-left: 5%;
     margin-right: 5%;
 }
@@ -95,7 +105,6 @@ body {
     float: left;
     min-width: 200px;
     max-width: 500px;
-    
 }
 
 #botonAgregarVendedor {
@@ -110,11 +119,12 @@ body {
     text-align: left;
     justify-content: left;
     padding-left: 2%;
+    padding-right: 0.5%;
     border-radius: 15px;
 }
 
 #buscarVendedor p {
-    margin-right: 5%;
+    margin-right: 4%;
 }
 
 #vendedores {
@@ -130,7 +140,8 @@ body {
 #iconoBuscar {
     margin-left: 2%;
     scale: 1.2;
-    color: #7BAFFB;
+    color: #090069;
+    cursor: pointer;
 }
 
 #correoEstadoVendedor {
@@ -146,7 +157,7 @@ body {
     margin-right: 30%;
     scale: 1;
     transition: scale 0.2s;
-    color: #7BAFFB;
+    color: #090069;
 }#iconoEditar:hover {
     scale:1.2;
     transition: scale 0.2s;
@@ -156,7 +167,7 @@ body {
 #iconoEliminar {
     scale: 1;
     transition: scale 0.2s;
-    color: #7BAFFB;
+    color: #090069;
 
 }#iconoEliminar:hover {
     scale:1.2;
@@ -164,3 +175,6 @@ body {
     cursor: pointer;
 }
 
+.MuiTextField-root {
+    scale: 0.8;
+}

@@ -2,10 +2,12 @@ import React from 'react'
 import './styles.css'
 import Box from '@mui/material/Box';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Typography } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import InventoryIcon from '@mui/icons-material/Inventory';
 
 function ListaVendedores() {
   
@@ -20,17 +22,28 @@ function ListaVendedores() {
       <body>
         <Box id="toolbar">
           <ArrowBackIosIcon id='backIcon'/>
-          <h3>Lista de Vendedores</h3>
+          <Typography
+              component="tittle"
+              variant="h5"
+              sx={{
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
+                fontWeight: "bold", // Hace que el texto sea en negrita
+                color: "#ffffff", // Cambia el color del texto
+                fontSize: "2rem", // Cambia el tamaño de la fuente
+                position: "absolute",
+                pointerEvents: "none",
+                left: 0,
+                right: 0,
+                textAlign: "center",
+              }}
+            >
+              InventoTrack <InventoryIcon/>
+          </Typography>
           <h4>Bienvenido, admin</h4>
+          <AccountCircleOutlinedIcon id='iconoUsuario'/>
         </Box>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          {/* <div id="atras" style={{ display: 'flex', alignItems: 'center' }}>
-            <ArrowBackIosIcon id='backIcon'/>
-            <h2 style={{color: '#1D35F7'}}> Atrás </h2>
-          </div> */}
-
-          {/*<Box className="tarjetas" id='bienvenidaUser'>
-          </Box>*/}
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
+          <h1>Lista de vendedores</h1>
         </div>
 
         <div id='operaciones'> 
@@ -41,7 +54,7 @@ function ListaVendedores() {
             <Button id="botonAgregarVendedor" className="botones" variant="outlined">Agregar vendedor</Button>
             <Box className="tarjetas" id='buscarVendedor'>
               <p>Buscar vendedor</p>
-              <TextField className='input' id="inputBuscarVendedor" label="Buscar" variant="filled" size="small"/>
+              <TextField className='input' id="inputBuscarVendedor" label="Buscar" variant="outlined" />
               <SearchIcon id='iconoBuscar'/>
             </Box>
           </div>
