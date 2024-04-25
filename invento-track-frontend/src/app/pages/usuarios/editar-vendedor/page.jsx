@@ -122,11 +122,15 @@ export default function EditarVendedor() {
                     sx={{
                         bgcolor: "white",
                         color: 'white',
-                        width: '40%',
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
-                        marginBottom: '1rem'
+                      
+                        
                     }}
+                    xs={12}
+                    sm={12}
+                    md={8}
+                    
                 >
                     <form onSubmit={handleSubmit(processForm)}>
                         <Stack
@@ -134,18 +138,23 @@ export default function EditarVendedor() {
                             alignItems="center"
                             justifyContent="center"
                             spacing={2}
-                            sx={{ height: '100%', padding: '1rem 0'}}
+                            sx={{  padding: '1rem 0'}}
+                           
                         >
-                            <Box sx={{ display: 'flex' }}>
-                                <Image src={vendorIcon} width={32} />
+                            <Box >
+                               
                                 <Typography sx={{
                                     color: "#090069",
                                     fontSize: '1.8rem',
                                     marginLeft: '1rem',
                                     fontWeight: 'bold',
-                                    marginBottom: '1rem'
-                                }}>
-                                    Editar Vendedor
+                                    marginBottom: '1rem',
+                                   
+                                }}
+                                   
+                                
+                                >
+                                   <Image src={vendorIcon} width={32} />  Editar Vendedor
                                 </Typography>
                             </Box>
                             <TextField
