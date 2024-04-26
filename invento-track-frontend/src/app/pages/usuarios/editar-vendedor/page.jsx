@@ -148,7 +148,6 @@ export default function EditarVendedor() {
                 <Box
                     sx={{
                         bgcolor: 'white',
-                        
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
                         marginBottom: '1rem'
