@@ -1,4 +1,4 @@
-#PARA EL FRONTEND:
+# PARA EL FRONTEND:
 Ingresar a la capeta del frontend
 ```bash
 cd ./invento-track-frontend
