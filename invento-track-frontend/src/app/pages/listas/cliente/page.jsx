@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import './styles.css'
 import Box from '@mui/material/Box';
