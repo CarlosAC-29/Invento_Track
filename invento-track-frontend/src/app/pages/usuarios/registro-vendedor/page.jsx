@@ -13,19 +13,20 @@ import {
     TextField,
     Button
 } from '@mui/material';
+import { registarVendedor } from '@/app/api/api.routes';
+import { Password } from '@mui/icons-material';
 
 
 export default function EditarVendedor() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm(
+    const { register, handleSubmit} = useForm(
         {
             defaultValues: {
                 nombre: '',
                 apellido: '',
-                correo: '',
-                contrasena: '',
-                confContra: '',
-                rol: ''
+                email: '',
+                password: '',
+                confPassword: ''
             }
         }
     )
@@ -34,17 +35,16 @@ export default function EditarVendedor() {
 
     const [nombreError, setNombreError] = useState('')
     const [apellidoError, setApellidoeError] = useState('')
-    const [contrasenaError, setContrasenaError] = useState('')
-    const [confContraError, setConfContraError] = useState('')
-    const [correoError, setCorreoError] = useState('')
-    const [rolError, setRolError] = useState('')
+    const [passowordError, setPasswordError] = useState('')
+    const [confPasswordError, setConfPasswordError] = useState('')
+    const [emailError, setEmailError] = useState('')
 
-    const saveData = async () => {
+
+    const saveData = async (data) => {
 
         Swal.fire({
-            title: 'Esperando respuesta del servidor',
+            title: 'Esperando respuesta del servidor...',
             allowOutsideClick: false,
-            timer: 2000,
             allowEscapeKey: false,
             button: true,
             showConfirmButton: false,
@@ -53,52 +53,73 @@ export default function EditarVendedor() {
             }
         })
 
-        // consumir endpoint para guardar datos
-        //y retornar true y despues usar Swal.close()
-        // y usar sweet alert de extio
+        const response = await registarVendedor(data)
+        console.log(response)
+
+        if(response){
+            Swal.close()
+            Swal.fire({
+                title: 'Vendedor registrado con éxito',
+                icon: 'success',
+                confirmButtonText: 'Ok',
+            })
+        }else{
+            Swal.close()
+            Swal.fire({
+                title: 'Error al registrar el vendedor',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+            })
+        }
 
     }
 
     const processForm = (data) => {
-
-        setData(data)
-        console.log(data)
-
+        setData(data);
+        console.log(data);
+    
+        let isValid = true;
+    
         if (!data.nombre || !data.nombre.length) {
-            setNombreError('Campo requerido')
+            setNombreError('Campo requerido');
+            isValid = false;
         } else {
-            setNombreError('')
+            setNombreError('');
         }
+    
         if (!data.apellido || !data.apellido.length) {
-            setApellidoeError('Campo requerido')
+            setApellidoeError('Campo requerido');
+            isValid = false;
         } else {
-            setApellidoeError('')
+            setApellidoeError('');
         }
-        if (!data.correo || !data.correo.length) {
-            setCorreoError('Campo requerido')
+    
+        if (!data.email || !data.email.length) {
+            setEmailError('Campo requerido');
+            isValid = false;
         } else {
-            setCorreoError('')
+            setEmailError('');
         }
-        if (!data.contrasena || !data.contrasena.length) {
-            setContrasenaError('Campo requerido')
+    
+        if (!data.password || !data.password.length) {
+            setPasswordError('Campo requerido');
+            isValid = false;
         } else {
-            setContrasenaError('')
+            setPasswordError('');
         }
-        if (!data.confContra || !data.confContra.length) {
-            setConfContraError('Campo requerido')
+    
+        if (!data.confPassword || !data.confPassword.length) {
+            setConfPasswordError('Campo requerido');
+            isValid = false;
         } else {
-            setConfContraError('')
+            setConfPasswordError('');
         }
-        if (!data.rol || !data.rol.length) {
-            setRolError('Campo requerido')
-        } else {
-            setRolError('')
+    
+        if (isValid) {
+            saveData(data);
         }
-
-        saveData()
-
-    }
-
+    };
+    
 
     return (
         <div className={styles.main_container}>
@@ -113,9 +134,9 @@ export default function EditarVendedor() {
             }}
             >
                 <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box sx={{cursor: 'pointer', display: 'flex'}}>
+                    <Box sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
                     <ArrowBackIosIcon id='backIcon' />
-                    <h2 style={{ color: 'white' }}> Atrás </h2>
+                    <Typography variant='h6' > Atrás </Typography>
                     </Box>
                 </Box>
                 <Box
@@ -139,7 +160,7 @@ export default function EditarVendedor() {
                             sx={{ height: '100%', padding: '1rem 0' }}
                         >
                             <Box sx={{ display: 'flex' }}>
-                                <Image src={vendorIcon} width={32} />
+                                <Image src={vendorIcon} width={32} alt='worker' />
                                 <Typography sx={{
                                     color: '#090069',
                                     fontSize: '1.8rem',
@@ -172,40 +193,31 @@ export default function EditarVendedor() {
                                 helperText={apellidoError}
                             />
                             <TextField
-                                error={correoError && correoError.length ? true : false}
+                                error={emailError && emailError.length ? true : false}
                                 size="small"
-                                id="correo"
+                                id="email"
                                 label="Correo Electrónico"
                                 variant="filled"
-                                {...register('correo')}
-                                helperText={correoError}
+                                {...register('email')}
+                                helperText={emailError}
                             />
                             <TextField
-                                error={contrasenaError && contrasenaError.length ? true : false}
+                                error={passowordError && passowordError.length ? true : false}
                                 size="small"
-                                id="contrasena"
+                                id="password"
                                 label="Contraseña"
                                 variant="filled"
-                                {...register('contrasena')}
-                                helperText={contrasenaError}
+                                {...register('password')}
+                                helperText={passowordError}
                             />
                             <TextField
-                                error={confContraError && confContraError.length ? true : false}
+                                error={confPasswordError && confPasswordError.length ? true : false}
                                 size="small"
-                                id="confContra"
+                                id="confPassowrd"
                                 label="Confirmar Contraseña"
                                 variant="filled"
-                                {...register('confContra')}
-                                helperText={confContraError}
-                            />
-                            <TextField
-                                error={rolError && rolError.length ? true : false}
-                                size="small"
-                                id="rol"
-                                label="Rol"
-                                variant="filled"
-                                {...register('rol')}
-                                helperText={rolError}
+                                helperText={confPasswordError}
+                                {...register('confPassword')}
                             />
                             <Button
                                 type='submit'
