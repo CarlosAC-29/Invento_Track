@@ -7,7 +7,7 @@ Instalar dependencias
 ```bash
 npm install
 ```
-Ejcutar proyecto 
+Ejecutar proyecto 
 ```bash
 npm run dev
 ```
