@@ -9,9 +9,28 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import {useEffect, useState} from 'react'
+import {useEffect, useState} from 'react';
+import { useRouter } from 'next/navigation';
 
 function ListaVendedores() {
+
+  const [vendedores, setVendedores] = useState([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetch('http://localhost:5000/vendedores')
+      .then(response => response.json())
+      .then(data => setVendedores(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
+
+  const handleClick = () => {
+    router.push('../usuarios/registro-vendedor');
+  };
+
+  const handleEdit = () => {
+    router.push('../usuarios/editar-vendedor');
+  };
 
   return (
     <>
@@ -52,29 +71,33 @@ function ListaVendedores() {
             <p>Agregar vendedor</p>
           </Box> */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button id="botonAgregarVendedor" className="botones" variant="outlined">Agregar vendedor</Button>
+            <Button onClick={handleClick} id="botonAgregarVendedor" className="botones" variant="outlined">Agregar vendedor</Button>
             <Box className="tarjetas" id='buscarVendedor'>
               <p>Buscar vendedor</p>
               <TextField className='input' id="inputBuscarVendedor" label="Buscar" variant="outlined" />
               <SearchIcon id='iconoBuscar'/>
             </Box>
           </div>
-          <div>
-            <Box className="tarjetas" id='vendedores'>
-              <div id='nombreVendedor'>
-                <p>Nombre: Cristian</p>
-                <p>Apellido: Montaño</p>
-              </div>
-              <div id='correoEstadoVendedor'>
-                <p>correo: cristian@gmail.com</p>
-                <p>Estado: ACTIVO</p>
-              </div>
-              <div id='accionesVendedor' style={{ display: 'flex', alignItems: 'center' }}>
-                <BorderColorOutlinedIcon id='iconoEditar'/>
-                <DeleteOutlinedIcon id='iconoEliminar'/>
-              </div>
-            </Box>
+          
+          <div id="listaVendedores">
+            {vendedores.map((vendedor, index) => (
+              <Box key={index} className="tarjetas" id='vendedores'>
+                <div id='nombreVendedor'>
+                  <p>Nombre: {vendedor.nombre}</p>
+                  <p>Apellido: {vendedor.apellido}</p>
+                </div>
+                <div id='correoEstadoVendedor'>
+                  <p>email: {vendedor.email}</p>
+                  <p>Estado: {vendedor.estado}</p>
+                </div>
+                <div id='accionesVendedor' style={{ display: 'flex', alignItems: 'center' }}>
+                  <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit}/>
+                  <DeleteOutlinedIcon id='iconoEliminar'/>
+                </div>
+              </Box>
+            ))}
           </div>
+
         </div>
       </body>
     </>

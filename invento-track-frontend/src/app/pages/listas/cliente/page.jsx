@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './styles.css'
 import Box from '@mui/material/Box';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -9,10 +9,31 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import { useForm } from 'react-hook-form';
+import { listarClientes } from '@/app/api/api.routes';
+import { useRouter } from 'next/navigation';
 
 function ListaClientes() {
-  
 
+  const [clientes, setClientes] = useState([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetch('http://localhost:5000/clientes')
+      .then(response => response.json())
+      .then(data => setClientes(data))
+      .catch(error => console.error('Error:', error));
+  }, []);
+
+  const handleClick = () => {
+    router.push('../usuarios/registro-clientes');
+  };
+
+  const handleEdit = () => {
+    router.push('../usuarios/editar-clientes');
+  };
+
+  
   return (
     <>
       <head>
@@ -48,31 +69,36 @@ function ListaClientes() {
         </div>
 
         <div id='operaciones'> 
+
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            <Button id="botonAgregarCliente" className="botones" variant="outlined">Agregar cliente</Button>
+            <Button onClick={handleClick} id="botonAgregarCliente" className="botones" variant="outlined">Agregar cliente</Button>
             <Box className="tarjetas" id='buscarCliente'>
               <p>Buscar cliente</p>
               <TextField className='input' id="inputBuscarCliente" label="Buscar" variant="outlined" />
               <SearchIcon id='iconoBuscar'/>
             </Box>
           </div>
-          <div>
-            <Box className="tarjetas" id='clientes'>
+
+          <div id="listaClientes">
+          {clientes.map((cliente, index) => (
+            <Box key={index} className="tarjetas" id='clientes'>
               <div id='nombreCliente'>
-                <p>Nombre: Santiago</p>
-                <p>Apellido: Trujillo</p>
+                <p>Nombre: {cliente.nombre}</p>
+                <p>Apellido: {cliente.apellido}</p>
               </div>
               <div id='correoEstadoCliente'>
-                <p>correo: quierocarne40@gmail.com</p>
-                <p>direccion: Cra 101B</p>
-                <p>cel: 3142435709</p>
+                <p>email: {cliente.email}</p>
+                <p>direccion: {cliente.direccion}</p>
+                <p>telefono: {cliente.telefono}</p>
               </div>
               <div id='accionesCliente' style={{ display: 'flex', alignItems: 'center' }}>
-                <BorderColorOutlinedIcon id='iconoEditar'/>
+                <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit} />
                 <DeleteOutlinedIcon id='iconoEliminar'/>
               </div>
             </Box>
+          ))}
           </div>
+
         </div>
       </body>
     </>
