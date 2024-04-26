@@ -1,3 +1,17 @@
+#PARA EL FRONTEND:
+Ingresar a la capeta del frontend
+```bash
+cd ./invento-track-frontend
+```
+Instalar dependencias 
+```bash
+npm install
+```
+Ejcutar proyecto 
+```bash
+npm run dev
+```
+
 # PARA EL BACKEND:
 
 ## Requisitos previos
