@@ -13,7 +13,7 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import { registarVendedor } from '@/app/api/api.routes';
+import { registarClientes } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 
 
@@ -25,8 +25,8 @@ export default function EditarVendedor() {
                 nombre: '',
                 apellido: '',
                 email: '',
-                password: '',
-                confPassword: ''
+                direccion: '',
+                telefono: '',
             }
         }
     )
@@ -35,8 +35,8 @@ export default function EditarVendedor() {
 
     const [nombreError, setNombreError] = useState('')
     const [apellidoError, setApellidoeError] = useState('')
-    const [passowordError, setPasswordError] = useState('')
-    const [confPasswordError, setConfPasswordError] = useState('')
+    const [dirreccionError, setDirreccionError] = useState('')
+    const [telefonoError, setTelefonoError] = useState('')
     const [emailError, setEmailError] = useState('')
 
 
@@ -53,7 +53,7 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await registarVendedor(data)
+        const response = await registarClientes(data)
         console.log(response)
 
         if(response){
@@ -101,18 +101,18 @@ export default function EditarVendedor() {
             setEmailError('');
         }
     
-        if (!data.password || !data.password.length) {
-            setPasswordError('Campo requerido');
+        if (!data.telefono || !data.telefono.length) {
+            setTelefonoError('Campo requerido');
             isValid = false;
         } else {
-            setPasswordError('');
+            setTelefonoError('');
         }
     
-        if (!data.confPassword || !data.confPassword.length) {
-            setConfPasswordError('Campo requerido');
+        if (!data.direccion || !data.direccion.length) {
+            setDirreccionError('Campo requerido');
             isValid = false;
         } else {
-            setConfPasswordError('');
+            setDirreccionError('');
         }
     
         if (isValid) {
@@ -168,7 +168,7 @@ export default function EditarVendedor() {
                                     fontWeight: 'bold',
                                     marginBottom: '1rem'
                                 }}>
-                                    Editar Vendedor
+                                    Registro Clientes
                                 </Typography>
                             </Box>
                             <TextField
@@ -202,22 +202,22 @@ export default function EditarVendedor() {
                                 helperText={emailError}
                             />
                             <TextField
-                                error={passowordError && passowordError.length ? true : false}
+                                error={telefonoError && telefonoError.length ? true : false}
                                 size="small"
-                                id="password"
-                                label="Contraseña"
+                                id="telefono"
+                                label="Telefono"
                                 variant="filled"
-                                {...register('password')}
-                                helperText={passowordError}
+                                {...register('telefono')}
+                                helperText={telefonoError}
                             />
                             <TextField
-                                error={confPasswordError && confPasswordError.length ? true : false}
+                                error={dirreccionError && dirreccionError.length ? true : false}
                                 size="small"
                                 id="confPassowrd"
-                                label="Confirmar Contraseña"
+                                label="Dirección"
                                 variant="filled"
-                                helperText={confPasswordError}
-                                {...register('confPassword')}
+                                helperText={dirreccionError}
+                                {...register('direccion')}
                             />
                             <Button
                                 type='submit'
