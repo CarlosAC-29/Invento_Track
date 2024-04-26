@@ -13,38 +13,44 @@ import {
     TextField,
     Button
 } from '@mui/material';
-
+import { editVendedor } from '@/app/api/api.routes';
+import { Password } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 export default function EditarVendedor() {
 
-    const { register, handleSubmit, formState: { errors } } = useForm(
+    const { register, handleSubmit} = useForm(
         {
             defaultValues: {
-                nombre: '',
-                apellido: '',
-                correo: '',
-                contrasena: '',
-                confContra: '',
-                rol: ''
+                nombre: 'Carlos',
+                apellido: 'Caceres',
+                email: 'carlos@gmail.com',
+                password: '123',
+                confPassword: '123'
             }
         }
     )
+
+    const handleClick = () => {
+        router.push('../listas/cliente');
+      };
+
+    const router = useRouter();
 
     const [data, setData] = useState('')
 
     const [nombreError, setNombreError] = useState('')
     const [apellidoError, setApellidoeError] = useState('')
-    const [contrasenaError, setContrasenaError] = useState('')
-    const [confContraError, setConfContraError] = useState('')
-    const [correoError, setCorreoError] = useState('')
-    const [rolError, setRolError] = useState('')
+    const [passowordError, setPasswordError] = useState('')
+    const [confPasswordError, setConfPasswordError] = useState('')
+    const [emailError, setEmailError] = useState('')
 
-    const saveData = async () => {
+
+    const saveData = async (data) => {
 
         Swal.fire({
-            title: 'Esperando respuesta del servidor',
+            title: 'Esperando respuesta del servidor...',
             allowOutsideClick: false,
-            timer: 2000,
             allowEscapeKey: false,
             button: true,
             showConfirmButton: false,
@@ -53,52 +59,73 @@ export default function EditarVendedor() {
             }
         })
 
-        // consumir endpoint para guardar datos
-        //y retornar true y despues usar Swal.close()
-        // y usar sweet alert de extio
+        const response = await editVendedor(3, data)
+        console.log(response)
+
+        if(response){
+            Swal.close()
+            Swal.fire({
+                title: 'Vendedor registrado con éxito',
+                icon: 'success',
+                confirmButtonText: 'Ok',
+            })
+        }else{
+            Swal.close()
+            Swal.fire({
+                title: 'Error al registrar el vendedor',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+            })
+        }
 
     }
 
     const processForm = (data) => {
-
-        setData(data)
-        console.log(data)
-
+        setData(data);
+        console.log(data);
+    
+        let isValid = true;
+    
         if (!data.nombre || !data.nombre.length) {
-            setNombreError('Campo requerido')
+            setNombreError('Campo requerido');
+            isValid = false;
         } else {
-            setNombreError('')
+            setNombreError('');
         }
+    
         if (!data.apellido || !data.apellido.length) {
-            setApellidoeError('Campo requerido')
+            setApellidoeError('Campo requerido');
+            isValid = false;
         } else {
-            setApellidoeError('')
+            setApellidoeError('');
         }
-        if (!data.correo || !data.correo.length) {
-            setCorreoError('Campo requerido')
+    
+        if (!data.email || !data.email.length) {
+            setEmailError('Campo requerido');
+            isValid = false;
         } else {
-            setCorreoError('')
+            setEmailError('');
         }
-        if (!data.contrasena || !data.contrasena.length) {
-            setContrasenaError('Campo requerido')
+    
+        if (!data.password || !data.password.length) {
+            setPasswordError('Campo requerido');
+            isValid = false;
         } else {
-            setContrasenaError('')
+            setPasswordError('');
         }
-        if (!data.confContra || !data.confContra.length) {
-            setConfContraError('Campo requerido')
+    
+        if (!data.confPassword || !data.confPassword.length) {
+            setConfPasswordError('Campo requerido');
+            isValid = false;
         } else {
-            setConfContraError('')
+            setConfPasswordError('');
         }
-        if (!data.rol || !data.rol.length) {
-            setRolError('Campo requerido')
-        } else {
-            setRolError('')
+    
+        if (isValid) {
+           saveData(data);
         }
-
-        saveData()
-
-    }
-
+    };
+    
 
     return (
         <div className={styles.main_container}>
@@ -109,21 +136,25 @@ export default function EditarVendedor() {
             spacing={2}
             sx={{
                 width: '100%',
+                height: '100vh',
             }}
             >
                 <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box sx={{cursor: 'pointer', display: 'flex'}}>
+                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
                     <ArrowBackIosIcon id='backIcon' />
-                    <h2 style={{ color: '#F6AE2D' }}> Atrás </h2>
+                    <Typography variant='h6' > Atrás </Typography>
                     </Box>
                 </Box>
                 <Box
                     sx={{
-                        bgcolor: '#F6AE2D',
-                        width: '40%',
+                        bgcolor: 'white',
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
+                        marginBottom: '1rem'
                     }}
+                    xs={12}
+                    sm={12}
+                    md={10}
                 >
                     <form onSubmit={handleSubmit(processForm)}>
                         <Stack
@@ -131,12 +162,12 @@ export default function EditarVendedor() {
                             alignItems="center"
                             justifyContent="center"
                             spacing={2}
-                            sx={{ height: '100%', padding: '2rem 0' }}
+                            sx={{ height: '100%', padding: '1rem 0' }}
                         >
                             <Box sx={{ display: 'flex' }}>
-                                <Image src={vendorIcon} width={32} />
+                                <Image src={vendorIcon} width={32} alt='worker' />
                                 <Typography sx={{
-                                    color: '#000000',
+                                    color: '#090069',
                                     fontSize: '1.8rem',
                                     marginLeft: '1rem',
                                     fontWeight: 'bold',
@@ -147,7 +178,6 @@ export default function EditarVendedor() {
                             </Box>
                             <TextField
                                 error={nombreError && nombreError.length ? true : false}
-                                autoFocus
                                 size="small"
                                 id="nombre"
                                 label="Nombre"
@@ -167,45 +197,39 @@ export default function EditarVendedor() {
                                 helperText={apellidoError}
                             />
                             <TextField
-                                error={correoError && correoError.length ? true : false}
+                                error={emailError && emailError.length ? true : false}
                                 size="small"
-                                id="correo"
+                                id="email"
                                 label="Correo Electrónico"
                                 variant="filled"
-                                {...register('correo')}
-                                helperText={correoError}
+                                {...register('email')}
+                                helperText={emailError}
                             />
                             <TextField
-                                error={contrasenaError && contrasenaError.length ? true : false}
+                                error={passowordError && passowordError.length ? true : false}
                                 size="small"
-                                id="contrasena"
+                                id="password"
                                 label="Contraseña"
                                 variant="filled"
-                                {...register('contrasena')}
-                                helperText={contrasenaError}
+                                {...register('password')}
+                                helperText={passowordError}
                             />
                             <TextField
-                                error={confContraError && confContraError.length ? true : false}
+                                error={confPasswordError && confPasswordError.length ? true : false}
                                 size="small"
-                                id="confContra"
+                                id="confPassowrd"
                                 label="Confirmar Contraseña"
                                 variant="filled"
-                                {...register('confContra')}
-                                helperText={confContraError}
-                            />
-                            <TextField
-                                error={rolError && rolError.length ? true : false}
-                                size="small"
-                                id="rol"
-                                label="Rol"
-                                variant="filled"
-                                {...register('rol')}
-                                helperText={rolError}
+                                helperText={confPasswordError}
+                                {...register('confPassword')}
                             />
                             <Button
                                 type='submit'
                                 variant="contained"
-                                sx={{ bgcolor: '#86BBD8', color: '#1E1E1E' }}
+                                sx={{ backgroundColor: "#090069",
+                                "&:hover": {
+                                  backgroundColor: "#1d35f7",
+                                }, color: 'white' }}
                             >
                                 Guardar
                             </Button>

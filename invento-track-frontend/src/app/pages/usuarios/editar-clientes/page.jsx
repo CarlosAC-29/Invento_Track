@@ -13,22 +13,11 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import { registarVendedor } from '@/app/api/api.routes';
+import { editCliente } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import { Exo_2 } from 'next/font/google';
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
-    authDomain: "logininventotrack.firebaseapp.com",
-    projectId: "logininventotrack",
-    storageBucket: "logininventotrack.appspot.com",
-    messagingSenderId: "692002139318",
-    appId: "1:692002139318:web:c627ac41ca3cc4b1d64a17"
-  };
-  
-const app = initializeApp(firebaseConfig);
 
 export default function EditarVendedor() {
 
@@ -38,8 +27,8 @@ export default function EditarVendedor() {
                 nombre: '',
                 apellido: '',
                 email: '',
-                password: '',
-                confPassword: ''
+                direccion: '',
+                telefono: '',
             }
         }
     )
@@ -54,8 +43,8 @@ export default function EditarVendedor() {
 
     const [nombreError, setNombreError] = useState('')
     const [apellidoError, setApellidoeError] = useState('')
-    const [passowordError, setPasswordError] = useState('')
-    const [confPasswordError, setConfPasswordError] = useState('')
+    const [dirreccionError, setDirreccionError] = useState('')
+    const [telefonoError, setTelefonoError] = useState('')
     const [emailError, setEmailError] = useState('')
 
 
@@ -72,20 +61,7 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await registarVendedor(data)
-        
-        //Firebase
-        const auth = getAuth();
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
-            // Usuario registrado con éxito
-            console.log('Usuario registrado:', userCredential.user);
-            // Aquí puedes redirigir a otra página o realizar otras acciones después del registro exitoso
-        } catch (error) {
-            // Si hay un error durante el registro
-            console.error('Error de registro:', error.message);
-        }
-
+        const response = await editCliente(2,data)
         console.log(response)
 
         if(response){
@@ -133,18 +109,18 @@ export default function EditarVendedor() {
             setEmailError('');
         }
     
-        if (!data.password || !data.password.length) {
-            setPasswordError('Campo requerido');
+        if (!data.telefono || !data.telefono.length) {
+            setTelefonoError('Campo requerido');
             isValid = false;
         } else {
-            setPasswordError('');
+            setTelefonoError('');
         }
     
-        if (!data.confPassword || !data.confPassword.length) {
-            setConfPasswordError('Campo requerido');
+        if (!data.direccion || !data.direccion.length) {
+            setDirreccionError('Campo requerido');
             isValid = false;
         } else {
-            setConfPasswordError('');
+            setDirreccionError('');
         }
     
         if (isValid) {
@@ -200,7 +176,7 @@ export default function EditarVendedor() {
                                     fontWeight: 'bold',
                                     marginBottom: '1rem'
                                 }}>
-                                    Registro Vendedor
+                                    Editar Clientes
                                 </Typography>
                             </Box>
                             <TextField
@@ -234,22 +210,22 @@ export default function EditarVendedor() {
                                 helperText={emailError}
                             />
                             <TextField
-                                error={passowordError && passowordError.length ? true : false}
+                                error={telefonoError && telefonoError.length ? true : false}
                                 size="small"
-                                id="password"
-                                label="Contraseña"
+                                id="telefono"
+                                label="Telefono"
                                 variant="filled"
-                                {...register('password')}
-                                helperText={passowordError}
+                                {...register('telefono')}
+                                helperText={telefonoError}
                             />
                             <TextField
-                                error={confPasswordError && confPasswordError.length ? true : false}
+                                error={dirreccionError && dirreccionError.length ? true : false}
                                 size="small"
                                 id="confPassowrd"
-                                label="Confirmar Contraseña"
+                                label="Dirección"
                                 variant="filled"
-                                helperText={confPasswordError}
-                                {...register('confPassword')}
+                                helperText={dirreccionError}
+                                {...register('direccion')}
                             />
                             <Button
                                 type='submit'
