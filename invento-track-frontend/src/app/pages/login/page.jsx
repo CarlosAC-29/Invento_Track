@@ -16,6 +16,8 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CardContent from "@mui/material/CardContent";
 import InventoryIcon from "@mui/icons-material/Inventory";
+
+import axios from 'axios'
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
@@ -53,14 +55,28 @@ export default function Login() {
     event.preventDefault();
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log("con éxito",userCredential.user);
+        console.log("Autenticación exitosa", userCredential.user);
+        // Aquí realizas tu petición al backend después de la autenticación exitosa
+        // Supongamos que quieres hacer una solicitud POST al endpoint '/api/userInfo'
+        axios.post('http://localhost:5000/login', {
+          email: email, // Por ejemplo, envías el ID de usuario
+          // Otros datos que necesites enviar al backend
+        })
+          .then(response => {
+            console.log('Respuesta del backend:', response.data);
+            // Puedes hacer algo con la respuesta del backend si es necesario
+          })
+          .catch(error => {
+            console.error('Error al hacer la solicitud al backend:', error);
+          });
       })
       .catch((error) => {
         var errorCode = error.code;
         var errorMessage = error.message;
-        console.log(errorCode, errorMessage);
+        console.error("Error durante la autenticación:", errorCode, errorMessage);
       });
   };
+  
 
   return (
     <Grid container justify="center" sx={{height: "100vh" }}>
