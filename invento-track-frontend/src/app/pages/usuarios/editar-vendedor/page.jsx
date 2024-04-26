@@ -13,7 +13,7 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import { registarVendedor } from '@/app/api/api.routes';
+import { editVendedor } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 
 
@@ -53,7 +53,7 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await registarVendedor(data)
+        const response = await editVendedor(id, data)
         console.log(response)
 
         if(response){
