@@ -15,29 +15,25 @@ import {
 } from '@mui/material';
 import { editCliente } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
 import { Exo_2 } from 'next/font/google';
+import Link from 'next/link';
 
 
-export default function EditarVendedor() {
-
-    const { register, handleSubmit} = useForm(
+export default function EditarVendedor({ searchParams }) {
+    console.log(searchParams)
+    const { register, handleSubmit } = useForm(
         {
             defaultValues: {
-                nombre: '',
-                apellido: '',
-                email: '',
-                direccion: '',
-                telefono: '',
+                nombre: searchParams.nombre,
+                apellido: searchParams.apellido,
+                email: searchParams.email,
+                direccion: searchParams.direccion,
+                telefono: searchParams.telefono,
             }
         }
     )
 
-    const handleClick = () => {
-        router.push('../listas/cliente');
-      };
 
-    const router = useRouter();
 
     const [data, setData] = useState('')
 
@@ -61,17 +57,17 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await editCliente(2,data)
+        const response = await editCliente(searchParams.id, data)
         console.log(response)
 
-        if(response){
+        if (response) {
             Swal.close()
             Swal.fire({
                 title: 'Vendedor registrado con éxito',
                 icon: 'success',
                 confirmButtonText: 'Ok',
             })
-        }else{
+        } else {
             Swal.close()
             Swal.fire({
                 title: 'Error al registrar el vendedor',
@@ -85,72 +81,74 @@ export default function EditarVendedor() {
     const processForm = (data) => {
         setData(data);
         console.log(data);
-    
+
         let isValid = true;
-    
+
         if (!data.nombre || !data.nombre.length) {
             setNombreError('Campo requerido');
             isValid = false;
         } else {
             setNombreError('');
         }
-    
+
         if (!data.apellido || !data.apellido.length) {
             setApellidoeError('Campo requerido');
             isValid = false;
         } else {
             setApellidoeError('');
         }
-    
+
         if (!data.email || !data.email.length) {
             setEmailError('Campo requerido');
             isValid = false;
         } else {
             setEmailError('');
         }
-    
+
         if (!data.telefono || !data.telefono.length) {
             setTelefonoError('Campo requerido');
             isValid = false;
         } else {
             setTelefonoError('');
         }
-    
+
         if (!data.direccion || !data.direccion.length) {
             setDirreccionError('Campo requerido');
             isValid = false;
         } else {
             setDirreccionError('');
         }
-    
+
         if (isValid) {
             saveData(data);
         }
     };
-    
+
 
     return (
         <div className={styles.main_container}>
             <Stack
-            direction='column'
-            alignItems="center"
-            justifyContent="center"
-            spacing={2}
-            sx={{
-                width: '100%',
-                height: '100vh',
-            }}
+                direction='column'
+                alignItems="center"
+                justifyContent="center"
+                spacing={2}
+                sx={{
+                    width: '100%',
+                    height: '100vh',
+                }}
             >
-                <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6' > Atrás </Typography>
-                    </Box>
+                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                    <Link href="../listas/cliente">
+                        <Box  sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
+                            <ArrowBackIosIcon id='backIcon' />
+                            <Typography variant='h6' > Atrás </Typography>
+                        </Box>
+                    </Link>
                 </Box>
                 <Box
                     sx={{
                         bgcolor: 'white',
-                        
+
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
                         marginBottom: '1rem'
@@ -230,10 +228,12 @@ export default function EditarVendedor() {
                             <Button
                                 type='submit'
                                 variant="contained"
-                                sx={{ backgroundColor: "#090069",
-                                "&:hover": {
-                                  backgroundColor: "#1d35f7",
-                                }, color: 'white' }}
+                                sx={{
+                                    backgroundColor: "#090069",
+                                    "&:hover": {
+                                        backgroundColor: "#1d35f7",
+                                    }, color: 'white'
+                                }}
                             >
                                 Guardar
                             </Button>
