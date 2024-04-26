@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { registarVendedor } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
-
+import { useRouter } from 'next/navigation';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 
@@ -43,6 +43,12 @@ export default function EditarVendedor() {
             }
         }
     )
+
+    const handleClick = () => {
+        router.push('../listas/cliente');
+      };
+
+    const router = useRouter();
 
     const [data, setData] = useState('')
 
@@ -160,7 +166,7 @@ export default function EditarVendedor() {
             }}
             >
                 <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
+                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
                     <ArrowBackIosIcon id='backIcon' />
                     <Typography variant='h6' > Atrás </Typography>
                     </Box>

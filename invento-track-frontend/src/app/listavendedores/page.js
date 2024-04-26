@@ -31,9 +31,8 @@ function ListaVendedores() {
         </div>
 
         <div id='operaciones'> 
-        {/* <Box className="tarjetas" id='agregarVendedor'>
-            <p>Agregar vendedor</p>
-          </Box> */}
+        
+        
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button id="botonAgregarVendedor" className="botones" variant="outlined">Agregar vendedor</Button>
             <Box className="tarjetas" id='buscarVendedor'>
