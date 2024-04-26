@@ -13,9 +13,11 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import { registarClientes } from '@/app/api/api.routes';
+import { editCliente } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import { Exo_2 } from 'next/font/google';
+
 
 export default function EditarVendedor() {
 
@@ -59,7 +61,7 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await registarClientes(data)
+        const response = await editCliente(2,data)
         console.log(response)
 
         if(response){

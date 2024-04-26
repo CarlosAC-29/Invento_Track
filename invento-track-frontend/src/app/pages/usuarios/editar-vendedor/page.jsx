@@ -22,11 +22,11 @@ export default function EditarVendedor() {
     const { register, handleSubmit} = useForm(
         {
             defaultValues: {
-                nombre: '',
-                apellido: '',
-                email: '',
-                password: '',
-                confPassword: ''
+                nombre: 'Carlos',
+                apellido: 'Caceres',
+                email: 'carlos@gmail.com',
+                password: '123',
+                confPassword: '123'
             }
         }
     )
@@ -59,7 +59,7 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await editVendedor(id, data)
+        const response = await editVendedor(3, data)
         console.log(response)
 
         if(response){
@@ -122,7 +122,7 @@ export default function EditarVendedor() {
         }
     
         if (isValid) {
-            saveData(data);
+           saveData(data);
         }
     };
     
@@ -178,7 +178,6 @@ export default function EditarVendedor() {
                             </Box>
                             <TextField
                                 error={nombreError && nombreError.length ? true : false}
-                                autoFocus
                                 size="small"
                                 id="nombre"
                                 label="Nombre"
