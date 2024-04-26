@@ -1,12 +1,29 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import Cliente, Vendedor
+from app.models import Cliente, Vendedor, Administrador
 
 @app.route('/')
 def index():
     return 'Hola, mundo!'
 
 from sqlalchemy import text
+
+@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json 
+    email = data.get('email') 
+
+    vendedor = Vendedor.query.filter_by(email=email).first()
+    if vendedor:
+        return jsonify({'id': vendedor.id, 'rol': 'vendedor'})
+
+    administrador = Administrador.query.filter_by(email=email).first()
+    if administrador:
+        return jsonify({'id': administrador.id, 'rol': 'administrador'})  
+
+    return jsonify({'error': 'Usuario no encontrado'})
+
 
 @app.route('/test-db')
 def test_db_connection():
