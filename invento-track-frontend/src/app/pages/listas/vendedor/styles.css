@@ -1,0 +1,187 @@
+* {
+    margin: 0;
+}
+
+body {
+    /*background: url("/images/fondo2.jpg");*/
+    background-color: #dde4f6;
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    overflow: hidden;
+}
+
+.tarjetas {
+    background-color: #ffffff;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+
+.botones {
+    text-transform: none;
+    background-color: #7baefb5b;
+    color: black;
+    border-color: #7baefb;
+    /*font-weight: bold;*/
+    font-size: 16px;
+}
+
+.botones:hover {
+    background-color: #7BAFFB;
+    border-color: #1D35F7;
+}
+
+#toolbar {
+    display: flex;
+    background-color: #090069;
+    margin-bottom:20px;
+    height: 50px;
+    align-items: center;
+    padding-left: 1.2%;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.29);
+}#toolbar h4 {
+    display: flex;
+    margin-left: auto;
+    color: #ffffff;
+    margin-right: 1.2%;
+    /* color: #1D35F7; */
+}#toolbar h2 {
+    position: absolute;
+    color: #ffffff;
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+#iconoUsuario {
+    display: flex;
+    color: #ffffff;
+    margin-right: 1.2%;
+    scale: 1.4;
+}
+
+#bienvenidaUser {
+    display: flex;
+    height: 60px;
+    width: 250px;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+
+#atras:hover #backIcon  {
+    margin-left: 3px;
+    margin-right: 7px;
+    cursor: pointer;
+}
+
+#backIcon {
+    color: #ffffff;
+    margin-left: 10px;
+    transition: margin-left 0.2s, margin-right 0.2s;
+    scale: 1.2;
+}
+
+#backIcon:hover {
+    transition: margin-left 0.2s, margin-right 0.2s;
+    margin-left: 6px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+#operaciones {
+    margin-top: 4%;
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#agregarVendedor {
+    float: left;
+    min-width: 200px;
+    max-width: 500px;
+}
+
+#botonAgregarVendedor {
+    height: 70px;
+    border-radius: 15px;
+}
+
+#buscarVendedor {
+    min-width: 400px;
+    max-width: 600px;
+    height: 70px;
+    text-align: left;
+    justify-content: left;
+    padding-left: 2%;
+    padding-right: 0.5%;
+    border-radius: 15px;
+}
+
+#buscarVendedor p {
+    margin-right: 4%;
+}
+
+#vendedores {
+    justify-content: unset;
+    padding-left: 2%;
+    padding-right: 4%;
+    padding-top: 1.3%;
+    padding-bottom: 1.3%;
+    margin-bottom: 3%;
+    border-radius: 15px;
+}
+
+#iconoBuscar {
+    margin-left: 2%;
+    scale: 1.2;
+    color: #090069;
+    cursor: pointer;
+}
+
+#correoEstadoVendedor {
+    margin-left: 7%;
+}
+
+#accionesVendedor {
+    margin-left: auto;
+    scale: 1.8;
+}
+
+#iconoEditar {
+    margin-right: 30%;
+    scale: 1;
+    transition: scale 0.2s;
+    color: #090069;
+}#iconoEditar:hover {
+    scale:1.2;
+    transition: scale 0.2s;
+    cursor: pointer;
+}
+
+#iconoEliminar {
+    scale: 1;
+    transition: scale 0.2s;
+    color: #090069;
+
+}#iconoEliminar:hover {
+    scale:1.2;
+    transition: scale 0.2s;
+    cursor: pointer;
+}
+
+.MuiTextField-root {
+    scale: 0.8;
+}
+
+#listaVendedores {
+    overflow-y: auto;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    max-height: 400px;
+}
