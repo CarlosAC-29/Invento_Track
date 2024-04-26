@@ -12,6 +12,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import { useForm } from 'react-hook-form';
 import { listarClientes } from '@/app/api/api.routes';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 function ListaClientes() {
 
@@ -30,10 +31,13 @@ function ListaClientes() {
   };
 
   const handleEdit = () => {
-    router.push('../usuarios/editar-clientes');
+    router.push({
+      pathname: '../usuarios/editar-clientes',
+      query: { id: 1 }
+    });
   };
 
-  
+
   return (
     <>
       <head>
@@ -43,60 +47,74 @@ function ListaClientes() {
       </head>
       <body>
         <Box id="toolbar">
-          <ArrowBackIosIcon id='backIcon'/>
+          <ArrowBackIosIcon id='backIcon' />
           <Typography
-              component="tittle"
-              variant="h5"
-              sx={{
-                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
-                fontWeight: "bold", // Hace que el texto sea en negrita
-                color: "#ffffff", // Cambia el color del texto
-                fontSize: "2rem", // Cambia el tamaño de la fuente
-                position: "absolute",
-                pointerEvents: "none",
-                left: 0,
-                right: 0,
-                textAlign: "center",
-              }}
-            >
-              InventoTrack <InventoryIcon/>
+            component="tittle"
+            variant="h5"
+            sx={{
+              fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
+              fontWeight: "bold", // Hace que el texto sea en negrita
+              color: "#ffffff", // Cambia el color del texto
+              fontSize: "2rem", // Cambia el tamaño de la fuente
+              position: "absolute",
+              pointerEvents: "none",
+              left: 0,
+              right: 0,
+              textAlign: "center",
+            }}
+          >
+            InventoTrack <InventoryIcon />
           </Typography>
           <h4>Bienvenido, admin</h4>
-          <AccountCircleOutlinedIcon id='iconoUsuario'/>
+          <AccountCircleOutlinedIcon id='iconoUsuario' />
         </Box>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de clientes</h1>
         </div>
 
-        <div id='operaciones'> 
+        <div id='operaciones'>
 
           <div style={{ display: 'flex', alignItems: 'center' }}>
             <Button onClick={handleClick} id="botonAgregarCliente" className="botones" variant="outlined">Agregar cliente</Button>
             <Box className="tarjetas" id='buscarCliente'>
               <p>Buscar cliente</p>
               <TextField className='input' id="inputBuscarCliente" label="Buscar" variant="outlined" />
-              <SearchIcon id='iconoBuscar'/>
+              <SearchIcon id='iconoBuscar' />
             </Box>
           </div>
 
           <div id="listaClientes">
-          {clientes.map((cliente, index) => (
-            <Box key={index} className="tarjetas" id='clientes'>
-              <div id='nombreCliente'>
-                <p>Nombre: {cliente.nombre}</p>
-                <p>Apellido: {cliente.apellido}</p>
-              </div>
-              <div id='correoEstadoCliente'>
-                <p>email: {cliente.email}</p>
-                <p>direccion: {cliente.direccion}</p>
-                <p>telefono: {cliente.telefono}</p>
-              </div>
-              <div id='accionesCliente' style={{ display: 'flex', alignItems: 'center' }}>
-                <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit} />
-                <DeleteOutlinedIcon id='iconoEliminar'/>
-              </div>
-            </Box>
-          ))}
+            {clientes.map((cliente, index) => (
+              <Box key={index} className="tarjetas" id='clientes'>
+                <div id='nombreCliente'>
+                  <p>Nombre: {cliente.nombre}</p>
+                  <p>Apellido: {cliente.apellido}</p>
+                </div>
+                <div id='correoEstadoCliente'>
+                  <p>email: {cliente.email}</p>
+                  <p>direccion: {cliente.direccion}</p>
+                  <p>telefono: {cliente.telefono}</p>
+                </div>
+                <div id='accionesCliente' style={{ display: 'flex', alignItems: 'center' }}>
+                  <Link
+                  href={{
+                    pathname: '../usuarios/editar-clientes',
+                    query: { 
+                      id: cliente.id,
+                      nombre: cliente.nombre,
+                      apellido: cliente.apellido,
+                      email: cliente.email,
+                      direccion: cliente.direccion,
+                      telefono: cliente.telefono
+                    }
+                  }}
+                  >
+                    <BorderColorOutlinedIcon id='iconoEditar' />
+                  </Link>
+                  <DeleteOutlinedIcon id='iconoEliminar' />
+                </div>
+              </Box>
+            ))}
           </div>
 
         </div>
