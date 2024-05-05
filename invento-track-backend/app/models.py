@@ -42,6 +42,7 @@ class Producto(db.Model):
     descripcion = db.Column(db.String(128))
     categoria = db.Column(db.String(128))
     referencia = db.Column(db.String(128))
+    imagen = db.Column(db.String(200))
 
     @staticmethod
     def get_all_products():

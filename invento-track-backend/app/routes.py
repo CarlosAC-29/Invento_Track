@@ -163,7 +163,8 @@ def list_product():
             'stock': producto.stock,
             'descripcion': producto.descripcion,
             'categoria': producto.categoria,
-            'referencia': producto.referencia
+            'referencia': producto.referencia,
+            'imagen': producto.imagen
         } for producto in productos]
         
         return jsonify(productos_json)
@@ -182,7 +183,8 @@ def agregar_producto():
             stock=data['stock'],
             descripcion=data['descripcion'],
             categoria=data['categoria'],
-            referencia=data['referencia']
+            referencia=data['referencia'],
+            imagen=data['imagen']
         )
 
         db.session.add(nuevo_producto)
