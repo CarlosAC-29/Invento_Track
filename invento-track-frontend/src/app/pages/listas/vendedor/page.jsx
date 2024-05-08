@@ -11,6 +11,7 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import InventoryIcon from '@mui/icons-material/Inventory';
 import {useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/app/components/navbar';
 
 function ListaVendedores() {
 
@@ -40,28 +41,7 @@ function ListaVendedores() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Box id="toolbar">
-          <ArrowBackIosIcon id='backIcon'/>
-          <Typography
-              component="tittle"
-              variant="h5"
-              sx={{
-                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
-                fontWeight: "bold", // Hace que el texto sea en negrita
-                color: "#ffffff", // Cambia el color del texto
-                fontSize: "2rem", // Cambia el tamaño de la fuente
-                position: "absolute",
-                pointerEvents: "none",
-                left: 0,
-                right: 0,
-                textAlign: "center",
-              }}
-            >
-              InventoTrack <InventoryIcon/>
-          </Typography>
-          <h4>Bienvenido, admin</h4>
-          <AccountCircleOutlinedIcon id='iconoUsuario'/>
-        </Box>
+        <Navbar />
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de vendedores</h1>
         </div>

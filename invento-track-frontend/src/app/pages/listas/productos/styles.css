@@ -1,0 +1,13 @@
+* {
+    margin: 0;
+}
+
+body {
+    /*background: url("/images/fondo2.jpg");*/
+    background-color: #dde4f6;
+    height: 100vh;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: 50%;
+    overflow: hidden;
+}
