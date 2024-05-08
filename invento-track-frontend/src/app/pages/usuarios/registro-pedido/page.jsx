@@ -8,15 +8,15 @@ export default function RegistroPedido() {
     const [productosAgregados, setProductosAgregados] = useState([]);
 
     const Clientes = [
-        { value: 1, label: 'Carlos' },
-        { value: 2, label: 'Camilo' },
-        { value: 3, label: 'Luis' }
+        { id : 1, value: 1, label: 'Carlos' },
+        { id : 2, value: 2, label: 'Camilo' },
+        { id : 3, value: 3, label: 'Luis' }
     ];
 
     const Productos = [
-        { value: 1, label: 'Agua', precio: 2000 },
-        { value: 2, label: 'Gaseosa', precio: 3000 },
-        { value: 3, label: 'Bombon', precio: 500 }
+        { id : 1, value: 1, label: 'Agua', precio: 2000 },
+        { id : 2, value: 2, label: 'Gaseosa', precio: 3000 },
+        { id : 3, value: 3, label: 'Bombon', precio: 500 }
     ];
 
     const handleChange = (event) => {
@@ -39,6 +39,14 @@ export default function RegistroPedido() {
 
     const handleDeleteProducto = (index) => {
         setProductosAgregados(productosAgregados.filter((producto, i) => i !== index));
+    };
+
+    const truncateText = (text) => {
+        if (text.length > 10) {
+            return text.substring(0, 10) + '...';
+        } else {
+            return text;
+        }
     };
 
     const handleAddProducto = (productoSeleccionado) => {
@@ -66,6 +74,11 @@ export default function RegistroPedido() {
         // Tu lógica para redirigir al usuario
     };
 
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log(productosAgregados)
+    }
+
     // Calcular el valor total general
     const valorTotalGeneral = productosAgregados.reduce((total, producto) => total + producto.valorTotal, 0);
 
@@ -79,12 +92,14 @@ export default function RegistroPedido() {
                     </Box>
                 </Box>
                 <Box sx={{ bgcolor: 'white', borderRadius: '1rem', padding: '2rem 4rem', marginBottom: '1rem' }}>
-                    <form>
-                        <Stack spacing={2} direction={'row'} s>
+                    <form onSubmit={handleSubmit}>
+                        <Stack spacing={2} direction={'row'} justifyContent="space-between">
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
                                 options={Clientes}
+                                getOptionLabel={(option) => `${truncateText(option.label)} (${option.id})`}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
                                 sx={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Clientes" />}
                             />
@@ -93,22 +108,25 @@ export default function RegistroPedido() {
                                 disablePortal
                                 id="combo-box-demo"
                                 options={Productos}
+                                getOptionLabel={(option) => `${truncateText(option.label)} (${option.id})`}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                disableClearable  
                                 sx={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Productos" />}
                                 onChange={(event, value) => handleAddProducto(value)}
                             />
                             <Typography variant='h6'>Total: ${valorTotalGeneral}</Typography>
-                            <Button variant='contained'>Generar Pedido</Button>
+                            <Button type='submit' variant='contained'>Generar Pedido</Button>
                         </Stack>
                         <Divider sx={{ margin: "1rem 0" }} />
                         {productosAgregados.map((producto, index) => (
                             <Stack key={index} direction={"row"} spacing={2} sx={{ background: "#fff", padding: "1rem", margin: "1rem 0", borderRadius: "1rem" }}>
-                                <TextField value={producto.referencia} label="Referencia" />
-                                <TextField value={producto.producto} label="Producto" />
-                                <TextField value={producto.valorUnitario} label="Valor Unitario" />
+                                <TextField sx={{textOverflow: 'ellipsis'}}  readOnly  value={truncateText(producto.referencia)} label="Referencia" />
+                                <TextField sx={{textOverflow: 'ellipsis'}}  readOnly value={truncateText(producto.producto)} label="Producto" />
+                                <TextField readOnly value={producto.valorUnitario} label="Valor Unitario" />
                                 <TextField label="Cantidad" value={producto.cantidad} onChange={(event) => handleCantidadChange(event, index)} />
                                 <TextField value={producto.valorTotal} label="Valor Total" />
-                                <TextField label="Descuento %" />
+                                {/* <TextField label="Descuento %" /> */}
                                 <Button variant='contained' onClick={() => handleDeleteProducto(index)}>Eliminar</Button>
                             </Stack>
                         ))}
