@@ -132,6 +132,19 @@ def editar_cliente(id):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/clientes/<int:id>', methods=['DELETE'])
+def eliminar_cliente(id):
+    try:
+        cliente = Cliente.query.get(id)
+        if cliente:
+            db.session.delete(cliente)
+            db.session.commit()
+            return jsonify({'mensaje': 'Cliente eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/vendedores/<int:id>', methods=['PUT'])
 def editar_vendedor(id):
@@ -149,6 +162,19 @@ def editar_vendedor(id):
         return jsonify({
             'mensaje': 'Vendedor actualizado exitosamente!'
         })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/vendedores/<int:id>', methods=['DELETE'])
+def eliminar_vendedor(id):
+    try:
+        vendedor = Vendedor.query.get(id)
+        if vendedor:
+            db.session.delete(vendedor)
+            db.session.commit()
+            return jsonify({'mensaje': 'Vendedor eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Vendedor no encontrado'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
