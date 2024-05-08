@@ -84,6 +84,141 @@ function Productos() {
       cantidad: 10,
       descripcion: 'Descripcion del producto 7',
       categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
+    },
+    {
+      id: 7,
+      imagen: postobon,
+      nombre: 'fruta',
+      precio: 100,
+      cantidad: 10,
+      descripcion: 'Descripcion del producto 7',
+      categoria: 'frutas'
     }
   ]
 
