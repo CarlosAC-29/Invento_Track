@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import Cliente, Vendedor, Administrador, Producto
+from app.models import Cliente, Vendedor, Administrador, Producto, Pedido
 
 @app.route('/')
 def index():
@@ -216,6 +216,7 @@ def agregar_pedido():
         }), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 
 

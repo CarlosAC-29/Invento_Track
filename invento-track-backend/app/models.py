@@ -40,10 +40,10 @@ class Producto(db.Model):
     nombre = db.Column(db.String(128))
     precio = db.Column(db.Integer)
     stock = db.Column(db.Integer)
-    descripcion = db.Column(db.String(128))
+    descripcion = db.Column(db.String(500))
     categoria = db.Column(db.String(128))
     referencia = db.Column(db.String(128))
-    imagen = db.Column(db.String(200))
+    imagen = db.Column(db.String(500))
 
     @staticmethod
     def get_all_products():
