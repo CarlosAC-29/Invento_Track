@@ -1,5 +1,6 @@
 from app import db
 from datetime import datetime
+from sqlalchemy import func
 
 #Cliente model
 class Cliente(db.Model):
@@ -14,6 +15,7 @@ class Cliente(db.Model):
     def get_all_clients():
         return Cliente.query.all()
 
+#Vendedor model
 class Vendedor(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(128))
@@ -27,6 +29,7 @@ class Vendedor(db.Model):
     def get_all_sellers():
         return Vendedor.query.all()
 
+#Administrador model
 class Administrador(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(128))
@@ -35,6 +38,7 @@ class Administrador(db.Model):
     password = db.Column(db.String(128))
     role = db.Column(db.String(128), default='admin')
 
+#Producto model
 class Producto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(128))
@@ -51,8 +55,9 @@ class Producto(db.Model):
     
     @staticmethod
     def get_products_by_category(categoria):
-        return Producto.query.filter_by(categoria=categoria).all()
+        return Producto.query.filter(func.lower(Producto.categoria) == categoria.lower()).all()
 
+#Pedido model
 class Pedido(db.Model):
     id_pedido = db.Column(db.Integer, primary_key=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'))
