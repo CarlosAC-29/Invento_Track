@@ -8,7 +8,7 @@ def index():
 
 from sqlalchemy import text
 
-
+# Rutas para autenticación
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -28,7 +28,6 @@ def login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/test-db')
 def test_db_connection():
     try:
@@ -37,6 +36,10 @@ def test_db_connection():
     except Exception as e:
         return f'Error en la conexión con la base de datos: {e}'
 
+
+########################################################################################
+
+# Rutas para clientes
 @app.route('/clientes', methods=['GET'])
 def list_clients():
     try:
@@ -51,22 +54,6 @@ def list_clients():
         } for cliente in clientes]
         
         return jsonify(clientes_json)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/vendedores', methods=['GET'])
-def list_sellers():
-    try:
-        vendedores = Vendedor.get_all_sellers()
-        vendedores_json = [{
-            'id': vendedor.id,
-            'nombre': vendedor.nombre,
-            'apellido': vendedor.apellido,
-            'email': vendedor.email,
-            'estado': vendedor.estado
-        } for vendedor in vendedores]
-
-        return jsonify(vendedores_json)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -92,26 +79,6 @@ def agregar_cliente():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/vendedores', methods=['POST'])
-def agregar_vendedor():
-    try:
-        data = request.json
-
-        nuevo_vendedor = Vendedor(
-            nombre=data['nombre'],
-            apellido=data['apellido'],
-            email=data['email'],
-            password=data['password']
-        )
-
-        db.session.add(nuevo_vendedor)
-        db.session.commit()
-
-        return jsonify({
-            'mensaje': 'Vendedor agregado exitosamente!'
-        }), 201
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/clientes/<int:id>', methods=['PUT'])
 def editar_cliente(id):
@@ -143,6 +110,46 @@ def eliminar_cliente(id):
             return jsonify({'mensaje': 'Cliente eliminado exitosamente!'})
         else:
             return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+########################################################################################
+
+# Rutas para vendedores
+@app.route('/vendedores', methods=['GET'])
+def list_sellers():
+    try:
+        vendedores = Vendedor.get_all_sellers()
+        vendedores_json = [{
+            'id': vendedor.id,
+            'nombre': vendedor.nombre,
+            'apellido': vendedor.apellido,
+            'email': vendedor.email,
+            'estado': vendedor.estado
+        } for vendedor in vendedores]
+
+        return jsonify(vendedores_json)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/vendedores', methods=['POST'])
+def agregar_vendedor():
+    try:
+        data = request.json
+
+        nuevo_vendedor = Vendedor(
+            nombre=data['nombre'],
+            apellido=data['apellido'],
+            email=data['email'],
+            password=data['password']
+        )
+
+        db.session.add(nuevo_vendedor)
+        db.session.commit()
+
+        return jsonify({
+            'mensaje': 'Vendedor agregado exitosamente!'
+        }), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -178,6 +185,10 @@ def eliminar_vendedor(id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+########################################################################################
+
+
+# Rutas para productos
 @app.route('/productos', methods=['GET'])
 def list_product():
     try:
@@ -222,6 +233,47 @@ def agregar_producto():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/productos/<int:id>', methods=['PUT'])
+def update_producto(id):
+    try:
+        data = request.json
+
+        producto = Producto.query.get(id)
+        producto.nombre = data['nombre']
+        producto.precio = data['precio']
+        producto.stock = data['stock']
+        producto.descripcion = data['descripcion']
+        producto.categoria = data['categoria']
+        producto.referencia = data['referencia']
+        producto.imagen = data['imagen']
+
+        db.session.commit()
+
+        return jsonify({
+            'mensaje': 'Producto actualizado exitosamente!'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/productos/<int:id>', methods=['DELETE'])
+def delete_producto(id):
+    try:
+        producto = Producto.query.get(id)
+        if producto:
+            db.session.delete(producto)
+            db.session.commit()
+            return jsonify({'mensaje': 'Producto eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+########################################################################################
+
+
+# Rutas para pedidos
 @app.route('/pedido', methods=['POST'])
 def agregar_pedido():
     try:
@@ -242,8 +294,4 @@ def agregar_pedido():
         }), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-
-
-
 
