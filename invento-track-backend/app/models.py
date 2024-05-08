@@ -1,4 +1,5 @@
 from app import db
+from datetime import datetime
 
 #Cliente model
 class Cliente(db.Model):
@@ -39,11 +40,19 @@ class Producto(db.Model):
     nombre = db.Column(db.String(128))
     precio = db.Column(db.Integer)
     stock = db.Column(db.Integer)
-    descripcion = db.Column(db.String(128))
+    descripcion = db.Column(db.String(500))
     categoria = db.Column(db.String(128))
     referencia = db.Column(db.String(128))
-    imagen = db.Column(db.String(200))
+    imagen = db.Column(db.String(500))
 
     @staticmethod
     def get_all_products():
         return Producto.query.all()
+
+class Pedido(db.Model):
+    id_pedido = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'))
+    id_producto = db.Column(db.Integer, db.ForeignKey('producto.id'))
+    total_pedido = db.Column(db.Integer)
+    fecha_pedido = db.Column(db.DateTime, default=datetime.utcnow)
+    cantidad_producto = db.Column(db.Integer)

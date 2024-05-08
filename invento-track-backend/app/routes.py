@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import Cliente, Vendedor, Administrador, Producto
+from app.models import Cliente, Vendedor, Administrador, Producto, Pedido
 
 @app.route('/')
 def index():
@@ -221,6 +221,28 @@ def agregar_producto():
         }), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/pedido', methods=['POST'])
+def agregar_pedido():
+    try:
+        data = request.json
+
+        nuevo_pedido = Pedido(
+            id_cliente=data['id_cliente'],
+            id_producto=data['id_producto'],
+            total_pedido=data['total_pedido'],
+            cantidad_producto=data['cantidad_producto']
+        )
+
+        db.session.add(nuevo_pedido)
+        db.session.commit()
+
+        return jsonify({
+            'mensaje': 'Pedido agregado exitosamente!'
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 
