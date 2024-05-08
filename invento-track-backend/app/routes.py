@@ -192,7 +192,12 @@ def eliminar_vendedor(id):
 @app.route('/productos', methods=['GET'])
 def list_product():
     try:
-        productos = Producto.get_all_products()
+        categoria = request.args.get('categoria')
+        if categoria:
+            productos = Producto.get_products_by_category(categoria)
+        else:
+            productos = Producto.get_all_products()
+
         productos_json = [{
             'id': producto.id,
             'nombre': producto.nombre,

@@ -48,6 +48,10 @@ class Producto(db.Model):
     @staticmethod
     def get_all_products():
         return Producto.query.all()
+    
+    @staticmethod
+    def get_products_by_category(categoria):
+        return Producto.query.filter_by(categoria=categoria).all()
 
 class Pedido(db.Model):
     id_pedido = db.Column(db.Integer, primary_key=True)
