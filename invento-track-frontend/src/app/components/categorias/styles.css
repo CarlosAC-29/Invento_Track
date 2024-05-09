@@ -1,0 +1,20 @@
+.textoInicial {
+    color: rgb(143, 143, 143);
+}
+
+.categorias {
+    display: block;
+    margin-top: 15%;
+}
+
+.categorias p {
+
+    margin-bottom: 7%;
+    margin-top: 7%;
+    transition: color 0.1s;
+}
+
+.categorias p:hover {
+    color: #7BAFFB;
+    transition: color 0.1s;
+}
