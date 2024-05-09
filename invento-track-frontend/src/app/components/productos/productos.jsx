@@ -183,7 +183,7 @@ function Productos() {
                   <div>
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
-                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).cantidad}</p>
+                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
                     <Divider />
                     <h2 style={{ marginTop: '5%' }}>Descripción</h2>
                     <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
