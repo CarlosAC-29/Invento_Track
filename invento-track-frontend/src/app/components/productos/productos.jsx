@@ -1,17 +1,14 @@
 'use client'
 
-import { Backdrop, Box, Divider, Fade, Modal, TextField} from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import { Backdrop, Box, Divider, Fade, Modal, TextField, Button } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import postobon from '../../../../public/images/postobon.webp'
-import leche from '../../../../public/images/leche.png'
-import Image from 'next/image';
+
 import './styles.css'
-import Detail from './detail';
 //Buttons
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+
 function Productos() {
 
   const [productos, setProductos] = useState([]);
@@ -19,13 +16,55 @@ function Productos() {
   const handleClose = () => setOpen(false);
   const [viewDetail, setViewDetail] = useState();
   const [viewEdit, setViewEdit] = useState(false)
+  //Atributos del producto
+  // nombre, precio, stock, descripcion, categoria, referencia, imagen
+  const [nombre, setNombre] = useState();
+  const [precio, setPrecio] = useState();
+  const [stock, setStock] = useState();
+  const [descripcion, setDescripcion] = useState();
+  const [categoria, setCategoria] = useState();
+  const [referencia, setReferencia] = useState();
+
+  //Métodos handler
   const handleClick = (id) => { // Añadido parámetro producto
     // Actualiza viewDetail con el producto seleccionado
     setOpen(true);
     setViewDetail(id)
   }
-
+  const saveItemsAttributes = () => {
+    const newProduct = {
+      nombre: nombre,
+      precio: precio,
+      stock: stock,
+      descripcion: descripcion,
+      categoria: categoria,
+      referencia: referencia,
+    }
+    var url = "http://localhost:5000/productos/" + viewDetail
+    console.log("Lo que se va a envair es ", newProduct)
+    fetch(url, {
+      method: 'PUT', // Método PUT
+      headers: {
+        'Content-Type': 'application/json', // Encabezado para JSON
+      },
+      body: JSON.stringify(newProduct), // Convertir el objeto a cadena JSON
+    }).then((response) => {
+      console.log("Este es la respuesta ", response)
+    })
+  }
+  const handleEditSave = () => {
+    saveItemsAttributes()
+    handleCloseEdit()
+  }
   const handleEdit = () => {
+    var producto = productos.find(p => p.id === viewDetail)
+    setNombre(producto.nombre)
+    setPrecio(producto.precio)
+    setStock(producto.stock)
+    setDescripcion(producto.descripcion)
+    setCategoria(producto.categoria)
+    setReferencia(producto.referencia)
+
     setViewEdit(true)
     setOpen(false)
   }
@@ -34,72 +73,7 @@ function Productos() {
     setOpen(true)
   }
 
-  // const productos = [
-  //   {
-  //     id: 1,
-  //     imagen: leche,
-  //     nombre: 'Lacteo',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Está libre de antibióticos y conservantes. Es una leche entera, ordeñada bajo procesos altamente higiénicos. Ideal para disfrutar en cualquier momento del día.',
-  //     categoria: 'lacteos'
-  //   },
-  //   {
-  //     id: 2,
-  //     imagen: postobon,
-  //     nombre: 'Carne',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 2',
-  //     categoria: 'carnes'
-  //   },
-  //   {
-  //     id: 3,
-  //     imagen: postobon,
-  //     nombre: 'Fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 3',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 4,
-  //     imagen: postobon,
-  //     nombre: 'Gaseosa',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 4',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 5,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 5',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 6,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 6',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 7,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 7',
-  //     categoria: 'frutas'
-  //   }
-  // ]
-  
+
   useEffect(() => {
     fetch('http://localhost:5000/productos')
       .then(response => response.json())
@@ -226,21 +200,49 @@ function Productos() {
               <CloseIcon />
             </IconButton>
             <Divider />
+            {/* Las opciones que se pueden editar son: 
+            nombre, precio, stock, descripcion, categoria, referencia, imagen */}
             {productos.find(p => p.id === viewDetail) ? (
               <>
                 <div className='detalles'>
-                  {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail'/>
+                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail' />
                   <div>
-                    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-                    <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
-                    <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
-                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
-                    <Divider />
-                    <h2 style={{ marginTop: '5%' }}>Descripción</h2>
-                    <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Nombre" variant="outlined" value={nombre} onChange={(event) => { setNombre(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Precio" variant="outlined" value={precio} onChange={(event) => { setPrecio(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Stock" variant="outlined" value={stock} onChange={(event) => { setStock(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Descripcion" variant="outlined" value={descripcion} onChange={(event) => { setDescripcion(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Referencia" variant="outlined" value={referencia} onChange={(event) => { setReferencia(event.target.value) }} />
                   </div>
                 </div>
+                <Button
+                  onClick={handleEditSave}
+                  type='submit'
+                  variant="contained"
+                  sx={{
+                    left: "10%",
+                    backgroundColor: "#090069",
+                    "&:hover": {
+                      backgroundColor: "#1d35f7",
+                    }, color: 'white'
+                  }}
+                >
+                  Guardar
+                </Button>
+                <Button
+                  onClick={handleEditSave}
+                  type='submit'
+                  variant="contained"
+                  sx={{
+                    left: "13%",
+                    backgroundColor: "#090069",
+                    "&:hover": {
+                      backgroundColor: "#1d35f7",
+                    }, color: 'white'
+                  }}
+                >
+                  Cancelar
+                </Button>
               </>
             ) : (
               <p>Producto no encontrado</p>
