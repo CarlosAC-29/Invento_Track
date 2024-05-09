@@ -12,7 +12,8 @@ import Detail from './detail';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-function Productos() {
+
+function Productos({ selectedCategory }) {
 
   const [productos, setProductos] = useState([]);
   const [open, setOpen] = useState(false);
@@ -33,6 +34,8 @@ function Productos() {
     setViewEdit(false)
     setOpen(true)
   }
+
+  const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
 
   // const productos = [
   //   {
@@ -113,7 +116,7 @@ function Productos() {
   return (
     <>
       <div className='contenedor-producto' style={{ marginTop: '1%', marginLeft: '1%' }}>
-        {productos.map(({ id, imagen, nombre, precio, stock }) => {
+        {filteredProducts.map(({ id, imagen, nombre, precio, stock }) => {
           return (
             <div key={id} className="producto" onClick={() => handleClick(id)}>
               <div className='tarjeta'>
@@ -121,7 +124,7 @@ function Productos() {
                   {/* <Image src={imagen} alt='imagen' className='imagen'/> */}
                   <img src={imagen} alt='imagen' className='imagen' />
                 </div>
-                <Divider flexItem />
+                
                 <div className='descripcion'>
                   <h3 style={{ fontSize: '1.2rem' }}>{nombre}</h3>
                   <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
