@@ -8,6 +8,9 @@ import './styles.css'
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Swal from 'sweetalert2';
+
 
 function Productos({ selectedCategory }) {
 
@@ -71,6 +74,17 @@ function Productos({ selectedCategory }) {
     setViewEdit(false)
     setOpen(true)
   }
+  const deleteProduct = (id) => {
+    var url = "http://localhost:5000/productos/" + id
+    fetch(url, {
+      method: 'DELETE', // Método DELETE
+      headers: {
+        'Content-Type': 'application/json', // Encabezado para JSON
+      },
+    }).then((response) => {
+      console.log("Este es la respuesta ", response)
+    })
+  }
   const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
   useEffect(() => {
     fetch('http://localhost:5000/productos')
@@ -78,6 +92,12 @@ function Productos({ selectedCategory }) {
       .then(data => setProductos(data))
       .catch(error => console.error('Error:', error));
   }, []);
+  const fetchProducts = () => {
+    fetch('http://localhost:5000/productos')
+      .then(response => response.json())
+      .then(data => setProductos(data))
+      .catch(error => console.error('Error:', error));
+  };
 
   // console.log(productos)
 
@@ -87,8 +107,9 @@ function Productos({ selectedCategory }) {
       <div className='contenedor-producto' style={{ marginTop: '1%', marginLeft: '1%' }}>
         {filteredProducts.map(({ id, imagen, nombre, precio, stock }) => {
           return (
-            <div key={id} className="producto" onClick={() => handleClick(id)}>
+            <div key={id} className="producto">
               <div className='tarjeta'>
+                <div className='section1' onClick={() => handleClick(id)}>
                 <div className='imagen'>
                   {/* <Image src={imagen} alt='imagen' className='imagen'/> */}
                   <img src={imagen} alt='imagen' className='imagen' />
@@ -99,7 +120,44 @@ function Productos({ selectedCategory }) {
                   <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
                   <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>${precio}</span>
                 </div>
+                </div>
+                <Divider />
+                <div className="botones">
+                 
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => {
+                      Swal.fire({
+                        title: "¿Estás seguro?",
+                        text: "¡No podrás revertir esto!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "¡Sí, bórralo!"
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          deleteProduct(id);
+
+                          Swal.fire(
+                            '¡Eliminado!',
+                            'Tu producto ha sido eliminado.',
+                            'success'
+                          )
+                          fetchProducts(); // Actualiza la lista de productos
+
+                        }
+                      })
+                    }}
+                    sx={{
+                      color: (theme) => theme.palette.error.light,
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  </div>
               </div>
+              
             </div>
           );
         })}
@@ -135,7 +193,7 @@ function Productos({ selectedCategory }) {
             </IconButton>
 
             <IconButton
-              aria-label="close"
+              aria-label="edit"
               onClick={handleEdit}
               sx={{
                 position: 'absolute',
@@ -209,7 +267,7 @@ function Productos({ selectedCategory }) {
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Precio" variant="outlined" value={precio} onChange={(event) => { setPrecio(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Stock" variant="outlined" value={stock} onChange={(event) => { setStock(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Descripcion" variant="outlined" value={descripcion} onChange={(event) => { setDescripcion(event.target.value) }} />
-                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px"}} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Referencia" variant="outlined" value={referencia} onChange={(event) => { setReferencia(event.target.value) }} />
                   </div>
                 </div>
