@@ -1,12 +1,48 @@
-from flask import request, jsonify
+﻿from flask import request, jsonify
 from app import app, db
 from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
+import google.generativeai as genai
+from dotenv import load_dotenv
+import os, json   
 
 @app.route('/')
 def index():
     return 'Hola, mundo!'
 
+API_KEY = os.getenv("API_KEY")
+genai.configure(api_key=API_KEY)
+model = genai.GenerativeModel('gemini-pro')
+
+
 from sqlalchemy import text
+
+@app.route('/api/gemini', methods=['POST'])
+def gemini():
+    try:
+        
+        data = request.json
+        
+        productos = Producto.get_all_products()
+        
+
+        lista_productos = [producto.to_dict() for producto in productos]
+        lista_productos_texto = json.dumps(lista_productos)
+
+        prompt = 'Necesito crear un json con esta estructura a partir del siguiente enunciado :' + data['text'] + '. Tengo una base de datos con los siguientes productos :'
+        json_result = '. El json resultante debe tener la siguiente estructura : {"id_cliente": numero,"total_pedido": numero,"productos": [{"id_producto": numero,"cantidad_producto": numero},{"id_producto": numero,"cantidad_producto": numero}]}.'
+        final = 'El campo id_cliente sera' + str(data['id_cliente']) + 'Dame solo el json resultante, sin texto adicional.'
+        total = '. El campo total_pedido debe ser calculado multiplicando el precio de cada producto por su cantidad respectiva. Luego, suma todas estas multiplicaciones para obtener el total del pedido. Por ejemplo, si el pedido contiene 2 productos del id_producto 1 (cuyo precio es 10) y 3 productos del id_producto 2 (cuyo precio es 20), el total_pedido sería (2*10) + (3*20) = 80.'
+        aclaracion = 'si el enunciado no se entiende, devolver en json un mensaje de error con el texto "No se pudo generar el pedido"'
+
+        response = model.generate_content(prompt + lista_productos_texto + json_result + final + total + aclaracion)
+
+        print(response.text)
+
+        agregar_producto_gemini(response.text)
+        
+        return jsonify({'response': response.text})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # Rutas para autenticación
 @app.route('/login', methods=['POST'])
@@ -240,25 +276,28 @@ def agregar_producto():
 
 @app.route('/productos/<int:id>', methods=['PUT'])
 def update_producto(id):
-    try:
-        data = request.json
+    data = request.json
 
-        producto = Producto.query.get(id)
+    producto = Producto.query.get_or_404(id)
+
+    if 'nombre' in data:
         producto.nombre = data['nombre']
+    if 'precio' in data:
         producto.precio = data['precio']
+    if 'stock' in data:
         producto.stock = data['stock']
+    if 'descripcion' in data:
         producto.descripcion = data['descripcion']
+    if 'categoria' in data:
         producto.categoria = data['categoria']
+    if 'referencia' in data:
         producto.referencia = data['referencia']
+    if 'imagen' in data:
         producto.imagen = data['imagen']
 
-        db.session.commit()
+    db.session.commit()
 
-        return jsonify({
-            'mensaje': 'Producto actualizado exitosamente!'
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    return 'Producto actualizado correctamente', 200
 
 @app.route('/productos/<int:id>', methods=['DELETE'])
 def delete_producto(id):
@@ -311,6 +350,34 @@ def agregar_pedido():
         return jsonify({'error': str(e)}), 500
 
 
+def agregar_producto_gemini(data_string):
+    try:
+        data = json.loads(data_string)
+        id_cliente = data['id_cliente']
+        total_pedido = data['total_pedido']
+
+        nuevo_pedido = Pedido(
+            id_cliente=id_cliente,
+            total_pedido=total_pedido
+        )
+        db.session.add(nuevo_pedido)
+        db.session.commit()
+
+        for producto_pedido in data['productos']:
+            nuevo_producto = ProductoPedido(
+                id_pedido=nuevo_pedido.id_pedido,
+                id_producto=producto_pedido['id_producto'],
+                cantidad_producto=producto_pedido['cantidad_producto']
+            )
+            db.session.add(nuevo_producto)
+        db.session.commit()
+
+        print('Pedido de Gemini agregado exitosamente!', total_pedido)
+        return jsonify({'mensaje': 'Pedido de Gemini agregado exitosamente!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/pedido', methods=['GET'])
 def get_orders():
     orders = Pedido.get_all_orders()
@@ -328,3 +395,16 @@ def get_orders():
             })
 
     return jsonify(result)
+
+@app.route('/pedido', methods=['DELETE'])
+def delete_orders():
+    try:
+        for pedido in Pedido.query.all():
+            db.session.delete(pedido)
+        for pedidos in ProductoPedido.query.all():
+            db.session.delete(pedidos)
+
+        db.session.commit()
+        return jsonify({'mensaje': 'Pedidos eliminados exitosamente!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
