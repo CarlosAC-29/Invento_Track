@@ -1,38 +1,45 @@
-'use client'
+"use client";
+
+import { Backdrop, Box, Divider, Fade, Modal, TextField } from "@mui/material";
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+import React, { useEffect, useState } from "react";
+import postobon from "../../../../public/images/postobon.webp";
+import leche from "../../../../public/images/leche.png";
+import Image from "next/image";
+import "./styles.css";
+import Detail from "./detail";
+import Swal from 'sweetalert2';
 
 import { Backdrop, Box, Divider, Fade, Modal, TextField} from '@mui/material'
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import React, { useEffect, useState } from 'react'
-import postobon from '../../../../public/images/postobon.webp'
-import leche from '../../../../public/images/leche.png'
-import Image from 'next/image';
-import './styles.css'
-import Detail from './detail';
 //Buttons
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
-import EditIcon from '@mui/icons-material/Edit';
-function Productos() {
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { handleClientScriptLoad } from "next/script";
 
+function Productos() {
   const [productos, setProductos] = useState([]);
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const [viewDetail, setViewDetail] = useState();
-  const [viewEdit, setViewEdit] = useState(false)
-  const handleClick = (id) => { // Añadido parámetro producto
+  const [viewEdit, setViewEdit] = useState(false);
+
+  const handleClick = (id) => {
+    // Añadido parámetro producto
     // Actualiza viewDetail con el producto seleccionado
     setOpen(true);
-    setViewDetail(id)
-  }
+    setViewDetail(id);
+  };
 
   const handleEdit = () => {
-    setViewEdit(true)
-    setOpen(false)
-  }
+    setViewEdit(true);
+   
+  };
   const handleCloseEdit = () => {
-    setViewEdit(false)
-    setOpen(true)
-  }
+    setViewEdit(false);
+    
+  };
 
   // const productos = [
   //   {
@@ -99,33 +106,95 @@ function Productos() {
   //     categoria: 'frutas'
   //   }
   // ]
-  
+
+  const deleteProduct = (id) => {
+    console.log("id", id);
+    fetch(`http://localhost:5000/productos/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Success:", data))
+      .catch((error) => console.error("Error:", error));
+  };
+
   useEffect(() => {
-    fetch('http://localhost:5000/productos')
-      .then(response => response.json())
-      .then(data => setProductos(data))
-      .catch(error => console.error('Error:', error));
+    fetch("http://localhost:5000/productos")
+      .then((response) => response.json())
+      .then((data) => setProductos(data))
+      .catch((error) => console.error("Error:", error));
   }, []);
 
   // console.log(productos)
 
-
   return (
     <>
-      <div className='contenedor-producto' style={{ marginTop: '1%', marginLeft: '1%' }}>
+      <div
+        className="contenedor-producto"
+        style={{ marginTop: "1%", marginLeft: "1%" }}
+      >
         {productos.map(({ id, imagen, nombre, precio, stock }) => {
           return (
-            <div key={id} className="producto" onClick={() => handleClick(id)}>
-              <div className='tarjeta'>
-                <div className='imagen'>
+            <div key={id} className="producto" >
+              <div className="tarjeta" >
+                <div className="section1" onClick={() => handleClick(id)}>
+                <div className="imagen">
                   {/* <Image src={imagen} alt='imagen' className='imagen'/> */}
-                  <img src={imagen} alt='imagen' className='imagen' />
+                  <img src={imagen} alt="imagen" className="imagen" />
                 </div>
                 <Divider flexItem />
-                <div className='descripcion'>
-                  <h3 style={{ fontSize: '1.2rem' }}>{nombre}</h3>
-                  <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>${precio}</span>
+                <div className="descripcion">
+                  <h3 style={{ fontSize: "1.2rem" }}>{nombre}</h3>
+                  <p style={{ fontSize: "0.8rem" }}>Stock: {stock}</p>
+                  <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
+                    ${precio}
+                  </span>
+                </div>
+                </div>
+                <Divider />
+                <div className="botones">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={handleEdit}
+                    sx={{
+                      color: (theme) => theme.palette.success.light,
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => {
+                      Swal.fire({
+                        title: "¿Estás seguro?",
+                        text: "¡No podrás revertir esto!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "¡Sí, bórralo!"
+                      }).then((result) => {
+                        if (result.isConfirmed) {
+                          deleteProduct(id);
+
+                          Swal.fire(
+                            '¡Eliminado!',
+                            'Tu producto ha sido eliminado.',
+                            'success'
+                          )
+                          
+                        }
+                      })
+                    }}
+                    sx={{
+                      color: (theme) => theme.palette.error.light,
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                  
                 </div>
               </div>
             </div>
@@ -147,13 +216,13 @@ function Productos() {
         }}
       >
         <Fade in={open}>
-          <div className='modal' key={viewDetail}>
+          <div className="modal" key={viewDetail}>
             <h1>Detalle del producto</h1>
             <IconButton
               aria-label="close"
               onClick={handleClose}
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.primary,
@@ -162,31 +231,31 @@ function Productos() {
               <CloseIcon />
             </IconButton>
 
-            <IconButton
-              aria-label="close"
-              onClick={handleEdit}
-              sx={{
-                position: 'absolute',
-                right: 58,
-                top: 8,
-                color: (theme) => theme.palette.success.light,
-              }}
-            >
-              <EditIcon />
-            </IconButton>
             <Divider />
-            {productos.find(p => p.id === viewDetail) ? (
+            {productos.find((p) => p.id === viewDetail) ? (
               <>
-                <div className='detalles'>
+                <div className="detalles">
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
+                  <img
+                    className="imagenDetail"
+                    src={productos.find((p) => p.id === viewDetail).imagen}
+                  />
                   <div>
-                    <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
-                    <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
-                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
+                    <h1 style={{ marginBottom: "5%" }}>
+                      {productos.find((p) => p.id === viewDetail).nombre}
+                    </h1>
+                    <p style={{ marginBottom: "7%" }}>
+                      ${productos.find((p) => p.id === viewDetail).precio}
+                    </p>
+                    <p style={{ marginBottom: "5%" }}>
+                      Stock: {productos.find((p) => p.id === viewDetail).stock}
+                    </p>
                     <Divider />
-                    <h2 style={{ marginTop: '5%' }}>Descripción</h2>
-                    <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
+                    <h2 style={{ marginTop: "5%" }}>Descripción</h2>
+                    <p style={{ marginTop: "5%" }}>
+                      {" "}
+                      {productos.find((p) => p.id === viewDetail).descripcion}
+                    </p>
                   </div>
                 </div>
               </>
@@ -211,13 +280,13 @@ function Productos() {
         }}
       >
         <Fade in={viewEdit}>
-          <div className='modal' key={viewDetail}>
+          <div className="modal" key={viewDetail}>
             <h1>Editar el producto</h1>
             <IconButton
               aria-label="close"
               onClick={handleCloseEdit}
               sx={{
-                position: 'absolute',
+                position: "absolute",
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.primary,
@@ -226,19 +295,36 @@ function Productos() {
               <CloseIcon />
             </IconButton>
             <Divider />
-            {productos.find(p => p.id === viewDetail) ? (
+            {productos.find((p) => p.id === viewDetail) ? (
               <>
-                <div className='detalles'>
+                <div className="detalles">
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail'/>
+                  <img
+                    src={productos.find((p) => p.id === viewDetail).imagen}
+                    alt="imagen"
+                    className="imagenDetail"
+                  />
                   <div>
-                    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
-                    <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
-                    <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
-                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
+                    <TextField
+                      id="outlined-basic"
+                      label="Outlined"
+                      variant="outlined"
+                    />
+                    <h1 style={{ marginBottom: "5%" }}>
+                      {productos.find((p) => p.id === viewDetail).nombre}
+                    </h1>
+                    <p style={{ marginBottom: "7%" }}>
+                      ${productos.find((p) => p.id === viewDetail).precio}
+                    </p>
+                    <p style={{ marginBottom: "5%" }}>
+                      Stock: {productos.find((p) => p.id === viewDetail).stock}
+                    </p>
                     <Divider />
-                    <h2 style={{ marginTop: '5%' }}>Descripción</h2>
-                    <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
+                    <h2 style={{ marginTop: "5%" }}>Descripción</h2>
+                    <p style={{ marginTop: "5%" }}>
+                      {" "}
+                      {productos.find((p) => p.id === viewDetail).descripcion}
+                    </p>
                   </div>
                 </div>
               </>
@@ -248,10 +334,8 @@ function Productos() {
           </div>
         </Fade>
       </Modal>
-
-
     </>
-  )
+  );
 }
 
-export default Productos
+export default Productos;
