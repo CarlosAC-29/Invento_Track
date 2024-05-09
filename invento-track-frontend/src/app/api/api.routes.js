@@ -74,3 +74,17 @@ export const listarClientes = async (data) => {
     }
     return response.json()
 }
+
+export const listarProductos = async (data) => {
+    const response = await fetch('http://localhost:5000/productos', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if(!response.ok){
+        return false
+    }
+}
