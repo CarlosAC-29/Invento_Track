@@ -7,6 +7,9 @@ import './styles.css'
 import { Divider } from '@mui/material'
 import Productos from '@/app/components/productos/productos'
 function ListaProductos() {
+  
+  const [selectedCategory, setSelectedCategory] = useState('Todo');
+
   return (
     <>
       <head>
@@ -18,16 +21,15 @@ function ListaProductos() {
         <Navbar />
 
         <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '2%' }}>
-
           <div style={{ color: '#090069', marginBottom: '1%' }}>
             <h1>Lista de productos</h1>
           </div>
 
           <Divider />
           <div style={{display: 'flex'}}>
-            <Categorias />
+            <Categorias selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
             <Divider orientation='vertical'  flexItem />
-            <Productos />
+            <Productos selectedCategory={selectedCategory}/>
           </div>
         </div>
 

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import './styles.css'
 import { Divider } from '@mui/material'
 
-function Categorias() {
-  const [selectedCategory, setSelectedCategory] = useState('Todo');
+function Categorias({ selectedCategory, setSelectedCategory }) {
+  // const [selectedCategory, setSelectedCategory] = useState('Todo');
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
@@ -64,16 +64,28 @@ function Categorias() {
             Frutas
           </p>
           <p
-            id='verduras'
-            onClick={() => handleCategoryClick('Verduras')}
+            id='verdura'
+            onClick={() => handleCategoryClick('Verdura')}
             style={{
-              color: selectedCategory === 'Verduras' ? '#7BAFFB' : '',
+              color: selectedCategory === 'Verdura' ? '#7BAFFB' : '',
               cursor: 'pointer',
               transition: '0.4s',
-              fontWeight: selectedCategory === 'Verduras' ? 'bold' : ''
+              fontWeight: selectedCategory === 'Verdura' ? 'bold' : ''
             }}
           >
             Verduras
+          </p>
+          <p
+            id='utiles'
+            onClick={() => handleCategoryClick('Utiles')}
+            style={{
+              color: selectedCategory === 'Utiles' ? '#7BAFFB' : '',
+              cursor: 'pointer',
+              transition: '0.4s',
+              fontWeight: selectedCategory === 'Utiles' ? 'bold' : ''
+            }}
+          >
+            Útiles
           </p>
         </div>
 
