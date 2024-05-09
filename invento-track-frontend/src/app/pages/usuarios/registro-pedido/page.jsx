@@ -4,7 +4,7 @@ import { Box, Typography, Stack, TextField, Button, Autocomplete, Divider } from
 import styles from './styles.module.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { set, useForm } from 'react-hook-form';
-import { listarClientes, getProductos } from '@/app/api/api.routes';
+import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
 import Swal from 'sweetalert2';
 
 
@@ -13,6 +13,7 @@ export default function RegistroPedido() {
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null); // Estado para almacenar el cliente seleccionado
     const [clientes, setClientes] = useState("");
     const [productos, setProductos] = useState([]);
+    const [infoObtenida, setInfoObtenida] = useState(false);
 
     const { register, handleSubmit, setValue } = useForm(
         {
@@ -34,23 +35,21 @@ export default function RegistroPedido() {
             didOpen: () => {
                 Swal.showLoading();
             }
-        })
-        const responseClientes = await listarClientes();
-        const responseProductos = await getProductos();
-        if (responseClientes && responseProductos) {
-            Swal.close()
+        });
+        try {
+            const [responseClientes, responseProductos] = await Promise.all([listarClientes(), getProductos()]);
             setClientes(responseClientes);
             setProductos(responseProductos);
-            console.log(responseClientes);
-            console.log(responseProductos);
-        } else {
+            setInfoObtenida(true);
+            Swal.close();
+        } catch (error) {
             Swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: 'Ocurrió un error al cargar la información, por favor intenta de nuevo.',
-            })
+            });
         }
-    }
+    };
 
     const handleClienteChange = (event, value) => {
         event.preventDefault();
@@ -63,17 +62,57 @@ export default function RegistroPedido() {
 
 
     useEffect(() => {
-        getInfo();
+        if (!infoObtenida) {
+            getInfo();
+        }
         console.log(clientes);
         setValue('productos', productosAgregados.map(producto => ({ id_producto: producto.referencia, cantidad_producto: producto.cantidad })));
         setValue('total_pedido', productosAgregados.reduce((total, producto) => total + producto.valorTotal, 0));
         if (clienteSeleccionado) {
             setValue('id_cliente', clienteSeleccionado); // Asignar el id del cliente seleccionado al campo id_cliente
         }
-    }, [productosAgregados, clienteSeleccionado, setValue]);
+    }, [productosAgregados, clienteSeleccionado, setValue, infoObtenida]);
 
-    const processForm = (data) => {
-        console.log(data);
+    const processForm = async (data) => {
+        if (!clienteSeleccionado || productosAgregados.length === 0) {
+            // Si no hay cliente seleccionado o no hay productos agregados, mostrar alerta
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atención',
+                text: 'Debes seleccionar un cliente y agregar al menos un producto para realizar el pedido.',
+            });
+            return;
+        }
+        Swal.fire({
+            title: 'Esperando respuesta del servidor...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            button: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        const enviarPedido = await registrarPedido(data);
+
+        if (enviarPedido) {
+            console.log(enviarPedido);
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Pedido registrado',
+                text: 'El pedido se ha registrado correctamente',
+            });
+        }else{
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ocurrió un error al registrar el pedido, por favor intenta de nuevo.',
+            });
+        }
+
+
     }
 
     const handleChange = (event) => {
@@ -153,6 +192,7 @@ export default function RegistroPedido() {
                                 disablePortal
                                 id="combo-box-demo"
                                 options={clientes}
+                                disableClearable
                                 getOptionLabel={(option) => `${option.nombre} (${option.id})`}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                                 sx={{ width: 300 }}
