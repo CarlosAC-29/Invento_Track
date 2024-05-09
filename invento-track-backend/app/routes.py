@@ -1,4 +1,4 @@
-from flask import request, jsonify
+﻿from flask import request, jsonify
 from app import app, db
 from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
 import google.generativeai as genai
@@ -276,25 +276,28 @@ def agregar_producto():
 
 @app.route('/productos/<int:id>', methods=['PUT'])
 def update_producto(id):
-    try:
-        data = request.json
+    data = request.json
 
-        producto = Producto.query.get(id)
+    producto = Producto.query.get_or_404(id)
+
+    if 'nombre' in data:
         producto.nombre = data['nombre']
+    if 'precio' in data:
         producto.precio = data['precio']
+    if 'stock' in data:
         producto.stock = data['stock']
+    if 'descripcion' in data:
         producto.descripcion = data['descripcion']
+    if 'categoria' in data:
         producto.categoria = data['categoria']
+    if 'referencia' in data:
         producto.referencia = data['referencia']
+    if 'imagen' in data:
         producto.imagen = data['imagen']
 
-        db.session.commit()
+    db.session.commit()
 
-        return jsonify({
-            'mensaje': 'Producto actualizado exitosamente!'
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    return 'Producto actualizado correctamente', 200
 
 @app.route('/productos/<int:id>', methods=['DELETE'])
 def delete_producto(id):
