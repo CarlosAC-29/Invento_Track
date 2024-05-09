@@ -174,7 +174,8 @@ function Productos() {
             {productos.find(p => p.id === viewDetail) ? (
               <>
                 <div className='detalles'>
-                  <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
+                  {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
+                  <img className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
                   <div>
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
@@ -213,7 +214,7 @@ function Productos() {
               <>
                 <div className='detalles'>
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail' />
+                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail'/>
                   <div>
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
