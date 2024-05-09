@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import Cliente, Vendedor, Administrador, Producto
+from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
 
 @app.route('/')
 def index():
@@ -8,7 +8,7 @@ def index():
 
 from sqlalchemy import text
 
-
+# Rutas para autenticación
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -28,7 +28,6 @@ def login():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
 @app.route('/test-db')
 def test_db_connection():
     try:
@@ -37,6 +36,10 @@ def test_db_connection():
     except Exception as e:
         return f'Error en la conexión con la base de datos: {e}'
 
+
+########################################################################################
+
+# Rutas para clientes
 @app.route('/clientes', methods=['GET'])
 def list_clients():
     try:
@@ -51,22 +54,6 @@ def list_clients():
         } for cliente in clientes]
         
         return jsonify(clientes_json)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/vendedores', methods=['GET'])
-def list_sellers():
-    try:
-        vendedores = Vendedor.get_all_sellers()
-        vendedores_json = [{
-            'id': vendedor.id,
-            'nombre': vendedor.nombre,
-            'apellido': vendedor.apellido,
-            'email': vendedor.email,
-            'estado': vendedor.estado
-        } for vendedor in vendedores]
-
-        return jsonify(vendedores_json)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -92,6 +79,59 @@ def agregar_cliente():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/clientes/<int:id>', methods=['PUT'])
+def editar_cliente(id):
+    try:
+        data = request.json
+
+        cliente = Cliente.query.get(id)
+        cliente.nombre = data['nombre']
+        cliente.apellido = data['apellido']
+        cliente.email = data['email']
+        cliente.direccion = data['direccion']
+        cliente.telefono = data['telefono']
+
+        db.session.commit()
+
+        return jsonify({
+            'mensaje': 'Cliente actualizado exitosamente!'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/clientes/<int:id>', methods=['DELETE'])
+def eliminar_cliente(id):
+    try:
+        cliente = Cliente.query.get(id)
+        if cliente:
+            db.session.delete(cliente)
+            db.session.commit()
+            return jsonify({'mensaje': 'Cliente eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+########################################################################################
+
+# Rutas para vendedores
+@app.route('/vendedores', methods=['GET'])
+def list_sellers():
+    try:
+        vendedores = Vendedor.get_all_sellers()
+        vendedores_json = [{
+            'id': vendedor.id,
+            'nombre': vendedor.nombre,
+            'apellido': vendedor.apellido,
+            'email': vendedor.email,
+            'estado': vendedor.estado
+        } for vendedor in vendedores]
+
+        return jsonify(vendedores_json)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/vendedores', methods=['POST'])
 def agregar_vendedor():
     try:
@@ -113,26 +153,6 @@ def agregar_vendedor():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/clientes/<int:id>', methods=['PUT'])
-def editar_cliente(id):
-    try:
-        data = request.json
-
-        cliente = Cliente.query.get(id)
-        cliente.nombre = data['nombre']
-        cliente.apellido = data['apellido']
-        cliente.email = data['email']
-        cliente.direccion = data['direccion']
-        cliente.telefono = data['telefono']
-
-        db.session.commit()
-
-        return jsonify({
-            'mensaje': 'Cliente actualizado exitosamente!'
-        })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
 @app.route('/vendedores/<int:id>', methods=['PUT'])
 def editar_vendedor(id):
     try:
@@ -151,11 +171,33 @@ def editar_vendedor(id):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/vendedores/<int:id>', methods=['DELETE'])
+def eliminar_vendedor(id):
+    try:
+        vendedor = Vendedor.query.get(id)
+        if vendedor:
+            db.session.delete(vendedor)
+            db.session.commit()
+            return jsonify({'mensaje': 'Vendedor eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Vendedor no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
+########################################################################################
+
+
+# Rutas para productos
 @app.route('/productos', methods=['GET'])
 def list_product():
     try:
-        productos = Producto.get_all_products()
+        categoria = request.args.get('categoria')
+        if categoria:
+            productos = Producto.get_products_by_category(categoria)
+        else:
+            productos = Producto.get_all_products()
+
         productos_json = [{
             'id': producto.id,
             'nombre': producto.nombre,
@@ -198,35 +240,91 @@ def agregar_producto():
 
 @app.route('/productos/<int:id>', methods=['PUT'])
 def update_producto(id):
-    data = request.json
+    try:
+        data = request.json
 
-    producto = Producto.query.get_or_404(id)
-
-    if 'nombre' in data:
+        producto = Producto.query.get(id)
         producto.nombre = data['nombre']
-    if 'precio' in data:
         producto.precio = data['precio']
-    if 'stock' in data:
         producto.stock = data['stock']
-    if 'descripcion' in data:
         producto.descripcion = data['descripcion']
-    if 'categoria' in data:
         producto.categoria = data['categoria']
-    if 'referencia' in data:
         producto.referencia = data['referencia']
-    if 'imagen' in data:
         producto.imagen = data['imagen']
 
-    db.session.commit()
+        db.session.commit()
 
-    return 'Producto actualizado correctamente', 200
+        return jsonify({
+            'mensaje': 'Producto actualizado exitosamente!'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/productos/<int:id>', methods=['DELETE'])
 def delete_producto(id):
-    producto = Producto.query.get_or_404(id)
+    try:
+        producto = Producto.query.get(id)
+        if producto:
+            db.session.delete(producto)
+            db.session.commit()
+            return jsonify({'mensaje': 'Producto eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Producto no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-    db.session.delete(producto)
-    db.session.commit()
 
-    return 'Producto eliminado correctamente', 200
 
+########################################################################################
+
+
+# Rutas para pedidos
+@app.route('/pedido', methods=['POST'])
+def agregar_pedido():
+    try:
+        data = request.json
+
+        id_cliente = data['id_cliente']
+        total_pedido = data['total_pedido']
+
+        nuevo_pedido = Pedido(
+            id_cliente=id_cliente,
+            total_pedido=total_pedido
+        )
+        db.session.add(nuevo_pedido)
+        db.session.commit()
+
+        for producto_pedido in data['productos']:
+            nuevo_pedido_producto = ProductoPedido(
+                id_pedido=nuevo_pedido.id_pedido,
+                id_producto=producto_pedido['id_producto'],
+                cantidad_producto=producto_pedido['cantidad_producto']
+            )
+            db.session.add(nuevo_pedido_producto)
+
+        db.session.commit()
+
+        return jsonify({
+            'mensaje': 'Pedido realizado exitosamente!'
+        }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/pedido', methods=['GET'])
+def get_orders():
+    orders = Pedido.get_all_orders()
+    result = []
+
+    for order in orders:
+        for product_order in order.producto:
+            result.append({
+                'id_pedido': order.id_pedido,
+                'id_cliente': order.id_cliente,
+                'total_pedido': order.total_pedido,
+                'fecha_pedido': order.fecha_pedido,
+                'id_producto': product_order.id_producto,
+                'cantidad_producto': product_order.cantidad_producto
+            })
+
+    return jsonify(result)
