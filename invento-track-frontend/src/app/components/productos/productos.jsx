@@ -41,7 +41,6 @@ function Productos({ selectedCategory }) {
       referencia: referencia,
     }
     var url = "http://localhost:5000/productos/" + viewDetail
-    console.log("Lo que se va a envair es ", newProduct)
     fetch(url, {
       method: 'PUT', // Método PUT
       headers: {
@@ -72,7 +71,7 @@ function Productos({ selectedCategory }) {
     setViewEdit(false)
     setOpen(true)
   }
-
+  const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
   useEffect(() => {
     fetch('http://localhost:5000/productos')
       .then(response => response.json())
