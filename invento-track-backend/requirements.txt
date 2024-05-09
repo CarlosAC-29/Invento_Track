@@ -3,3 +3,5 @@ Flask-Migrate
 flask-cors
 Flask
 psycopg2
+google-generativeai
+python-dotenv
