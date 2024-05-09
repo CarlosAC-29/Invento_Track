@@ -196,6 +196,37 @@ def agregar_producto():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/productos/<int:id>', methods=['PUT'])
+def update_producto(id):
+    data = request.json
 
+    producto = Producto.query.get_or_404(id)
 
+    if 'nombre' in data:
+        producto.nombre = data['nombre']
+    if 'precio' in data:
+        producto.precio = data['precio']
+    if 'stock' in data:
+        producto.stock = data['stock']
+    if 'descripcion' in data:
+        producto.descripcion = data['descripcion']
+    if 'categoria' in data:
+        producto.categoria = data['categoria']
+    if 'referencia' in data:
+        producto.referencia = data['referencia']
+    if 'imagen' in data:
+        producto.imagen = data['imagen']
+
+    db.session.commit()
+
+    return 'Producto actualizado correctamente', 200
+
+@app.route('/productos/<int:id>', methods=['DELETE'])
+def delete_producto(id):
+    producto = Producto.query.get_or_404(id)
+
+    db.session.delete(producto)
+    db.session.commit()
+
+    return 'Producto eliminado correctamente', 200
 
