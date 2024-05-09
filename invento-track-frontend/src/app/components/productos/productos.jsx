@@ -34,26 +34,61 @@ function Productos({ selectedCategory }) {
     setOpen(true);
     setViewDetail(id)
   }
-  const saveItemsAttributes = () => {
-    const newProduct = {
-      nombre: nombre,
-      precio: precio,
-      stock: stock,
-      descripcion: descripcion,
-      categoria: categoria,
-      referencia: referencia,
+ const saveItemsAttributes = () => {
+  const newProduct = {
+    nombre: nombre,
+    precio: precio,
+    stock: stock,
+    descripcion: descripcion,
+    categoria: categoria,
+    referencia: referencia,
+  }
+  var url = "http://localhost:5000/productos/" + viewDetail
+
+  // Mostrar alerta de SweetAlert indicando que se están aplicando cambios
+  Swal.fire({
+    title: 'Aplicando cambios',
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
     }
-    var url = "http://localhost:5000/productos/" + viewDetail
+  });
+
+  // Promesa para esperar al menos 2 segundos antes de resolver
+  const wait = new Promise(resolve => setTimeout(resolve, 2000));
+
+  // Realizar la solicitud y esperar al menos 2 segundos
+  Promise.all([
     fetch(url, {
       method: 'PUT', // Método PUT
       headers: {
         'Content-Type': 'application/json', // Encabezado para JSON
       },
       body: JSON.stringify(newProduct), // Convertir el objeto a cadena JSON
-    }).then((response) => {
-      console.log("Este es la respuesta ", response)
-    })
-  }
+    }),
+    wait
+  ])
+  .then(([response]) => {
+    if (response.ok) {
+      // Actualizar el estado local después de guardar los atributos
+      // Esto garantizará que la lista de productos se actualice en la interfaz
+      fetchProducts();
+      // Opcionalmente, puedes cerrar el modal de edición
+      handleCloseEdit();
+    } else {
+      // Manejar errores si la solicitud no fue exitosa
+      console.error('Error al guardar los atributos del producto:', response.statusText);
+    }
+  })
+  .catch((error) => {
+    console.error('Error al guardar los atributos del producto:', error);
+  })
+  .finally(() => {
+    // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
+    Swal.close();
+  });
+}
   const handleEditSave = () => {
     saveItemsAttributes()
     handleCloseEdit()
@@ -76,14 +111,47 @@ function Productos({ selectedCategory }) {
   }
   const deleteProduct = (id) => {
     var url = "http://localhost:5000/productos/" + id
-    fetch(url, {
-      method: 'DELETE', // Método DELETE
-      headers: {
-        'Content-Type': 'application/json', // Encabezado para JSON
-      },
-    }).then((response) => {
-      console.log("Este es la respuesta ", response)
+  
+    // Mostrar alerta de SweetAlert indicando que se está eliminando el producto
+    Swal.fire({
+      title: 'Eliminando producto',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+  
+    // Realizar la solicitud y esperar al menos 2 segundos
+    const wait = new Promise(resolve => setTimeout(resolve, 2000));
+  
+    // Realizar la solicitud de eliminación y esperar al menos 2 segundos
+    Promise.all([
+      fetch(url, {
+        method: 'DELETE', // Método DELETE
+        headers: {
+          'Content-Type': 'application/json', // Encabezado para JSON
+        },
+      }),
+      wait
+    ])
+    .then(([response]) => {
+      if (response.ok) {
+        // Actualizar el estado local después de eliminar el producto
+        // Esto garantizará que la lista de productos se actualice en la interfaz
+        fetchProducts();
+      } else {
+        // Manejar errores si la solicitud no fue exitosa
+        console.error('Error al eliminar el producto:', response.statusText);
+      }
     })
+    .catch((error) => {
+      console.error('Error al eliminar el producto:', error);
+    })
+    .finally(() => {
+      // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
+      Swal.close();
+    });
   }
   const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
   useEffect(() => {
