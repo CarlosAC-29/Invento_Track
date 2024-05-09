@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import { Box, Typography, Stack, TextField, Button, Autocomplete, Divider } from '@mui/material';
 import styles from './styles.module.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -7,16 +7,30 @@ import { useForm } from 'react-hook-form';
 
 export default function RegistroPedido() {
     const [productosAgregados, setProductosAgregados] = useState([]);
+    const [clienteSeleccionado, setClienteSeleccionado] = useState(null); // Estado para almacenar el cliente seleccionado
+
 
     const { register, handleSubmit, setValue} = useForm(
         {
             defaultValues: {
-                cliente: '',
-                productos: '',
-                total: '',
+                id_cliente: '',
+                productos: productosAgregados,
+                total_pedido: '',
             }
         }
     )
+
+    const handleClienteChange = (event, value) => {
+        setClienteSeleccionado(value); // Almacenar el cliente seleccionado en el estado
+    };
+
+    useEffect(() => {
+        setValue('productos', productosAgregados.map(producto => ({ id_producto: producto.referencia, cantidad_producto: producto.cantidad })));
+        setValue('total_pedido', productosAgregados.reduce((total, producto) => total + producto.valorTotal, 0));
+        if (clienteSeleccionado) {
+            setValue('id_cliente', clienteSeleccionado.value); // Asignar el id del cliente seleccionado al campo id_cliente
+        }
+    }, [productosAgregados, clienteSeleccionado, setValue]);
 
     const Clientes = [
         { id: 1, value: 1, label: 'Carlos' },
@@ -31,10 +45,7 @@ export default function RegistroPedido() {
     ];
 
     const processForm = (data) => {
-        console.log(productosAgregados);
-        setValue('productos', productosAgregados)
-        setValue('total', valorTotalGeneral)
-        alert(JSON.stringify(data));
+        console.log(data);
     }
 
     const handleChange = (event) => {
@@ -78,7 +89,7 @@ export default function RegistroPedido() {
         } else {
             // Si el producto no existe, agregarlo con cantidad 1
             const nuevoProducto = {
-                referencia: productoSeleccionado.label,
+                referencia: productoSeleccionado.id,
                 producto: productoSeleccionado.label,
                 valorUnitario: productoSeleccionado.precio,
                 cantidad: 1,
@@ -115,7 +126,8 @@ export default function RegistroPedido() {
                                 getOptionLabel={(option) => `${truncateText(option.label)} (${option.id})`}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                                 sx={{ width: 300 }}
-                                renderInput={(params) => <TextField {...register('cliente')} {...params} label="Clientes" />}
+                                onChange={handleClienteChange}
+                                renderInput={(params) => <TextField {...params} label="Clientes" />}
                             />
                             <Button variant='contained'>Agregar Cliente</Button>
                             <Autocomplete
@@ -129,7 +141,7 @@ export default function RegistroPedido() {
                                 renderInput={(params) => <TextField {...params} label="Productos" />}
                                 onChange={(event, value) => handleAddProducto(value)}
                             />
-                            <Typography variant='h6'>Total: ${valorTotalGeneral}</Typography>
+                            <Typography variant='h6' sx={{color : "#7688D2"}}>Total: ${valorTotalGeneral}</Typography>
                             <Button type='submit' variant='contained'>Generar Pedido</Button>
                         </Stack>
                         <Divider sx={{ margin: "1rem 0" }} />
@@ -140,7 +152,7 @@ export default function RegistroPedido() {
                         )}
                         {productosAgregados.map((producto, index) => (
                             <Stack key={index} direction={"row"} spacing={2} sx={{ background: "#fff", padding: "1rem", margin: "1rem 0", borderRadius: "1rem" }}>
-                                <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={truncateText(producto.referencia)} label="Referencia" />
+                                <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={producto.referencia} label="Referencia" />
                                 <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={truncateText(producto.producto)} label="Producto" />
                                 <TextField readOnly value={producto.valorUnitario} label="Valor Unitario" />
                                 <TextField label="Cantidad" value={producto.cantidad} onChange={(event) => handleCantidadChange(event, index)} />
