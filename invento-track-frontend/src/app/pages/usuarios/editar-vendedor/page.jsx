@@ -16,26 +16,27 @@ import {
 import { editVendedor } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export default function EditarVendedor() {
+export default function EditarVendedor({ searchParams }) {
 
-    const { register, handleSubmit} = useForm(
+
+
+    const { register, handleSubmit } = useForm(
         {
             defaultValues: {
-                nombre: 'Carlos',
-                apellido: 'Caceres',
-                email: 'carlos@gmail.com',
-                password: '123',
-                confPassword: '123'
+                nombre: searchParams.nombre,
+                apellido: searchParams.apellido,
+                email: searchParams.email,
+                password: searchParams.password,
+                confPassword: searchParams.password,
             }
         }
     )
 
     const handleClick = () => {
         router.push('../listas/cliente');
-      };
-
-    const router = useRouter();
+    };
 
     const [data, setData] = useState('')
 
@@ -59,17 +60,17 @@ export default function EditarVendedor() {
             }
         })
 
-        const response = await editVendedor(3, data)
+        const response = await editVendedor(searchParams.id, data)
         console.log(response)
 
-        if(response){
+        if (response) {
             Swal.close()
             Swal.fire({
                 title: 'Vendedor registrado con éxito',
                 icon: 'success',
                 confirmButtonText: 'Ok',
             })
-        }else{
+        } else {
             Swal.close()
             Swal.fire({
                 title: 'Error al registrar el vendedor',
@@ -83,67 +84,69 @@ export default function EditarVendedor() {
     const processForm = (data) => {
         setData(data);
         console.log(data);
-    
+
         let isValid = true;
-    
+
         if (!data.nombre || !data.nombre.length) {
             setNombreError('Campo requerido');
             isValid = false;
         } else {
             setNombreError('');
         }
-    
+
         if (!data.apellido || !data.apellido.length) {
             setApellidoeError('Campo requerido');
             isValid = false;
         } else {
             setApellidoeError('');
         }
-    
+
         if (!data.email || !data.email.length) {
             setEmailError('Campo requerido');
             isValid = false;
         } else {
             setEmailError('');
         }
-    
+
         if (!data.password || !data.password.length) {
             setPasswordError('Campo requerido');
             isValid = false;
         } else {
             setPasswordError('');
         }
-    
+
         if (!data.confPassword || !data.confPassword.length) {
             setConfPasswordError('Campo requerido');
             isValid = false;
         } else {
             setConfPasswordError('');
         }
-    
+
         if (isValid) {
-           saveData(data);
+            saveData(data);
         }
     };
-    
+
 
     return (
         <div className={styles.main_container}>
             <Stack
-            direction='column'
-            alignItems="center"
-            justifyContent="center"
-            spacing={2}
-            sx={{
-                width: '100%',
-                height: '100vh',
-            }}
+                direction='column'
+                alignItems="center"
+                justifyContent="center"
+                spacing={2}
+                sx={{
+                    width: '100%',
+                    height: '100vh',
+                }}
             >
-                <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6' > Atrás </Typography>
-                    </Box>
+                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                    <Link href='../listas/vendedor'>
+                        <Box sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
+                            <ArrowBackIosIcon id='backIcon' />
+                            <Typography variant='h6' > Atrás </Typography>
+                        </Box>
+                    </Link>
                 </Box>
                 <Box
                     sx={{
@@ -226,10 +229,12 @@ export default function EditarVendedor() {
                             <Button
                                 type='submit'
                                 variant="contained"
-                                sx={{ backgroundColor: "#090069",
-                                "&:hover": {
-                                  backgroundColor: "#1d35f7",
-                                }, color: 'white' }}
+                                sx={{
+                                    backgroundColor: "#090069",
+                                    "&:hover": {
+                                        backgroundColor: "#1d35f7",
+                                    }, color: 'white'
+                                }}
                             >
                                 Guardar
                             </Button>

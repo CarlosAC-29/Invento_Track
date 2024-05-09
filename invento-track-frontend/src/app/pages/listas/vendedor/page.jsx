@@ -12,6 +12,7 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import {useEffect, useState} from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/app/components/navbar';
+import Link from 'next/link';
 
 function ListaVendedores() {
 
@@ -71,7 +72,20 @@ function ListaVendedores() {
                   <p>Estado: {vendedor.estado}</p>
                 </div>
                 <div id='accionesVendedor' style={{ display: 'flex', alignItems: 'center' }}>
+                  <Link href={{
+                    pathname: '../usuarios/editar-vendedor',
+                    query: { 
+                      id: vendedor.id,
+                      nombre: vendedor.nombre,
+                      apellido: vendedor.apellido,
+                      email: vendedor.email,
+                      password: vendedor.password,
+
+                    }
+                  
+                  }}>
                   <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit}/>
+                  </Link>
                   <DeleteOutlinedIcon id='iconoEliminar'/>
                 </div>
               </Box>
