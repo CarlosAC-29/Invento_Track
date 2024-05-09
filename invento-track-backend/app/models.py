@@ -61,7 +61,21 @@ class Producto(db.Model):
 class Pedido(db.Model):
     id_pedido = db.Column(db.Integer, primary_key=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'))
-    id_producto = db.Column(db.Integer, db.ForeignKey('producto.id'))
     total_pedido = db.Column(db.Integer)
     fecha_pedido = db.Column(db.DateTime, default=datetime.utcnow)
+
+    cliente = db.relationship('Cliente', backref=db.backref('pedidos', lazy=True))
+    producto = db.relationship('ProductoPedido', backref=db.backref('pedido', lazy=True))
+
+    @staticmethod
+    def get_all_orders():
+        return Pedido.query.all()
+
+#ProductoPedido model
+class ProductoPedido(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    id_pedido = db.Column(db.Integer, db.ForeignKey('pedido.id_pedido'))
+    id_producto = db.Column(db.Integer, db.ForeignKey('producto.id'))
     cantidad_producto = db.Column(db.Integer)
+
+    producto = db.relationship('Producto', backref=db.backref('pedidos', lazy=True))
