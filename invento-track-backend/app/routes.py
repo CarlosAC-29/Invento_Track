@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from app import app, db
-from app.models import Cliente, Vendedor, Administrador, Producto, Pedido
+from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
 
 @app.route('/')
 def index():
@@ -284,19 +284,47 @@ def agregar_pedido():
     try:
         data = request.json
 
-        nuevo_pedido = Pedido(
-            id_cliente=data['id_cliente'],
-            id_producto=data['id_producto'],
-            total_pedido=data['total_pedido'],
-            cantidad_producto=data['cantidad_producto']
-        )
+        id_cliente = data['id_cliente']
+        total_pedido = data['total_pedido']
 
+        nuevo_pedido = Pedido(
+            id_cliente=id_cliente,
+            total_pedido=total_pedido
+        )
         db.session.add(nuevo_pedido)
         db.session.commit()
 
+        for producto_pedido in data['productos']:
+            nuevo_pedido_producto = ProductoPedido(
+                id_pedido=nuevo_pedido.id_pedido,
+                id_producto=producto_pedido['id_producto'],
+                cantidad_producto=producto_pedido['cantidad_producto']
+            )
+            db.session.add(nuevo_pedido_producto)
+
+        db.session.commit()
+
         return jsonify({
-            'mensaje': 'Pedido agregado exitosamente!'
+            'mensaje': 'Pedido realizado exitosamente!'
         }), 201
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/pedido', methods=['GET'])
+def get_orders():
+    orders = Pedido.get_all_orders()
+    result = []
+
+    for order in orders:
+        for product_order in order.producto:
+            result.append({
+                'id_pedido': order.id_pedido,
+                'id_cliente': order.id_cliente,
+                'total_pedido': order.total_pedido,
+                'fecha_pedido': order.fecha_pedido,
+                'id_producto': product_order.id_producto,
+                'cantidad_producto': product_order.cantidad_producto
+            })
+
+    return jsonify(result)
