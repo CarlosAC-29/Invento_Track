@@ -57,6 +57,13 @@ class Producto(db.Model):
     def get_products_by_category(categoria):
         return Producto.query.filter(func.lower(Producto.categoria) == categoria.lower()).all()
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'nombre': self.nombre,
+            'precio': self.precio
+        }
+
 #Pedido model
 class Pedido(db.Model):
     id_pedido = db.Column(db.Integer, primary_key=True)
