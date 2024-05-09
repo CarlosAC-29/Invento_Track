@@ -11,8 +11,10 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { useForm } from 'react-hook-form';
 import { listarClientes } from '@/app/api/api.routes';
+import { eliminarCliente } from '@/app/api/api.routes';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 function ListaClientes() {
 
@@ -36,6 +38,17 @@ function ListaClientes() {
       query: { id: 1 }
     });
   };
+
+  const handleDelete = async (id) => {
+    const response = await eliminarCliente(id);
+    if (response) {
+      const newVendedores = clientes.filter(cliente => cliente.id !== id);
+      setClientes(newVendedores);
+      console.log('Cliente eliminado');
+    } else {
+      console.log('Error al eliminar cliente');
+    }
+  }
 
 
   return (
@@ -97,21 +110,40 @@ function ListaClientes() {
                 </div>
                 <div id='accionesCliente' style={{ display: 'flex', alignItems: 'center' }}>
                   <Link
-                  href={{
-                    pathname: '../usuarios/editar-clientes',
-                    query: { 
-                      id: cliente.id,
-                      nombre: cliente.nombre,
-                      apellido: cliente.apellido,
-                      email: cliente.email,
-                      direccion: cliente.direccion,
-                      telefono: cliente.telefono
-                    }
-                  }}
+                    href={{
+                      pathname: '../usuarios/editar-clientes',
+                      query: {
+                        id: cliente.id,
+                        nombre: cliente.nombre,
+                        apellido: cliente.apellido,
+                        email: cliente.email,
+                        direccion: cliente.direccion,
+                        telefono: cliente.telefono
+                      }
+                    }}
                   >
                     <BorderColorOutlinedIcon id='iconoEditar' />
                   </Link>
-                  <DeleteOutlinedIcon id='iconoEliminar' />
+                  <DeleteOutlinedIcon id='iconoEliminar' onClick={() => {
+                    Swal.fire({
+                      title: "¿Estás seguro que deseas eliminar el cliente?",
+                      text: "Esta acción es irreversible.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Sí, deseo borrarlo."
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDelete(cliente.id)
+                        Swal.fire({
+                          title: "¡Cliente eliminado!",
+                          text: "El cliente ha sido eliminado exitosamente.",
+                          icon: "success"
+                        });
+                      }
+                    })
+                  }} />
                 </div>
               </Box>
             ))}

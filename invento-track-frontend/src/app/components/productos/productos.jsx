@@ -1,200 +1,103 @@
-"use client";
+'use client'
 
-import { Backdrop, Box, Divider, Fade, Modal, TextField } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import React, { useEffect, useState } from "react";
-import postobon from "../../../../public/images/postobon.webp";
-import leche from "../../../../public/images/leche.png";
-import Image from "next/image";
-import "./styles.css";
-import Detail from "./detail";
-import Swal from 'sweetalert2';
+import { Backdrop, Box, Divider, Fade, Modal, TextField, Button } from '@mui/material'
+import React, { useEffect, useState } from 'react'
 
-import { Backdrop, Box, Divider, Fade, Modal, TextField} from '@mui/material'
+import './styles.css'
 //Buttons
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { handleClientScriptLoad } from "next/script";
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 
-function Productos() {
+function Productos({ selectedCategory }) {
+
   const [productos, setProductos] = useState([]);
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
   const [viewDetail, setViewDetail] = useState();
-  const [viewEdit, setViewEdit] = useState(false);
+  const [viewEdit, setViewEdit] = useState(false)
+  //Atributos del producto
+  // nombre, precio, stock, descripcion, categoria, referencia, imagen
+  const [nombre, setNombre] = useState();
+  const [precio, setPrecio] = useState();
+  const [stock, setStock] = useState();
+  const [descripcion, setDescripcion] = useState();
+  const [categoria, setCategoria] = useState();
+  const [referencia, setReferencia] = useState();
 
-  const handleClick = (id) => {
-    // Añadido parámetro producto
+  //Métodos handler
+  const handleClick = (id) => { // Añadido parámetro producto
     // Actualiza viewDetail con el producto seleccionado
     setOpen(true);
-    setViewDetail(id);
-  };
-
-  const handleEdit = () => {
-    setViewEdit(true);
-   
-  };
-  const handleCloseEdit = () => {
-    setViewEdit(false);
-    
-  };
-
-  // const productos = [
-  //   {
-  //     id: 1,
-  //     imagen: leche,
-  //     nombre: 'Lacteo',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Está libre de antibióticos y conservantes. Es una leche entera, ordeñada bajo procesos altamente higiénicos. Ideal para disfrutar en cualquier momento del día.',
-  //     categoria: 'lacteos'
-  //   },
-  //   {
-  //     id: 2,
-  //     imagen: postobon,
-  //     nombre: 'Carne',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 2',
-  //     categoria: 'carnes'
-  //   },
-  //   {
-  //     id: 3,
-  //     imagen: postobon,
-  //     nombre: 'Fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 3',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 4,
-  //     imagen: postobon,
-  //     nombre: 'Gaseosa',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 4',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 5,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 5',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 6,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 6',
-  //     categoria: 'frutas'
-  //   },
-  //   {
-  //     id: 7,
-  //     imagen: postobon,
-  //     nombre: 'fruta',
-  //     precio: 100,
-  //     cantidad: 10,
-  //     descripcion: 'Descripcion del producto 7',
-  //     categoria: 'frutas'
-  //   }
-  // ]
-
-  const deleteProduct = (id) => {
-    console.log("id", id);
-    fetch(`http://localhost:5000/productos/${id}`, {
-      method: "DELETE",
+    setViewDetail(id)
+  }
+  const saveItemsAttributes = () => {
+    const newProduct = {
+      nombre: nombre,
+      precio: precio,
+      stock: stock,
+      descripcion: descripcion,
+      categoria: categoria,
+      referencia: referencia,
+    }
+    var url = "http://localhost:5000/productos/" + viewDetail
+    fetch(url, {
+      method: 'PUT', // Método PUT
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json', // Encabezado para JSON
       },
+      body: JSON.stringify(newProduct), // Convertir el objeto a cadena JSON
+    }).then((response) => {
+      console.log("Este es la respuesta ", response)
     })
-      .then((response) => response.json())
-      .then((data) => console.log("Success:", data))
-      .catch((error) => console.error("Error:", error));
-  };
+  }
+  const handleEditSave = () => {
+    saveItemsAttributes()
+    handleCloseEdit()
+  }
+  const handleEdit = () => {
+    var producto = productos.find(p => p.id === viewDetail)
+    setNombre(producto.nombre)
+    setPrecio(producto.precio)
+    setStock(producto.stock)
+    setDescripcion(producto.descripcion)
+    setCategoria(producto.categoria)
+    setReferencia(producto.referencia)
 
+    setViewEdit(true)
+    setOpen(false)
+  }
+  const handleCloseEdit = () => {
+    setViewEdit(false)
+    setOpen(true)
+  }
+  const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
   useEffect(() => {
-    fetch("http://localhost:5000/productos")
-      .then((response) => response.json())
-      .then((data) => setProductos(data))
-      .catch((error) => console.error("Error:", error));
+    fetch('http://localhost:5000/productos')
+      .then(response => response.json())
+      .then(data => setProductos(data))
+      .catch(error => console.error('Error:', error));
   }, []);
 
   // console.log(productos)
 
+
   return (
     <>
-      <div
-        className="contenedor-producto"
-        style={{ marginTop: "1%", marginLeft: "1%" }}
-      >
-        {productos.map(({ id, imagen, nombre, precio, stock }) => {
+      <div className='contenedor-producto' style={{ marginTop: '1%', marginLeft: '1%' }}>
+        {filteredProducts.map(({ id, imagen, nombre, precio, stock }) => {
           return (
-            <div key={id} className="producto" >
-              <div className="tarjeta" >
-                <div className="section1" onClick={() => handleClick(id)}>
-                <div className="imagen">
+            <div key={id} className="producto" onClick={() => handleClick(id)}>
+              <div className='tarjeta'>
+                <div className='imagen'>
                   {/* <Image src={imagen} alt='imagen' className='imagen'/> */}
-                  <img src={imagen} alt="imagen" className="imagen" />
+                  <img src={imagen} alt='imagen' className='imagen' />
                 </div>
-                <Divider flexItem />
-                <div className="descripcion">
-                  <h3 style={{ fontSize: "1.2rem" }}>{nombre}</h3>
-                  <p style={{ fontSize: "0.8rem" }}>Stock: {stock}</p>
-                  <span style={{ fontSize: "0.8rem", fontWeight: "bold" }}>
-                    ${precio}
-                  </span>
-                </div>
-                </div>
-                <Divider />
-                <div className="botones">
-                  <IconButton
-                    aria-label="edit"
-                    onClick={handleEdit}
-                    sx={{
-                      color: (theme) => theme.palette.success.light,
-                    }}
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => {
-                      Swal.fire({
-                        title: "¿Estás seguro?",
-                        text: "¡No podrás revertir esto!",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#3085d6",
-                        cancelButtonColor: "#d33",
-                        confirmButtonText: "¡Sí, bórralo!"
-                      }).then((result) => {
-                        if (result.isConfirmed) {
-                          deleteProduct(id);
-
-                          Swal.fire(
-                            '¡Eliminado!',
-                            'Tu producto ha sido eliminado.',
-                            'success'
-                          )
-                          
-                        }
-                      })
-                    }}
-                    sx={{
-                      color: (theme) => theme.palette.error.light,
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                  
+                
+                <div className='descripcion'>
+                  <h3 style={{ fontSize: '1.2rem' }}>{nombre}</h3>
+                  <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>${precio}</span>
                 </div>
               </div>
             </div>
@@ -216,13 +119,13 @@ function Productos() {
         }}
       >
         <Fade in={open}>
-          <div className="modal" key={viewDetail}>
+          <div className='modal' key={viewDetail}>
             <h1>Detalle del producto</h1>
             <IconButton
               aria-label="close"
               onClick={handleClose}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.primary,
@@ -231,31 +134,31 @@ function Productos() {
               <CloseIcon />
             </IconButton>
 
+            <IconButton
+              aria-label="close"
+              onClick={handleEdit}
+              sx={{
+                position: 'absolute',
+                right: 58,
+                top: 8,
+                color: (theme) => theme.palette.success.light,
+              }}
+            >
+              <EditIcon />
+            </IconButton>
             <Divider />
-            {productos.find((p) => p.id === viewDetail) ? (
+            {productos.find(p => p.id === viewDetail) ? (
               <>
-                <div className="detalles">
+                <div className='detalles'>
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img
-                    className="imagenDetail"
-                    src={productos.find((p) => p.id === viewDetail).imagen}
-                  />
+                  <img className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
                   <div>
-                    <h1 style={{ marginBottom: "5%" }}>
-                      {productos.find((p) => p.id === viewDetail).nombre}
-                    </h1>
-                    <p style={{ marginBottom: "7%" }}>
-                      ${productos.find((p) => p.id === viewDetail).precio}
-                    </p>
-                    <p style={{ marginBottom: "5%" }}>
-                      Stock: {productos.find((p) => p.id === viewDetail).stock}
-                    </p>
+                    <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
+                    <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
+                    <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
                     <Divider />
-                    <h2 style={{ marginTop: "5%" }}>Descripción</h2>
-                    <p style={{ marginTop: "5%" }}>
-                      {" "}
-                      {productos.find((p) => p.id === viewDetail).descripcion}
-                    </p>
+                    <h2 style={{ marginTop: '5%' }}>Descripción</h2>
+                    <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
                   </div>
                 </div>
               </>
@@ -280,13 +183,13 @@ function Productos() {
         }}
       >
         <Fade in={viewEdit}>
-          <div className="modal" key={viewDetail}>
+          <div className='modal' key={viewDetail}>
             <h1>Editar el producto</h1>
             <IconButton
               aria-label="close"
               onClick={handleCloseEdit}
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 right: 8,
                 top: 8,
                 color: (theme) => theme.palette.primary,
@@ -295,38 +198,49 @@ function Productos() {
               <CloseIcon />
             </IconButton>
             <Divider />
-            {productos.find((p) => p.id === viewDetail) ? (
+            {/* Las opciones que se pueden editar son: 
+            nombre, precio, stock, descripcion, categoria, referencia, imagen */}
+            {productos.find(p => p.id === viewDetail) ? (
               <>
-                <div className="detalles">
-                  {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
-                  <img
-                    src={productos.find((p) => p.id === viewDetail).imagen}
-                    alt="imagen"
-                    className="imagenDetail"
-                  />
+                <div className='detalles'>
+                  <img src={productos.find(p => p.id === viewDetail).imagen} alt='imagen' className='imagenDetail' />
                   <div>
-                    <TextField
-                      id="outlined-basic"
-                      label="Outlined"
-                      variant="outlined"
-                    />
-                    <h1 style={{ marginBottom: "5%" }}>
-                      {productos.find((p) => p.id === viewDetail).nombre}
-                    </h1>
-                    <p style={{ marginBottom: "7%" }}>
-                      ${productos.find((p) => p.id === viewDetail).precio}
-                    </p>
-                    <p style={{ marginBottom: "5%" }}>
-                      Stock: {productos.find((p) => p.id === viewDetail).stock}
-                    </p>
-                    <Divider />
-                    <h2 style={{ marginTop: "5%" }}>Descripción</h2>
-                    <p style={{ marginTop: "5%" }}>
-                      {" "}
-                      {productos.find((p) => p.id === viewDetail).descripcion}
-                    </p>
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Nombre" variant="outlined" value={nombre} onChange={(event) => { setNombre(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Precio" variant="outlined" value={precio} onChange={(event) => { setPrecio(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Stock" variant="outlined" value={stock} onChange={(event) => { setStock(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Descripcion" variant="outlined" value={descripcion} onChange={(event) => { setDescripcion(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Referencia" variant="outlined" value={referencia} onChange={(event) => { setReferencia(event.target.value) }} />
                   </div>
                 </div>
+                <Button
+                  onClick={handleEditSave}
+                  type='submit'
+                  variant="contained"
+                  sx={{
+                    left: "10%",
+                    backgroundColor: "#090069",
+                    "&:hover": {
+                      backgroundColor: "#1d35f7",
+                    }, color: 'white'
+                  }}
+                >
+                  Guardar
+                </Button>
+                <Button
+                  onClick={handleEditSave}
+                  type='submit'
+                  variant="contained"
+                  sx={{
+                    left: "13%",
+                    backgroundColor: "#090069",
+                    "&:hover": {
+                      backgroundColor: "#1d35f7",
+                    }, color: 'white'
+                  }}
+                >
+                  Cancelar
+                </Button>
               </>
             ) : (
               <p>Producto no encontrado</p>
@@ -334,8 +248,10 @@ function Productos() {
           </div>
         </Fade>
       </Modal>
+
+
     </>
-  );
+  )
 }
 
-export default Productos;
+export default Productos
