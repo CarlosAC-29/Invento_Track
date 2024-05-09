@@ -1,16 +1,20 @@
 "use client"
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Stack, TextField, Button, Autocomplete, Divider } from '@mui/material';
 import styles from './styles.module.css';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import { useForm } from 'react-hook-form';
+import { set, useForm } from 'react-hook-form';
+import { listarClientes, getProductos } from '@/app/api/api.routes';
+import Swal from 'sweetalert2';
+
 
 export default function RegistroPedido() {
     const [productosAgregados, setProductosAgregados] = useState([]);
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null); // Estado para almacenar el cliente seleccionado
+    const [clientes, setClientes] = useState("");
+    const [productos, setProductos] = useState([]);
 
-
-    const { register, handleSubmit, setValue} = useForm(
+    const { register, handleSubmit, setValue } = useForm(
         {
             defaultValues: {
                 id_cliente: '',
@@ -20,29 +24,53 @@ export default function RegistroPedido() {
         }
     )
 
+    const getInfo = async () => {
+        Swal.fire({
+            title: 'Esperando respuesta del servidor...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            button: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        })
+        const responseClientes = await listarClientes();
+        const responseProductos = await getProductos();
+        if (responseClientes && responseProductos) {
+            Swal.close()
+            setClientes(responseClientes);
+            setProductos(responseProductos);
+            console.log(responseClientes);
+            console.log(responseProductos);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ocurrió un error al cargar la información, por favor intenta de nuevo.',
+            })
+        }
+    }
+
     const handleClienteChange = (event, value) => {
-        setClienteSeleccionado(value); // Almacenar el cliente seleccionado en el estado
+        event.preventDefault();
+        const { id } = value;
+        console.log(id);
+        setClienteSeleccionado(id);
+        console.log("clienteSeleccionado", clienteSeleccionado) // Almacenar el cliente seleccionado en el estado
     };
 
+
+
     useEffect(() => {
+        getInfo();
+        console.log(clientes);
         setValue('productos', productosAgregados.map(producto => ({ id_producto: producto.referencia, cantidad_producto: producto.cantidad })));
         setValue('total_pedido', productosAgregados.reduce((total, producto) => total + producto.valorTotal, 0));
         if (clienteSeleccionado) {
-            setValue('id_cliente', clienteSeleccionado.value); // Asignar el id del cliente seleccionado al campo id_cliente
+            setValue('id_cliente', clienteSeleccionado); // Asignar el id del cliente seleccionado al campo id_cliente
         }
     }, [productosAgregados, clienteSeleccionado, setValue]);
-
-    const Clientes = [
-        { id: 1, value: 1, label: 'Carlos' },
-        { id: 2, value: 2, label: 'Camilo' },
-        { id: 3, value: 3, label: 'Luis' }
-    ];
-
-    const Productos = [
-        { id: 1, value: 1, label: 'Agua', precio: 2000 },
-        { id: 2, value: 2, label: 'Gaseosa', precio: 3000 },
-        { id: 3, value: 3, label: 'Bombon', precio: 500 }
-    ];
 
     const processForm = (data) => {
         console.log(data);
@@ -71,15 +99,17 @@ export default function RegistroPedido() {
     };
 
     const truncateText = (text) => {
-        if (text.length > 10) {
-            return text.substring(0, 10) + '...';
-        } else {
-            return text;
-        }
+        console.log(text);
+        // if (text.length > 10) {
+        //     return text.substring(0, 10) + '...';
+        // } else {
+        //     return text;
+        // }
     };
 
     const handleAddProducto = (productoSeleccionado) => {
-        const productoExistenteIndex = productosAgregados.findIndex(producto => producto.referencia === productoSeleccionado.label);
+        console.log(productoSeleccionado);
+        const productoExistenteIndex = productosAgregados.findIndex(producto => producto.referencia === productoSeleccionado.nombre);
         if (productoExistenteIndex !== -1) {
             // Si el producto ya existe, aumentar la cantidad en 1
             const nuevosProductos = [...productosAgregados];
@@ -90,7 +120,7 @@ export default function RegistroPedido() {
             // Si el producto no existe, agregarlo con cantidad 1
             const nuevoProducto = {
                 referencia: productoSeleccionado.id,
-                producto: productoSeleccionado.label,
+                producto: productoSeleccionado.nombre,
                 valorUnitario: productoSeleccionado.precio,
                 cantidad: 1,
                 valorTotal: productoSeleccionado.precio
@@ -122,8 +152,8 @@ export default function RegistroPedido() {
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                options={Clientes}
-                                getOptionLabel={(option) => `${truncateText(option.label)} (${option.id})`}
+                                options={clientes}
+                                getOptionLabel={(option) => `${option.nombre} (${option.id})`}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                                 sx={{ width: 300 }}
                                 onChange={handleClienteChange}
@@ -133,27 +163,27 @@ export default function RegistroPedido() {
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
-                                options={Productos}
-                                getOptionLabel={(option) => `${truncateText(option.label)} (${option.id})`}
+                                options={productos}
+                                getOptionLabel={(option) => `${option.nombre} (${option.id})`}
                                 isOptionEqualToValue={(option, value) => option.id === value.id}
                                 disableClearable
                                 sx={{ width: 300 }}
                                 renderInput={(params) => <TextField {...params} label="Productos" />}
                                 onChange={(event, value) => handleAddProducto(value)}
                             />
-                            <Typography variant='h6' sx={{color : "#7688D2"}}>Total: ${valorTotalGeneral}</Typography>
+                            <Typography variant='h6' sx={{ color: "#7688D2" }}>Total: ${valorTotalGeneral}</Typography>
                             <Button type='submit' variant='contained'>Generar Pedido</Button>
                         </Stack>
                         <Divider sx={{ margin: "1rem 0" }} />
                         {productosAgregados.length === 0 && (
-                            <Stack sx={{textAlign:"center"}} direction={"column"} justifyContent={"center"} alignItems={"center"}>
-                                <Typography sx={{color : "#7688D2", fontSize: "1.7rem"}}>No hay productos en esta orden de compra...</Typography>
+                            <Stack sx={{ textAlign: "center" }} direction={"column"} justifyContent={"center"} alignItems={"center"}>
+                                <Typography sx={{ color: "#7688D2", fontSize: "1.7rem" }}>No hay productos en esta orden de compra...</Typography>
                             </Stack>
                         )}
                         {productosAgregados.map((producto, index) => (
                             <Stack key={index} direction={"row"} spacing={2} sx={{ background: "#fff", padding: "1rem", margin: "1rem 0", borderRadius: "1rem" }}>
                                 <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={producto.referencia} label="Referencia" />
-                                <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={truncateText(producto.producto)} label="Producto" />
+                                <TextField sx={{ textOverflow: 'ellipsis' }} readOnly value={producto.producto} label="Producto" />
                                 <TextField readOnly value={producto.valorUnitario} label="Valor Unitario" />
                                 <TextField label="Cantidad" value={producto.cantidad} onChange={(event) => handleCantidadChange(event, index)} />
                                 <TextField value={producto.valorTotal} label="Valor Total" />
