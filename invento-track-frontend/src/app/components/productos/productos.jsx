@@ -23,11 +23,15 @@ function Productos() {
     // Actualiza viewDetail con el producto seleccionado
     setOpen(true);
     setViewDetail(id)
-    console.log(viewDetail)
   }
 
   const handleEdit = () => {
     setViewEdit(true)
+    setOpen(false)
+  }
+  const handleCloseEdit = () =>{
+    setViewEdit(false)
+    setOpen(true)
   }
 
   // const productos = [
@@ -209,6 +213,18 @@ function Productos() {
         <Fade in={viewEdit}>
           <div className='modal' key={viewDetail}>
             <h1>Editar el producto</h1>
+            <IconButton
+              aria-label="close"
+              onClick={handleCloseEdit}
+              sx={{
+                position: 'absolute',
+                right: 8,
+                top: 8,
+                color: (theme) => theme.palette.primary,
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
             <Divider />
             {productos.find(p => p.id === viewDetail) ? (
               <>
