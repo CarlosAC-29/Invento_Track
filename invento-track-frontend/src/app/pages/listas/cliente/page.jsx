@@ -11,8 +11,11 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import InventoryIcon from '@mui/icons-material/Inventory';
 import { useForm } from 'react-hook-form';
 import { listarClientes } from '@/app/api/api.routes';
+import { eliminarCliente } from '@/app/api/api.routes';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/app/components/navbar';
 import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 function ListaClientes() {
 
@@ -37,6 +40,17 @@ function ListaClientes() {
     });
   };
 
+  const handleDelete = async (id) => {
+    const response = await eliminarCliente(id);
+    if (response) {
+      const newVendedores = clientes.filter(cliente => cliente.id !== id);
+      setClientes(newVendedores);
+      console.log('Cliente eliminado');
+    } else {
+      console.log('Error al eliminar cliente');
+    }
+  }
+
 
   return (
     <>
@@ -46,28 +60,7 @@ function ListaClientes() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Box id="toolbar">
-          <ArrowBackIosIcon id='backIcon' />
-          <Typography
-            component="tittle"
-            variant="h5"
-            sx={{
-              fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
-              fontWeight: "bold", // Hace que el texto sea en negrita
-              color: "#ffffff", // Cambia el color del texto
-              fontSize: "2rem", // Cambia el tamaño de la fuente
-              position: "absolute",
-              pointerEvents: "none",
-              left: 0,
-              right: 0,
-              textAlign: "center",
-            }}
-          >
-            InventoTrack <InventoryIcon />
-          </Typography>
-          <h4>Bienvenido, admin</h4>
-          <AccountCircleOutlinedIcon id='iconoUsuario' />
-        </Box>
+      <Navbar />
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de clientes</h1>
         </div>
@@ -97,21 +90,40 @@ function ListaClientes() {
                 </div>
                 <div id='accionesCliente' style={{ display: 'flex', alignItems: 'center' }}>
                   <Link
-                  href={{
-                    pathname: '../usuarios/editar-clientes',
-                    query: { 
-                      id: cliente.id,
-                      nombre: cliente.nombre,
-                      apellido: cliente.apellido,
-                      email: cliente.email,
-                      direccion: cliente.direccion,
-                      telefono: cliente.telefono
-                    }
-                  }}
+                    href={{
+                      pathname: '../usuarios/editar-clientes',
+                      query: {
+                        id: cliente.id,
+                        nombre: cliente.nombre,
+                        apellido: cliente.apellido,
+                        email: cliente.email,
+                        direccion: cliente.direccion,
+                        telefono: cliente.telefono
+                      }
+                    }}
                   >
                     <BorderColorOutlinedIcon id='iconoEditar' />
                   </Link>
-                  <DeleteOutlinedIcon id='iconoEliminar' />
+                  <DeleteOutlinedIcon id='iconoEliminar' onClick={() => {
+                    Swal.fire({
+                      title: "¿Estás seguro que deseas eliminar el cliente?",
+                      text: "Esta acción es irreversible.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Sí, deseo borrarlo."
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDelete(cliente.id)
+                        Swal.fire({
+                          title: "¡Cliente eliminado!",
+                          text: "El cliente ha sido eliminado exitosamente.",
+                          icon: "success"
+                        });
+                      }
+                    })
+                  }} />
                 </div>
               </Box>
             ))}

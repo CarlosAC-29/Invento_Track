@@ -45,7 +45,7 @@ export default function EditarVendedor() {
     )
 
     const handleClick = () => {
-        router.push('../listas/cliente');
+        router.push('../listas/vendedor');
       };
 
     const router = useRouter();
@@ -133,15 +133,21 @@ export default function EditarVendedor() {
             setEmailError('');
         }
     
-        if (!data.password || !data.password.length) {
+        if (!data.password || !data.password.length || data.password.length < 8) {
             setPasswordError('Campo requerido');
+            if(data.password.length < 8){
+                setPasswordError('Contraseña tener min 8 caracteres');
+            }
             isValid = false;
         } else {
             setPasswordError('');
         }
     
-        if (!data.confPassword || !data.confPassword.length) {
+        if (!data.confPassword || !data.confPassword.length || data.confPassword !== data.password) {
             setConfPasswordError('Campo requerido');
+            if(data.confPassword !== data.password){
+                setConfPasswordError('Las contraseñas no coinciden');
+            }
             isValid = false;
         } else {
             setConfPasswordError('');

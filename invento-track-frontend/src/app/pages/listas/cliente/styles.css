@@ -35,36 +35,6 @@ body {
     border-color: #1D35F7;
 }
 
-#toolbar {
-    display: flex;
-    background-color: #090069;
-    margin-bottom:20px;
-    height: 50px;
-    align-items: center;
-    padding-left: 1.2%;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.29);
-}#toolbar h4 {
-    display: flex;
-    margin-left: auto;
-    color: #ffffff;
-    margin-right: 1.2%;
-    /* color: #1D35F7; */
-}#toolbar h2 {
-    position: absolute;
-    color: #ffffff;
-    left: 0;
-    right: 0;
-    text-align: center;
-    pointer-events: none;
-}
-
-#iconoUsuario {
-    display: flex;
-    color: #ffffff;
-    margin-right: 1.2%;
-    scale: 1.4;
-}
-
 #bienvenidaUser {
     display: flex;
     height: 60px;
@@ -78,20 +48,6 @@ body {
 #atras:hover #backIcon  {
     margin-left: 3px;
     margin-right: 7px;
-    cursor: pointer;
-}
-
-#backIcon {
-    color: #ffffff;
-    margin-left: 10px;
-    transition: margin-left 0.2s, margin-right 0.2s;
-    scale: 1.2;
-}
-
-#backIcon:hover {
-    transition: margin-left 0.2s, margin-right 0.2s;
-    margin-left: 6px;
-    margin-right: 4px;
     cursor: pointer;
 }
 
