@@ -4,6 +4,7 @@ import { Box, Typography, Stack, TextField, Button, Autocomplete, Divide, Autoco
 import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
 import SpatialAudioOffIcon from '@mui/icons-material/SpatialAudioOff';
 import { useForm } from 'react-hook-form';
+import { registrarPedidoSpeech } from '@/app/api/api.routes';
 import Swal from 'sweetalert2';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import styles from './styles.module.css';
@@ -109,12 +110,39 @@ export default function SpeechToText() {
         return true;
     };
 
-    const processPedido = (data) => {
+    const processPedido = async (data) => {
         if (!validateFields()) {
             return;
         }
         console.log(data);
         setValue('text', transcript);
+        Swal.fire({
+            title: 'Procesando pedido...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            button: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        const pedido = await registrarPedidoSpeech(data);
+
+        if (pedido) {
+            Swal.close();
+            Swal.fire({
+                icon: 'success',
+                title: 'Pedido procesado',
+                text: 'El pedido se ha procesado correctamente.',
+            });
+        } else {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ocurrió un error al procesar el pedido, por favor intenta de nuevo.',
+            });
+        }
     };
 
     return (
