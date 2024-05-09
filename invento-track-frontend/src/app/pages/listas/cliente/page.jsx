@@ -12,7 +12,6 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import { useForm } from 'react-hook-form';
 import { listarClientes } from '@/app/api/api.routes';
 import { useRouter } from 'next/navigation';
-import Navbar from '../../../components/navbar';
 import Link from 'next/link';
 
 function ListaClientes() {
@@ -47,7 +46,6 @@ function ListaClientes() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Navbar />
         <Box id="toolbar">
           <ArrowBackIosIcon id='backIcon' />
           <Typography
