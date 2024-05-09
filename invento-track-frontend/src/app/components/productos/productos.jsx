@@ -1,6 +1,6 @@
 'use client'
 
-import { Backdrop, Box, Divider, Fade, Modal } from '@mui/material'
+import { Backdrop, Box, Divider, Fade, Modal, TextField} from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import React, { useState } from 'react'
 import postobon from '../../../../public/images/postobon.webp'
@@ -28,7 +28,7 @@ function Productos() {
     setViewEdit(true)
     setOpen(false)
   }
-  const handleCloseEdit = () =>{
+  const handleCloseEdit = () => {
     setViewEdit(false)
     setOpen(true)
   }
@@ -219,6 +219,7 @@ function Productos() {
                 <div className='detalles'>
                   <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
                   <div>
+                    <TextField id="outlined-basic" label="Outlined" variant="outlined" />
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
                     <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).cantidad}</p>

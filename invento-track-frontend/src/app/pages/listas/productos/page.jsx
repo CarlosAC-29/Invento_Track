@@ -6,7 +6,6 @@ import Categorias from '@/app/components/categorias/categorias'
 import './styles.css'
 import { Divider } from '@mui/material'
 import Productos from '@/app/components/productos/productos'
-
 function ListaProductos() {
   return (
     <>
