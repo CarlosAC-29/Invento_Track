@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+import React, { use } from 'react'
 import './styles.css'
 import Box from '@mui/material/Box';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -9,8 +9,12 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/app/components/navbar';
+import { eliminarVendedor } from '@/app/api/api.routes';
+import Link from 'next/link';
+import Swal from 'sweetalert2';
 
 function ListaVendedores() {
 
@@ -23,6 +27,19 @@ function ListaVendedores() {
       .then(data => setVendedores(data))
       .catch(error => console.error('Error:', error));
   }, []);
+
+  const handleDelete = async (id) => {
+    const response = await eliminarVendedor(id);
+    if (response) {
+      const newVendedores = vendedores.filter(vendedor => vendedor.id !== id);
+      setVendedores(newVendedores);
+      console.log('Vendedor eliminado');
+    } else {
+      console.log('Error al eliminar vendedor');
+    }
+  }
+
+
 
   const handleClick = () => {
     router.push('../usuarios/registro-vendedor');
@@ -40,34 +57,13 @@ function ListaVendedores() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Box id="toolbar">
-          <ArrowBackIosIcon id='backIcon'/>
-          <Typography
-              component="tittle"
-              variant="h5"
-              sx={{
-                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif', // Cambia esto por la fuente que prefieras
-                fontWeight: "bold", // Hace que el texto sea en negrita
-                color: "#ffffff", // Cambia el color del texto
-                fontSize: "2rem", // Cambia el tamaño de la fuente
-                position: "absolute",
-                pointerEvents: "none",
-                left: 0,
-                right: 0,
-                textAlign: "center",
-              }}
-            >
-              InventoTrack <InventoryIcon/>
-          </Typography>
-          <h4>Bienvenido, admin</h4>
-          <AccountCircleOutlinedIcon id='iconoUsuario'/>
-        </Box>
+        <Navbar />
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de vendedores</h1>
         </div>
 
-        <div id='operaciones'> 
-        {/* <Box className="tarjetas" id='agregarVendedor'>
+        <div id='operaciones'>
+          {/* <Box className="tarjetas" id='agregarVendedor'>
             <p>Agregar vendedor</p>
           </Box> */}
           <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -75,10 +71,10 @@ function ListaVendedores() {
             <Box className="tarjetas" id='buscarVendedor'>
               <p>Buscar vendedor</p>
               <TextField className='input' id="inputBuscarVendedor" label="Buscar" variant="outlined" />
-              <SearchIcon id='iconoBuscar'/>
+              <SearchIcon id='iconoBuscar' />
             </Box>
           </div>
-          
+
           <div id="listaVendedores">
             {vendedores.map((vendedor, index) => (
               <Box key={index} className="tarjetas" id='vendedores'>
@@ -91,8 +87,39 @@ function ListaVendedores() {
                   <p>Estado: {vendedor.estado}</p>
                 </div>
                 <div id='accionesVendedor' style={{ display: 'flex', alignItems: 'center' }}>
-                  <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit}/>
-                  <DeleteOutlinedIcon id='iconoEliminar'/>
+                  <Link href={{
+                    pathname: '../usuarios/editar-vendedor',
+                    query: {
+                      id: vendedor.id,
+                      nombre: vendedor.nombre,
+                      apellido: vendedor.apellido,
+                      email: vendedor.email,
+                      password: vendedor.password,
+                    }
+
+                  }}>
+                    <BorderColorOutlinedIcon id='iconoEditar' onClick={handleEdit} />
+                  </Link>
+                  <DeleteOutlinedIcon id='iconoEliminar' onClick={() => {
+                    Swal.fire({
+                      title: "¿Estás seguro que deseas eliminar el vendedor?",
+                      text: "Esta acción es irreversible.",
+                      icon: "warning",
+                      showCancelButton: true,
+                      confirmButtonColor: "#3085d6",
+                      cancelButtonColor: "#d33",
+                      confirmButtonText: "Sí, deseo borrarlo."
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        handleDelete(vendedor.id)
+                        Swal.fire({
+                          title: "¡Vendedor eliminado!",
+                          text: "El vendedor ha sido eliminado exitosamente.",
+                          icon: "success"
+                        });
+                      }
+                    })
+                  }} />
                 </div>
               </Box>
             ))}
