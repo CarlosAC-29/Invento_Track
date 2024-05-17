@@ -391,22 +391,10 @@ def get_orders():
                 'id_cliente': order.id_cliente,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
-                "estado_pedudi": order.estado_pedido,
+                "estado_pedido": order.estado_pedido,
                 'id_producto': product_order.id_producto,
                 'cantidad_producto': product_order.cantidad_producto
             })
 
     return jsonify(result)
 
-@app.route('/pedido', methods=['DELETE'])
-def delete_orders():
-    try:
-        for pedido in Pedido.query.all():
-            db.session.delete(pedido)
-        for pedidos in ProductoPedido.query.all():
-            db.session.delete(pedidos)
-
-        db.session.commit()
-        return jsonify({'mensaje': 'Pedidos eliminados exitosamente!'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
