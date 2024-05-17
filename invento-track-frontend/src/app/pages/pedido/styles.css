@@ -1,5 +1,6 @@
 .contenedor {
     overflow-y: auto;
+    overflow-x: hidden;
     position: absolute;
     background-color: white;
     height: 80%;
@@ -7,7 +8,6 @@
     top: 53%;
     left: 50%;
     transform: translate(-50%, -50%);
-    padding: 1%;
     outline: none;
     border-radius: 15px;
     box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
@@ -16,8 +16,31 @@
     width: 0px;
 }
 
+.top-bar {
+    padding: 2%;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
+    margin: 0px;
+    align-items: center;
+    width: 100%;
+}
+
+.imprimir {
+    border-color: #090069;
+    color: #090069;
+}
+
+.imprimir:hover {
+    border-color: #090069;
+    background-color: #09006920;
+}
+
+.elementos {
+    padding: 1%;
+}
+
 .elementos h2 {
     padding: 2%;
+    color: #090069;
 }
 
 .detalles {
@@ -41,6 +64,11 @@
     padding-left: 0%;
     position: relative;
     color: gray;
+}
+
+.total {
+    color: gray;
+    font-size: 1.7em;
 }
 
 .elemento-producto {

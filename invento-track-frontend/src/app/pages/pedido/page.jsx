@@ -4,7 +4,7 @@ import Navbar from '@/app/components/navbar'
 import React from 'react'
 import { styled } from '@mui/material/styles';
 import './styles.css'
-import { Box, Divider } from '@mui/material'
+import { Box, Button, Divider } from '@mui/material'
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Table from '@mui/material/Table';
@@ -17,6 +17,12 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import postobon from '../../../../public/images/postobon.webp'
 import Image from 'next/image';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -30,6 +36,7 @@ const cliente = [
     id: 1,
     nombre: 'Carlos',
     apellido: 'Perez',
+    email: 'carlos.perez@gmail.com',
     telefono: '1234567890',
     direccion: 'Calle 123',
   }
@@ -101,21 +108,42 @@ function Pedido() {
         </header>
         <main>
           <Box className='contenedor'>
+            <Box className='top-bar'>
+              <Grid container>
+                <Grid xs={6} spacing={2} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <ShoppingBagOutlinedIcon sx={{ marginRight: '1%', color: '#090069' }} />
+                  <p style={{ fontSize: '1.3em', color: '#090069' }}>Detalles de la orden</p>
+                </Grid>
+                <Grid xs={6}>
+                  <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Grid>
+                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />}>Imprimir</Button>
+                    </Grid>
+                    <Grid>
+                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />}>Editar pedido</Button>
+                    </Grid>
+                    <Grid>
+                      <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />}>Cancelar orden</Button>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Box>
             <Grid className='elementos' container spacing={1} columns={2}>
               <Grid xs={6} md={1}>
                 <Item>
                   <h2>Detalles del cliente</h2>
                   <Divider />
-                  {cliente.map(({ id, nombre, apellido, telefono, direccion }) => {
+                  {cliente.map(({ id, nombre, apellido, email, telefono, direccion }) => {
                     return (
                       <div key={id} className='detalles'>
                         <div>
                           <p className='subtitulo'>Nombre</p>
-                          <p>{nombre}</p>
+                          <p>{nombre} {apellido}</p>
                         </div>
                         <div>
-                          <p className='subtitulo'>Apellido</p>
-                          <p>{apellido}</p>
+                          <p className='subtitulo'>Email</p>
+                          <p>{email}</p>
                         </div>
                         <div>
                           <p className='subtitulo'>Telefono</p>
@@ -160,31 +188,23 @@ function Pedido() {
               </Grid>
               <Grid xs={12}>
                 <Item>
-                  <h2>Productos</h2>
+                  <h2 style={{ padding: '1%' }}>Productos</h2>
                   <Divider />
                   <TableContainer>
                     <Table>
                       <TableHead>
                         <TableRow hover>
                           <TableCell>
-                            <TableSortLabel>
-                              <p className='elemento-producto'>Producto</p>
-                            </TableSortLabel>
+                            <p className='elemento-producto'>Producto</p>
                           </TableCell>
                           <TableCell>
-                            <TableSortLabel>
-                              <p className='elemento-producto'>Cantidad</p>
-                            </TableSortLabel>
+                            <p className='elemento-producto'>Cantidad</p>
                           </TableCell>
                           <TableCell>
-                            <TableSortLabel>
-                              <p className='elemento-producto'>Precio</p>
-                            </TableSortLabel>
+                            <p className='elemento-producto'>Precio unitario</p>
                           </TableCell>
                           <TableCell>
-                            <TableSortLabel>
-                              <p className='elemento-producto'>Total</p>
-                            </TableSortLabel>
+                            <p className='elemento-producto'>Total</p>
                           </TableCell>
                         </TableRow>
                       </TableHead>
@@ -196,9 +216,9 @@ function Pedido() {
                                 <div className='producto'>
                                   {/* <img src={imagen} alt='imagen' /> */}
                                   <Image style={{ backgroundColor: '#f6f6f6', borderRadius: '5px' }} src={imagen} alt='imagen' width={80} height={80} />
-                                  <div style={{display: 'block', width: '100%'}}>
+                                  <div style={{ display: 'block', width: '100%' }}>
                                     <p>{nombre}</p>
-                                    <p style={{color: 'gray'}}>SKU: {referencia}</p>
+                                    <p style={{ color: 'gray' }}>SKU: {referencia}</p>
                                   </div>
                                 </div>
                               </TableCell>
@@ -206,10 +226,10 @@ function Pedido() {
                                 <p>{cantidad}</p>
                               </TableCell>
                               <TableCell>
-                                <p>{precio}</p>
+                                <p>${precio.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
                               </TableCell>
                               <TableCell>
-                                <p>{cantidad * precio}</p>
+                                <p>${(cantidad * precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
                               </TableCell>
                             </TableRow>
                           )
@@ -217,6 +237,14 @@ function Pedido() {
                       </TableBody>
                     </Table>
                   </TableContainer>
+                  <Grid container sx={{ padding: '1.5%' }}>
+                    <Grid xs={12}>
+                      <div>
+                        <p className='total'>Total del pedido</p>
+                        <p style={{fontSize:'1.4em'}}>${productos.reduce((acc, { cantidad, precio }) => acc + (cantidad * precio), 0).toLocaleString('es-CO', { minimumFractionDigits: 2 })} </p>
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Item>
               </Grid>
             </Grid>
