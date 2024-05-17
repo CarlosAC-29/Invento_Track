@@ -391,6 +391,7 @@ def get_orders():
                 'id_cliente': order.id_cliente,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
+                "estado_pedudi": order.estado_pedido,
                 'id_producto': product_order.id_producto,
                 'cantidad_producto': product_order.cantidad_producto
             })
