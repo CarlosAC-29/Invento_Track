@@ -1,10 +1,10 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Box, Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, IconButton, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, IconButton, Typography, Chip } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import SearchIcon from '@mui/icons-material/Search';
 import Navbar from '@/app/components/navbar';
 import Swal from 'sweetalert2';
@@ -41,6 +41,7 @@ function ListaPedidos() {
     if (response) {
       Swal.close();
       setPedido(response);
+      console.log(response);
       setPedidoFiltrado(response);
     } else {
       Swal.fire({
@@ -98,10 +99,49 @@ function ListaPedidos() {
     setPedidoFiltrado(pedido);
   }
 
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: '¿Está seguro que quiere cancelar el pedido?',
+      text: "Esta acción no se puede deshacer.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cancelar pedido',
+      cancelButtonText: 'No, mantener pedido'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Aquí llamas a la función que maneja la cancelación del pedido
+        console.log('Pedido cancelado', id);
+        // Puedes actualizar el estado o hacer una petición para eliminar el pedido
+      }
+    });
+  }
+
+  const handleViewDetails = (id) => {
+    // Implement view details logic here
+    console.log('View details', id);
+  }
+
   const columns = [
     { field: 'id_pedido', headerName: 'ID Pedido', width: 150 },
     { field: 'fecha_pedido', headerName: 'Fecha Pedido', width: 200 },
-    { field: 'cantidad_producto', headerName: 'Cantidad Producto', width: 200 },
+    {
+      field: 'estado_pedido',
+      headerName: 'Estado',
+      width: 200,
+      renderCell: (params) => {
+        let color = 'default';
+        if (params.value === 'completed') {
+          color = 'success';
+        } else if (params.value === 'PENDIENTE') {
+          color = 'warning';
+        } else if (params.value === 'canceled') {
+          color = 'error';
+        }
+        return <Chip label={params.value} color={color} />;
+      }
+    },
     { field: 'total_pedido', headerName: 'Total Pedido', width: 200 },
     {
       field: 'acciones',
@@ -112,21 +152,21 @@ function ListaPedidos() {
       renderCell: (params) => (
         <div>
           <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon sx={{color : "#090069"}} />
+            <DeleteIcon sx={{ color: "#090069" }} />
           </IconButton>
           <IconButton aria-label="view-details" onClick={() => handleViewDetails(params.row.id)}>
-            <SummarizeIcon sx={{color : "#090069"}}/>
+            <SummarizeIcon sx={{ color: "#090069" }} />
           </IconButton>
         </div>
       ),
     },
-
   ];
 
   const rows = pedidoFiltrado.map((pedido, index) => ({
     id: index,
     id_pedido: pedido.id_pedido,
     fecha_pedido: new Date(pedido.fecha_pedido).toLocaleString(),
+    estado_pedido: pedido.estado_pedido,
     cantidad_producto: pedido.cantidad_producto,
     total_pedido: pedido.total_pedido
   }));
@@ -152,15 +192,14 @@ function ListaPedidos() {
                 padding: "1rem",
                 borderRadius: "1rem",
               }}>
-              <Button sx={{background: "#090069"}} onClick={handleClick} id="botonAgregarCliente" className="botones" variant="contained">
+              <Button sx={{ background: "#090069" }} onClick={handleClick} id="botonAgregarCliente" className="botones" variant="contained">
                 <AddCircleIcon />
-                <p style={{marginLeft: "1rem"}}>Agregar pedido</p>
-                </Button>
+                <p style={{ marginLeft: "1rem" }}>Agregar pedido</p>
+              </Button>
               <FormControl sx={{ width: '25ch', marginTop: "1rem" }} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password" >Buscar ID</InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
-                  
                   type={'text'}
                   value={buscar}
                   onChange={handleInputChange}
@@ -193,18 +232,29 @@ function ListaPedidos() {
                 </Stack>
               </LocalizationProvider>
               <Button onClick={handleFiltrar} variant="contained" style={{ background: "#090069" }}> <FilterAltIcon />Filtrar</Button>
-              <Button onClick={handleVerTodos} variant="contained" style={{background: "#090069"}}><RefreshIcon /></Button>
+              <Button onClick={handleVerTodos} variant="contained" style={{ background: "#090069" }}><RefreshIcon /></Button>
             </Stack>
           </Stack>
 
-          <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto'}}>
+          <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto' }}>
             <DataGrid
-              headerStyle={{ backgroundColor: 'lightblue', color: 'red' }}
-              sx={{backgroundColor: '#fff'}}
+              components={{
+                Toolbar: GridToolbar,
+              }}
+              sx={{
+                backgroundColor: '#fff',
+                '& .MuiDataGrid-columnHeaders': {
+                  backgroundColor: 'lightblue',
+                  color: '#000',
+                },
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  fontWeight: 'bold',
+                },
+              }}
               disableRowSelectionOnClick
               rows={rows}
               columns={columns}
-              pageSize={5}
+              pageSize={pageSize}
               initialState={{
                 pagination: {
                   paginationModel: {
@@ -221,7 +271,7 @@ function ListaPedidos() {
         </Stack>
       </Box>
     </>
-  )
+  );
 }
 
 export default ListaPedidos;
