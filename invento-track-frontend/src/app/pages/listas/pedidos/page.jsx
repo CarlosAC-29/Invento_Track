@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Box, Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, IconButton, Typography, Chip } from '@mui/material';
+import { Box, Button, FormControl, InputAdornment, InputLabel, OutlinedInput, Stack, IconButton, Typography, Chip, Select, MenuItem } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -23,6 +23,8 @@ function ListaPedidos() {
   const [buscar, setBuscar] = useState('');
   const [pageSize, setPageSize] = useState(5);
   const [pedidoFiltrado, setPedidoFiltrado] = useState([]);
+  const [estadoFiltrado, setEstadoFiltrado] = useState('');
+
 
   const router = useRouter();
 
@@ -65,6 +67,8 @@ function ListaPedidos() {
   };
 
   const handleFiltrar = () => {
+    let pedidosFiltrados = pedido;
+
     if (fechaInicio && fechaFin) {
       const inicio = new Date(fechaInicio).setHours(0, 0, 0, 0);
       const fin = new Date(fechaFin).setHours(23, 59, 59, 999);
@@ -79,13 +83,19 @@ function ListaPedidos() {
         return;
       }
 
-      const filtrado = pedido.filter(p => {
-        const fechaPedido = new Date(p.fecha_pedido).getTime();
+      pedidosFiltrados = pedidosFiltrados.filter(pedido => {
+        const fechaPedido = new Date(pedido.fecha_pedido).getTime();
         return fechaPedido >= inicio && fechaPedido <= fin;
       });
-
-      setPedidoFiltrado(filtrado);
     }
+
+    console.log(estadoFiltrado);
+
+    if (estadoFiltrado) {
+      pedidosFiltrados = pedidosFiltrados.filter(pedido => pedido.estado_pedido === estadoFiltrado);
+    }
+
+    setPedidoFiltrado(pedidosFiltrados);
   }
 
   const handleBuscarID = () => {
@@ -186,7 +196,7 @@ function ListaPedidos() {
               width: "100%",
               marginTop: "2rem"
             }}>
-            <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} spacing={5}
+            <Stack direction={"row"} justifyContent={"center"} alignItems={"center"} spacing={3}
               sx={{
                 background: "#fff",
                 padding: "1rem",
@@ -194,14 +204,15 @@ function ListaPedidos() {
               }}>
               <Button sx={{ background: "#090069" }} onClick={handleClick} id="botonAgregarCliente" className="botones" variant="contained">
                 <AddCircleIcon />
-                <p style={{ marginLeft: "1rem" }}>Agregar pedido</p>
+                <p style={{ marginLeft: "1rem" }}>Nuevo pedido</p>
               </Button>
-              <FormControl sx={{ width: '25ch', marginTop: "1rem" }} variant="outlined">
+              <FormControl sx={{ width: '15ch' }} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password" >Buscar ID</InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
                   type={'text'}
                   value={buscar}
+                  hiddenLabel
                   onChange={handleInputChange}
                   endAdornment={
                     <InputAdornment position="end">
@@ -218,19 +229,35 @@ function ListaPedidos() {
                 />
               </FormControl>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <Stack direction={"row"} spacing={2}>
+                <Stack direction={"row"} justifyContent={"center"} spacing={2} >
                   <DatePicker
+                    sx={{ width: "40%" }}
                     label="Fecha Inicio"
                     value={fechaInicio}
                     onChange={(newValue) => setFechaInicio(newValue)}
                   />
                   <DatePicker
+                    sx={{ width: "40%" }}
                     label="Fecha Fin"
                     value={fechaFin}
                     onChange={(newValue) => setFechaFin(newValue)}
                   />
                 </Stack>
               </LocalizationProvider>
+              <FormControl sx={{ width: '150px', marginTop: '1rem' }}>
+                <InputLabel id="estado-filter-label">Estado</InputLabel>
+                <Select
+                  labelId="estado-filter-label"
+                  id="estado-filter"
+                  label="Estado"
+                  value={estadoFiltrado}
+                  onChange={(e) => setEstadoFiltrado(e.target.value)}
+                >
+                  <MenuItem value="">Todos</MenuItem>
+                  <MenuItem value="PENDIENTE">Pendiente</MenuItem>
+                  <MenuItem value="ELIMINADO">Eliminado</MenuItem>
+                </Select>
+              </FormControl>
               <Button onClick={handleFiltrar} variant="contained" style={{ background: "#090069" }}> <FilterAltIcon />Filtrar</Button>
               <Button onClick={handleVerTodos} variant="contained" style={{ background: "#090069" }}><RefreshIcon /></Button>
             </Stack>
