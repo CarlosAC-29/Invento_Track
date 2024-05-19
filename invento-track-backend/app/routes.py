@@ -1,9 +1,13 @@
 ﻿from flask import request, jsonify
-from app import app, db
+from flask_mail import Mail, Message
+from app import app, db, mail
 from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os, json   
+
+# inventotrack.mindsoft
+# Univalle**2024
 
 @app.route('/')
 def index():
@@ -319,6 +323,25 @@ def delete_producto(id):
 
 
 # Rutas para pedidos
+def enviar_correo_pedido(cliente, total_pedido, productos_info):
+    mensaje = Message('Detalles de su pedido', recipients=[app.config['MAIL_DEFAULT_SENDER']])
+    mensaje.body = f"""
+    ¡Hola {cliente.nombre}!
+
+    Gracias por su compra. Aquí están los detalles de su pedido:
+
+    Total del pedido: ${total_pedido}
+
+    Productos comprados:
+    """
+    for producto in productos_info:
+        mensaje.body += f"\n- {producto['nombre_producto']} x{producto['cantidad']} - ${producto['precio']} cada uno"
+
+    mensaje.body += "\n\nGracias por su preferencia."
+
+    mail.send(mensaje)
+
+
 @app.route('/pedido', methods=['POST'])
 def agregar_pedido():
     try:
@@ -334,6 +357,8 @@ def agregar_pedido():
         db.session.add(nuevo_pedido)
         db.session.commit()
 
+        productos_info = []
+
         for producto_pedido in data['productos']:
             nuevo_pedido_producto = ProductoPedido(
                 id_pedido=nuevo_pedido.id_pedido,
@@ -342,7 +367,18 @@ def agregar_pedido():
             )
             db.session.add(nuevo_pedido_producto)
 
+            producto = db.session.query(Producto).filter_by(id=producto_pedido['id_producto']).first()
+            productos_info.append({
+                'nombre_producto': producto.nombre,
+                'cantidad': producto_pedido['cantidad_producto'],
+                'precio': producto.precio
+            })
+
         db.session.commit()
+
+        cliente = db.session.query(Cliente).filter_by(id=id_cliente).first()
+
+        enviar_correo_pedido(cliente, total_pedido, productos_info)
 
         return jsonify({
             'mensaje': 'Pedido realizado exitosamente!'
@@ -364,6 +400,7 @@ def agregar_producto_gemini(data_string):
         db.session.add(nuevo_pedido)
         db.session.commit()
 
+        productos_info = []
         for producto_pedido in data['productos']:
             nuevo_producto = ProductoPedido(
                 id_pedido=nuevo_pedido.id_pedido,
@@ -371,7 +408,19 @@ def agregar_producto_gemini(data_string):
                 cantidad_producto=producto_pedido['cantidad_producto']
             )
             db.session.add(nuevo_producto)
+        
+        producto = db.session.query(Producto).filter_by(id=producto_pedido['id_producto']).first()
+        productos_info.append({
+            'nombre_producto': producto.nombre,
+            'cantidad': producto_pedido['cantidad_producto'],
+            'precio': producto.precio
+        })
+
         db.session.commit()
+
+        cliente = db.session.query(Cliente).filter_by(id=id_cliente).first()
+
+        enviar_correo_pedido(cliente, total_pedido, productos_info)
 
         print('Pedido de Gemini agregado exitosamente!', total_pedido)
         return jsonify({'mensaje': 'Pedido de Gemini agregado exitosamente!'})
