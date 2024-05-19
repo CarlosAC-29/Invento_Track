@@ -78,6 +78,10 @@ class Pedido(db.Model):
     @staticmethod
     def get_all_orders():
         return Pedido.query.all()
+    
+    @staticmethod
+    def get_orders_by_id(id_order):
+        return Pedido.query.filter(Pedido.id_pedido == id_order).all()
 
 #ProductoPedido model
 class ProductoPedido(db.Model):

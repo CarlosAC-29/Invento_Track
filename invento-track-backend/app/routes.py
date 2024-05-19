@@ -409,12 +409,12 @@ def agregar_producto_gemini(data_string):
             )
             db.session.add(nuevo_producto)
         
-        producto = db.session.query(Producto).filter_by(id=producto_pedido['id_producto']).first()
-        productos_info.append({
-            'nombre_producto': producto.nombre,
-            'cantidad': producto_pedido['cantidad_producto'],
-            'precio': producto.precio
-        })
+            producto = db.session.query(Producto).filter_by(id=producto_pedido['id_producto']).first()
+            productos_info.append({
+                'nombre_producto': producto.nombre,
+                'cantidad': producto_pedido['cantidad_producto'],
+                'precio': producto.precio
+            })
 
         db.session.commit()
 
@@ -430,36 +430,46 @@ def agregar_producto_gemini(data_string):
 
 @app.route('/pedido-producto', methods=['GET'])
 def get_orders_products():
-    orders = Pedido.get_all_orders()
-    result = []
+    try:
+        id_pedido = request.args.get('id_pedido')
+        if id_pedido:
+            orders = Pedido.get_orders_by_id(id_pedido)
+        else:
+            orders = Pedido.get_all_orders()
+        result = []
 
-    for order in orders:
-        for product_order in order.producto:
+        for order in orders:
+            for product_order in order.producto:
+                result.append({
+                    'id_pedido': order.id_pedido,
+                    'id_cliente': order.id_cliente,
+                    'total_pedido': order.total_pedido,
+                    'fecha_pedido': order.fecha_pedido,
+                    "estado_pedido": order.estado_pedido,
+                    'id_producto': product_order.id_producto,
+                    'cantidad_producto': product_order.cantidad_producto
+                })
+
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/pedido', methods=['GET'])
+def get_orders():
+    try:
+        orders = Pedido.get_all_orders()
+        result = []
+
+        for order in orders:
             result.append({
                 'id_pedido': order.id_pedido,
                 'id_cliente': order.id_cliente,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
-                "estado_pedido": order.estado_pedido,
-                'id_producto': product_order.id_producto,
-                'cantidad_producto': product_order.cantidad_producto
+                "estado_pedido": order.estado_pedido
             })
 
-    return jsonify(result)
-
-
-@app.route('/pedido', methods=['GET'])
-def get_orders():
-    orders = Pedido.get_all_orders()
-    result = []
-
-    for order in orders:
-        result.append({
-            'id_pedido': order.id_pedido,
-            'id_cliente': order.id_cliente,
-            'total_pedido': order.total_pedido,
-            'fecha_pedido': order.fecha_pedido,
-            "estado_pedido": order.estado_pedido
-        })
-
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
