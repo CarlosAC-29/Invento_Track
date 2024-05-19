@@ -1,10 +1,12 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import styles from './styles.module.css'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import Image from 'next/image';
 import vendorIcon from '../../../../../public/images/vendedor-icon.png';
+import { decode } from 'base-64'; // Importa la función de decodificación Base64
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import {
     Box,
@@ -13,15 +15,21 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import { editCliente } from '@/app/api/api.routes';
-import { Password } from '@mui/icons-material';
-import { Exo_2 } from 'next/font/google';
+import { getCliente, editCliente } from '@/app/api/api.routes';
 import Link from 'next/link';
 
-
 export default function EditarVendedor({ searchParams }) {
-    console.log(searchParams)
-    const { register, handleSubmit } = useForm(
+
+    const [cliente, setCliente] = useState({
+        nombre: '',
+        apellido: '',
+        email: '',
+        direccion: '',
+        telefono: '',
+    });
+
+    
+    const { register, handleSubmit, setValue  } = useForm(
         {
             defaultValues: {
                 nombre: searchParams.nombre,
@@ -33,7 +41,40 @@ export default function EditarVendedor({ searchParams }) {
         }
     )
 
+    const fetchCliente = async () => {
+        Swal.fire({
+            title: 'Esperando respuesta del servidor...',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            button: true,
+            showConfirmButton: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }})
+        const response = await getCliente(searchParams.id)
+        console.log(response)   
 
+        setValue('nombre', response.nombre)
+        setValue('apellido', response.apellido)
+        if (response) {
+            Swal.close()
+            setCliente(response)
+            //reset(response)  // Resetea los valores del formulario con los datos del cliente
+        } else {
+            Swal.close()
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Ocurrió un error al cargar la información, por favor intenta de nuevo.',
+            });
+        }
+    }
+
+    
+
+    // useEffect(() => {
+    //     fetchCliente()
+    // },[])
 
     const [data, setData] = useState('')
 
@@ -43,9 +84,7 @@ export default function EditarVendedor({ searchParams }) {
     const [telefonoError, setTelefonoError] = useState('')
     const [emailError, setEmailError] = useState('')
 
-
     const saveData = async (data) => {
-
         Swal.fire({
             title: 'Esperando respuesta del servidor...',
             allowOutsideClick: false,
@@ -63,19 +102,18 @@ export default function EditarVendedor({ searchParams }) {
         if (response) {
             Swal.close()
             Swal.fire({
-                title: 'Vendedor registrado con éxito',
+                title: 'Cliente registrado con éxito',
                 icon: 'success',
                 confirmButtonText: 'Ok',
             })
         } else {
             Swal.close()
             Swal.fire({
-                title: 'Error al registrar el vendedor',
+                title: 'Error al registrar el cliente',
                 icon: 'error',
                 confirmButtonText: 'Ok',
             })
         }
-
     }
 
     const processForm = (data) => {
@@ -123,7 +161,6 @@ export default function EditarVendedor({ searchParams }) {
             saveData(data);
         }
     };
-
 
     return (
         <div className={styles.main_container}>
@@ -184,10 +221,10 @@ export default function EditarVendedor({ searchParams }) {
                                 id="nombre"
                                 label="Nombre"
                                 variant="filled"
+                                onChange={(e) => setCliente({ ...cliente, nombre: e.target.value })}
                                 {...register('nombre')}
                                 helperText={nombreError}
                                 sx={{ height: nombreError && nombreError.length ? 'auto' : '56px' }}
-
                             />
                             <TextField
                                 error={apellidoError && apellidoError.length ? true : false}
@@ -244,4 +281,3 @@ export default function EditarVendedor({ searchParams }) {
         </div>
     );
 }
-

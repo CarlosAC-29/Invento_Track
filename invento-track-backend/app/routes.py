@@ -115,6 +115,24 @@ def agregar_cliente():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/clientes/<int:id>', methods=['GET'])
+def obtener_cliente(id):
+    try:
+        cliente = Cliente.query.get(id)
+        if cliente:
+            cliente_json = {
+                'id': cliente.id,
+                'nombre': cliente.nombre,
+                'apellido': cliente.apellido,
+                'email': cliente.email,
+                'direccion': cliente.direccion,
+                'telefono': cliente.telefono
+            }
+            return jsonify(cliente_json)
+        else:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/clientes/<int:id>', methods=['PUT'])
 def editar_cliente(id):
@@ -187,6 +205,25 @@ def agregar_vendedor():
         return jsonify({
             'mensaje': 'Vendedor agregado exitosamente!'
         }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/vendedores/<int:id>', methods=['GET'])
+def obtener_vendedor(id):
+    try:
+        vendedor = Vendedor.query.get(id)
+        if vendedor:
+            vendedor_json = {
+                'id': vendedor.id,
+                'nombre': vendedor.nombre,
+                'apellido': vendedor.apellido,
+                'email': vendedor.email,
+                'estado': vendedor.estado,
+                'password': vendedor.password
+            }
+            return jsonify(vendedor_json)
+        else:
+            return jsonify({'error': 'Vendedor no encontrado'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -379,8 +416,8 @@ def agregar_producto_gemini(data_string):
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/pedido', methods=['GET'])
-def get_orders():
+@app.route('/pedido-producto', methods=['GET'])
+def get_orders_products():
     orders = Pedido.get_all_orders()
     result = []
 
@@ -391,21 +428,26 @@ def get_orders():
                 'id_cliente': order.id_cliente,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
+                "estado_pedido": order.estado_pedido,
                 'id_producto': product_order.id_producto,
                 'cantidad_producto': product_order.cantidad_producto
             })
 
     return jsonify(result)
 
-@app.route('/pedido', methods=['DELETE'])
-def delete_orders():
-    try:
-        for pedido in Pedido.query.all():
-            db.session.delete(pedido)
-        for pedidos in ProductoPedido.query.all():
-            db.session.delete(pedidos)
 
-        db.session.commit()
-        return jsonify({'mensaje': 'Pedidos eliminados exitosamente!'})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@app.route('/pedido', methods=['GET'])
+def get_orders():
+    orders = Pedido.get_all_orders()
+    result = []
+
+    for order in orders:
+        result.append({
+            'id_pedido': order.id_pedido,
+            'id_cliente': order.id_cliente,
+            'total_pedido': order.total_pedido,
+            'fecha_pedido': order.fecha_pedido,
+            "estado_pedido": order.estado_pedido
+        })
+
+    return jsonify(result)

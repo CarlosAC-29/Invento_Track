@@ -70,6 +70,7 @@ class Pedido(db.Model):
     id_cliente = db.Column(db.Integer, db.ForeignKey('cliente.id'))
     total_pedido = db.Column(db.Integer)
     fecha_pedido = db.Column(db.DateTime, default=datetime.utcnow)
+    estado_pedido = db.Column(db.String(128), default='PENDIENTE')
 
     cliente = db.relationship('Cliente', backref=db.backref('pedidos', lazy=True))
     producto = db.relationship('ProductoPedido', backref=db.backref('pedido', lazy=True))

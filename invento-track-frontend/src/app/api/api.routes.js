@@ -45,6 +45,21 @@ export const editCliente = async (id, data) => {
     return response.json()
 }
 
+export const getCliente = async (id) => {
+    const response = await fetch(`http://localhost:5000/clientes/${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+
+}
+
 export const registarClientes = async (data) => {
     const response = await fetch('http://localhost:5000/clientes', {
         method: 'POST',
@@ -78,6 +93,21 @@ export const getProductos = async (data) => {
 export const registrarPedido = async (data) => {
     const response = await fetch('http://localhost:5000/pedido', {
         method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    
+    if(!response.ok){
+        return false
+    }
+    return response.json()
+}
+
+export const getPedido = async (data) => {
+    const response = await fetch('http://localhost:5000/pedido', {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -150,6 +180,17 @@ export const eliminarCliente = async (id) => {
     try {
         const response = await fetch(`http://localhost:5000/clientes/${id}`, {
             method: 'DELETE',
+        });
+        return response.json();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export const listaVendedores = async () => {
+    try {
+        const response = await fetch(`http://localhost:5000/vendedores`, {
+            method: 'GET',
         });
         return response.json();
     } catch (error) {
