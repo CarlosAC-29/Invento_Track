@@ -83,7 +83,11 @@ def test_db_connection():
 @app.route('/clientes', methods=['GET'])
 def list_clients():
     try:
-        clientes = Cliente.get_all_clients()
+        id_cliente = request.args.get('id_cliente')
+        if id_cliente:
+            clientes = Cliente.query.filter_by(id=id_cliente).all()
+        else:
+            clientes = Cliente.get_all_clients()
         clientes_json = [{
             'id': cliente.id,
             'nombre': cliente.nombre,
@@ -159,7 +163,11 @@ def eliminar_cliente(id):
 @app.route('/vendedores', methods=['GET'])
 def list_sellers():
     try:
-        vendedores = Vendedor.get_all_sellers()
+        id_vendedor = request.args.get('id_vendedor')
+        if id_vendedor:
+            vendedores = Vendedor.query.filter_by(id=id_vendedor).all()
+        else:
+            vendedores = Vendedor.get_all_sellers()
         vendedores_json = [{
             'id': vendedor.id,
             'nombre': vendedor.nombre,
@@ -234,8 +242,11 @@ def eliminar_vendedor(id):
 def list_product():
     try:
         categoria = request.args.get('categoria')
+        id_producto = request.args.get('id_producto')
         if categoria:
             productos = Producto.get_products_by_category(categoria)
+        elif id_producto:
+            productos = Producto.query.filter_by(id=id_producto).all()
         else:
             productos = Producto.get_all_products()
 
