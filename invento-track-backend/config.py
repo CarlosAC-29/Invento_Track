@@ -8,3 +8,12 @@ class Config:
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'postgresql://inventotrack_user:0KmVK1O3r76xdcLQoaJRXUNStVGJQzw2@dpg-cokluu63e1ms73e6dj60-a.oregon-postgres.render.com/inventotrack'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
+    MAIL_USERNAME = 'inventotrack.mindsoft@gmail.com'
+    MAIL_PASSWORD = 'cejl ynvc ktwv fzcf'
+    MAIL_DEFAULT_SENDER = 'inventotrack.mindsoft@gmail.com'

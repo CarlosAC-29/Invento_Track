@@ -2,6 +2,7 @@ Flask-SQLAlchemy
 Flask-Migrate
 flask-cors
 Flask
+Flask-Mail
 psycopg2
 google-generativeai
 python-dotenv
