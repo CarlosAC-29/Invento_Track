@@ -7,6 +7,7 @@ import { set, useForm } from 'react-hook-form';
 import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
 import Swal from 'sweetalert2';
 import { useAppContext } from "@/app/context";
+import { useRouter } from 'next/navigation';
 
 
 
@@ -17,6 +18,7 @@ export default function RegistroPedido() {
     const [productos, setProductos] = useState([]);
     const [infoObtenida, setInfoObtenida] = useState(false);
     const { user } = useAppContext();
+    const router = useRouter();
     const { register, handleSubmit, setValue } = useForm(
         {
             defaultValues: {
@@ -172,7 +174,7 @@ export default function RegistroPedido() {
     };
 
     const handleClick = () => {
-        // Tu lógica para redirigir al usuario
+        router.push('/pages/home');
     };
 
 

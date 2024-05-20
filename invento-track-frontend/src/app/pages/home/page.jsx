@@ -6,6 +6,7 @@ import HailIcon from '@mui/icons-material/Hail';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import LiquorIcon from '@mui/icons-material/Liquor';
+import SpatialAudioIcon from '@mui/icons-material/SpatialAudio';
 import { Box, Typography, useTheme, useMediaQuery, Stack, Button } from '@mui/material'
 import { useRouter } from 'next/navigation';
 
@@ -33,6 +34,10 @@ export default function page() {
     router.push("/pages/usuarios/registro-pedido");
   }
 
+  const handleRegistroPedidoVoz = () => {
+    router.push("/pages/speech-to-pedido");
+  }
+
   const handleListarPedidos = () => {
     router.push("/pages/listas/pedidos");
   }
@@ -56,6 +61,7 @@ export default function page() {
           <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{marginRight : "1rem"}}/>Registo Cliente</Button>
           <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
           <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{marginRight : "1rem"}}/>Registo Pedido</Button>
+          <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{marginRight : "1rem"}}/>Registo Pedido Voz</Button>
           <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
           <Button variant="contained"><LiquorIcon sx={{marginRight : "1rem"}}/>Registo Producto</Button>
           <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>

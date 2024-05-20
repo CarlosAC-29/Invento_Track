@@ -83,8 +83,8 @@ export const getProductos = async (data) => {
         },
         body: JSON.stringify(data)
     })
-    
-    if(!response.ok){
+
+    if (!response.ok) {
         return false
     }
     return response.json()
@@ -99,8 +99,8 @@ export const registrarPedido = async (data, id) => {
         },
         body: JSON.stringify(data)
     })
-    
-    if(!response.ok){
+
+    if (!response.ok) {
         return false
     }
     return response.json()
@@ -114,14 +114,15 @@ export const getPedido = async (data) => {
         },
         body: JSON.stringify(data)
     })
-    
-    if(!response.ok){
+
+    if (!response.ok) {
         return false
     }
     return response.json()
 }
 
-export const registrarPedidoSpeech = async (data) => {
+export const registrarPedidoSpeech = async (data, id) => {
+    data.id_vendedor = id;
     const response = await fetch('http://localhost:5000/api/gemini', {
         method: 'POST',
         headers: {
@@ -129,8 +130,8 @@ export const registrarPedidoSpeech = async (data) => {
         },
         body: JSON.stringify(data)
     })
-    
-    if(!response.ok){
+
+    if (!response.ok) {
         return false
     }
     return response.json()
