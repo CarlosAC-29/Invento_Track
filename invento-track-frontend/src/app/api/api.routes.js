@@ -90,7 +90,8 @@ export const getProductos = async (data) => {
     return response.json()
 }
 
-export const registrarPedido = async (data) => {
+export const registrarPedido = async (data, id) => {
+    data.id_vendedor = id;
     const response = await fetch('http://localhost:5000/pedido', {
         method: 'POST',
         headers: {
