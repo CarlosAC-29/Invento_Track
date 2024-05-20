@@ -18,7 +18,7 @@ function ListaProductos() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Navbar />
+        <Navbar atras={''}/>
 
         <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '5%' }}>
           <div style={{ color: '#090069', marginBottom: '1%' }}>

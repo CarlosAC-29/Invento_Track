@@ -15,6 +15,7 @@ import SummarizeIcon from '@mui/icons-material/Summarize';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Link from 'next/link';
 
 function ListaPedidos() {
   const [pedido, setPedido] = useState([]);
@@ -164,9 +165,17 @@ function ListaPedidos() {
           <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
             <DeleteIcon sx={{ color: "#090069" }} />
           </IconButton>
-          <IconButton aria-label="view-details" onClick={() => handleViewDetails(params.row.id)}>
-            <SummarizeIcon sx={{ color: "#090069" }} />
-          </IconButton>
+          <Link
+            href={{
+              pathname: '../pedido',
+              query: { id: params.row.id_pedido }
+            }}
+          >
+            <IconButton aria-label="view-details" >
+              <SummarizeIcon sx={{ color: "#090069" }} />
+            </IconButton>
+          </Link>
+
         </div>
       ),
     },
@@ -183,7 +192,7 @@ function ListaPedidos() {
 
   return (
     <>
-      <Navbar />
+      <Navbar atras={''}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de pedidos</h1>

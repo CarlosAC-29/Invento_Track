@@ -1,10 +1,10 @@
 'use client'
 
 import Navbar from '@/app/components/navbar'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
 import './styles.css'
-import { Box, Button, Divider } from '@mui/material'
+import { Badge, Box, Button, Chip, Divider } from '@mui/material'
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import Table from '@mui/material/Table';
@@ -14,14 +14,15 @@ import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import TableHead from '@mui/material/TableHead';
+import Swal from 'sweetalert2';
 import TableRow from '@mui/material/TableRow';
-import postobon from '../../../../public/images/postobon.webp'
-import Image from 'next/image';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import { getPedidoProducto, getCliente, getProducto, getVendedor } from '@/app/api/api.routes';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -31,70 +32,147 @@ const Item = styled(Paper)(({ theme }) => ({
   margin: theme.spacing(2),
 }));
 
-const cliente = [
-  {
-    id: 1,
-    nombre: 'Carlos',
-    apellido: 'Perez',
-    email: 'carlos.perez@gmail.com',
-    telefono: '1234567890',
-    direccion: 'Calle 123',
-  }
-]
 
-const orden = [
-  {
-    id: 1,
-    fecha: '16 de Mayo de 2025',
-    vendedor: 'Sarah Paulson',
-    estado: 'En proceso',
-  }
-]
 
-const productos = [
-  {
-    id: 1,
-    imagen: postobon,
-    nombre: 'Producto 1',
-    referencia: '123456',
-    cantidad: 2,
-    precio: 100,
-  },
-  {
-    id: 2,
-    imagen: postobon,
-    nombre: 'Producto 2',
-    referencia: '123456',
-    cantidad: 3,
-    precio: 100,
-  },
-  {
-    id: 2,
-    imagen: postobon,
-    nombre: 'Producto 2',
-    referencia: '123456',
-    cantidad: 3,
-    precio: 100,
-  },
-  {
-    id: 2,
-    imagen: postobon,
-    nombre: 'Producto 2',
-    referencia: '123456',
-    cantidad: 3,
-    precio: 100,
-  },
-  {
-    id: 2,
-    imagen: postobon,
-    nombre: 'Producto 2',
-    referencia: '123456',
-    cantidad: 3,
-    precio: 100,
-  }
-]
+// const cliente = [
+//   {
+//     id: 1,
+//     nombre: 'Carlos',
+//     apellido: 'Perez',
+//     email: 'carlos.perez@gmail.com',
+//     telefono: '1234567890',
+//     direccion: 'Calle 123',
+//   }
+// ]
 
-function Pedido() {
+// const orden = [
+//   {
+//     id: 1,
+//     fecha: '16 de Mayo de 2025',
+//     vendedor: 'Sarah Paulson',
+//     estado: 'En proceso',
+//   }
+// ]
+
+// const productos = [
+//   {
+//     id: 1,
+//     imagen: postobon,
+//     nombre: 'Producto 1',
+//     referencia: '123456',
+//     cantidad: 2,
+//     precio: 100,
+//   },
+//   {
+//     id: 2,
+//     imagen: postobon,
+//     nombre: 'Producto 2',
+//     referencia: '123456',
+//     cantidad: 3,
+//     precio: 100,
+//   },
+//   {
+//     id: 2,
+//     imagen: postobon,
+//     nombre: 'Producto 2',
+//     referencia: '123456',
+//     cantidad: 3,
+//     precio: 100,
+//   },
+//   {
+//     id: 2,
+//     imagen: postobon,
+//     nombre: 'Producto 2',
+//     referencia: '123456',
+//     cantidad: 3,
+//     precio: 100,
+//   },
+//   {
+//     id: 2,
+//     imagen: postobon,
+//     nombre: 'Producto 2',
+//     referencia: '123456',
+//     cantidad: 3,
+//     precio: 100,
+//   }
+// ]
+
+export default function Pedido({ searchParams }) {
+
+  const [detalles, setDetalles] = useState([]);
+  const [cliente, setCliente] = useState([]);
+  const [vendedor, setVendedor] = useState([]);
+  const [productos, setProductos] = useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  const handleDetallePedido = async () => {
+    Swal.fire({
+      title: 'Esperando respuesta del servidor...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      button: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    const response = await getPedidoProducto(searchParams.id)
+    if (response) {
+      setDetalles(response);
+      const responseCliente = await getCliente(response[0].id_cliente)
+      if (responseCliente) {
+        setCliente(responseCliente);
+      }
+
+      const responseVendedor = await getVendedor(response[0].id_vendedor)
+      if (responseVendedor) {
+        setVendedor(responseVendedor);
+      }
+
+      // let responseProductos = []
+      let responseProductos = []
+      for (let i = 0; i < response.length; i++) {
+        const producto = await getProducto(response[i].id_producto)
+        if (producto) {
+          responseProductos.push(producto);
+        }
+      }
+      if (responseProductos) {
+        Swal.close();
+        setProductos(responseProductos.flat());
+      }
+
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Ocurrió un error al cargar la información, por favor intenta de nuevo.',
+      });
+    }
+  }
+
+  // const handleCliente = async () => {
+  //   const response = await getCliente(detalles[0].id_cliente)
+  //   if (response) {
+  //     setCliente(response);
+  //   }
+  // }
+
+  useEffect(() => {
+    handleDetallePedido();
+    // handleCliente();
+  }, []);
+
   return (
     <>
       <head>
@@ -104,7 +182,7 @@ function Pedido() {
       </head>
       <body>
         <header>
-          <Navbar />
+          <Navbar atras="./listas/pedidos" />
         </header>
         <main>
           <Box className='contenedor'>
@@ -162,28 +240,29 @@ function Pedido() {
                 <Item>
                   <h2>Detalles del pedido</h2>
                   <Divider />
-                  {orden.map(({ id, fecha, vendedor, estado }) => {
+                  {detalles.map(({ id_pedido, fecha_pedido, estado_pedido }) => {
                     return (
-                      <div key={id} className='detalles'>
+                      <div key={id_pedido} className='detalles'>
                         <div>
                           <p className='subtitulo'>Pedido No.</p>
-                          <p>{id}</p>
+                          <p>{id_pedido}</p>
                         </div>
                         <div>
                           <p className='subtitulo'>Fecha</p>
-                          <p>{fecha}</p>
+                          <p>{fecha_pedido}</p>
                         </div>
                         <div>
                           <p className='subtitulo'>Vendedor</p>
-                          <p>{vendedor}</p>
+                          <p>{vendedor.map(({ nombre }) => nombre)} {vendedor.map(({ apellido }) => apellido)}</p>
                         </div>
                         <div>
                           <p className='subtitulo'>Estado</p>
-                          <p><b>{estado}</b></p>
+                          {/* <Chip className='chip' icon={<AccessTimeIcon/>} label={estado_pedido} variant="outlined"/> */}
+                          <p><b>{estado_pedido}</b></p>
                         </div>
                       </div>
                     )
-                  })}
+                  })[0]}
                 </Item>
               </Grid>
               <Grid xs={12}>
@@ -209,13 +288,13 @@ function Pedido() {
                         </TableRow>
                       </TableHead>
                       <TableBody>
-                        {productos.map(({ id, imagen, nombre, referencia, cantidad, precio }) => {
+                        {productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(({ id, imagen, nombre, referencia, precio }) => {
+                          const cantidad = detalles.find(({ id_producto }) => id_producto === id).cantidad_producto;
                           return (
                             <TableRow key={id} hover>
                               <TableCell>
                                 <div className='producto'>
-                                  {/* <img src={imagen} alt='imagen' /> */}
-                                  <Image style={{ backgroundColor: '#f6f6f6', borderRadius: '5px' }} src={imagen} alt='imagen' width={80} height={80} />
+                                  <img src={imagen} alt='imagen' style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px', backgroundColor: '#f6f6f6', float: 'left' }} />
                                   <div style={{ display: 'block', width: '100%' }}>
                                     <p>{nombre}</p>
                                     <p style={{ color: 'gray' }}>SKU: {referencia}</p>
@@ -236,12 +315,23 @@ function Pedido() {
                         })}
                       </TableBody>
                     </Table>
+                    <TablePagination
+                      rowsPerPageOptions={[5, 10, 25]}
+                      component="div"
+                      count={productos.length}
+                      rowsPerPage={rowsPerPage}
+                      page={page}
+                      onPageChange={handleChangePage}
+                      onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
                   </TableContainer>
                   <Grid container sx={{ padding: '1.5%' }}>
                     <Grid xs={12}>
                       <div>
                         <p className='total'>Total del pedido</p>
-                        <p style={{fontSize:'1.4em'}}>${productos.reduce((acc, { cantidad, precio }) => acc + (cantidad * precio), 0).toLocaleString('es-CO', { minimumFractionDigits: 2 })} </p>
+                        <p style={{ fontSize: '1.4em' }}>
+                          ${detalles.map(({ total_pedido }) => total_pedido.toLocaleString('es-CO', { minimumFractionDigits: 2 }))[0]}
+                        </p>
                       </div>
                     </Grid>
                   </Grid>
@@ -252,7 +342,5 @@ function Pedido() {
         </main>
       </body>
     </>
-  )
+  );
 }
-
-export default Pedido
