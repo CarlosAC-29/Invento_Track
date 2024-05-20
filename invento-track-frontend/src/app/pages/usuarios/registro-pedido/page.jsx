@@ -6,6 +6,8 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { set, useForm } from 'react-hook-form';
 import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
 import Swal from 'sweetalert2';
+import { useAppContext } from "@/app/context";
+
 
 
 export default function RegistroPedido() {
@@ -14,13 +16,14 @@ export default function RegistroPedido() {
     const [clientes, setClientes] = useState("");
     const [productos, setProductos] = useState([]);
     const [infoObtenida, setInfoObtenida] = useState(false);
-
+    const { user } = useAppContext();
     const { register, handleSubmit, setValue } = useForm(
         {
             defaultValues: {
                 id_cliente: '',
                 productos: productosAgregados,
                 total_pedido: '',
+                id_vendedor: user.id
             }
         }
     )
@@ -93,7 +96,7 @@ export default function RegistroPedido() {
                 Swal.showLoading();
             }
         });
-        const enviarPedido = await registrarPedido(data);
+        const enviarPedido = await registrarPedido(data, user.id);
 
         if (enviarPedido) {
             console.log(enviarPedido);
