@@ -60,7 +60,7 @@ function ListaClientes() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-      <Navbar />
+        <Navbar atras={''}/>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de clientes</h1>
         </div>

@@ -15,6 +15,7 @@ import SummarizeIcon from '@mui/icons-material/Summarize';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import Link from 'next/link';
 
 function ListaPedidos() {
   const [pedido, setPedido] = useState([]);
@@ -57,6 +58,10 @@ function ListaPedidos() {
 
   const handleClick = () => {
     router.push('../usuarios/registro-pedido');
+  };
+
+  const handleViewDetails = (id) => {
+    router.push(`../pedido/${id}`);
   };
 
   const handleInputChange = (event) => {
@@ -112,11 +117,19 @@ function ListaPedidos() {
       renderCell: (params) => (
         <div>
           <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
-            <DeleteIcon sx={{color : "#090069"}} />
+            <DeleteIcon sx={{ color: "#090069" }} />
           </IconButton>
-          <IconButton aria-label="view-details" onClick={() => handleViewDetails(params.row.id)}>
-            <SummarizeIcon sx={{color : "#090069"}}/>
-          </IconButton>
+          <Link
+            href={{
+              pathname: '../pedido',
+              query: { id: params.row.id_pedido }
+            }}
+          >
+            <IconButton aria-label="view-details" >
+              <SummarizeIcon sx={{ color: "#090069" }} />
+            </IconButton>
+          </Link>
+
         </div>
       ),
     },
@@ -133,7 +146,7 @@ function ListaPedidos() {
 
   return (
     <>
-      <Navbar />
+      <Navbar atras={''}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de pedidos</h1>
@@ -152,15 +165,15 @@ function ListaPedidos() {
                 padding: "1rem",
                 borderRadius: "1rem",
               }}>
-              <Button sx={{background: "#090069"}} onClick={handleClick} id="botonAgregarCliente" className="botones" variant="contained">
+              <Button sx={{ background: "#090069" }} onClick={handleClick} id="botonAgregarCliente" className="botones" variant="contained">
                 <AddCircleIcon />
-                <p style={{marginLeft: "1rem"}}>Agregar pedido</p>
-                </Button>
+                <p style={{ marginLeft: "1rem" }}>Agregar pedido</p>
+              </Button>
               <FormControl sx={{ width: '25ch', marginTop: "1rem" }} variant="outlined">
                 <InputLabel htmlFor="outlined-adornment-password" >Buscar ID</InputLabel>
                 <OutlinedInput
                   id="outlined-adornment-password"
-                  
+
                   type={'text'}
                   value={buscar}
                   onChange={handleInputChange}
@@ -193,14 +206,14 @@ function ListaPedidos() {
                 </Stack>
               </LocalizationProvider>
               <Button onClick={handleFiltrar} variant="contained" style={{ background: "#090069" }}> <FilterAltIcon />Filtrar</Button>
-              <Button onClick={handleVerTodos} variant="contained" style={{background: "#090069"}}><RefreshIcon /></Button>
+              <Button onClick={handleVerTodos} variant="contained" style={{ background: "#090069" }}><RefreshIcon /></Button>
             </Stack>
           </Stack>
 
-          <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto'}}>
+          <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto' }}>
             <DataGrid
               headerStyle={{ backgroundColor: 'lightblue', color: 'red' }}
-              sx={{backgroundColor: '#fff'}}
+              sx={{ backgroundColor: '#fff' }}
               disableRowSelectionOnClick
               rows={rows}
               columns={columns}

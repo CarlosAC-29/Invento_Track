@@ -51,13 +51,18 @@
 .detalles div {
     display: flex;
     margin: 1%;
-    padding-bottom: 4%;
+    
 }
 
 .detalles p {
     position:absolute;
     padding-left: 12%;
     font-size: 1.2em;
+    margin-bottom: 4%;
+}
+
+.detalles .chip {
+    margin-left: 20%;
 }
 
 .detalles .subtitulo {
