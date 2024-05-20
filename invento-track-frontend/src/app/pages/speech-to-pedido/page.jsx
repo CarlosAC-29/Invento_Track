@@ -8,6 +8,8 @@ import { registrarPedidoSpeech } from '@/app/api/api.routes';
 import Swal from 'sweetalert2';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import styles from './styles.module.css';
+import { useAppContext } from "@/app/context";
+
 
 
 
@@ -20,6 +22,8 @@ export default function SpeechToText() {
     const [clientes, setClientes] = useState("");
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null); // Estado para almacenar el cliente seleccionado
     const [infoObtenida, setInfoObtenida] = useState(false);
+    const { user } = useAppContext();
+
 
 
     const { register, handleSubmit, setValue } = useForm(
@@ -27,6 +31,8 @@ export default function SpeechToText() {
             defaultValues: {
                 id_cliente: '',
                 text: '',
+                id_vendedor:''
+
             }
         }
     )
@@ -126,7 +132,7 @@ export default function SpeechToText() {
                 Swal.showLoading();
             }
         });
-        const pedido = await registrarPedidoSpeech(data);
+        const pedido = await registrarPedidoSpeech(data, user.id);
 
         if (pedido) {
             Swal.close();

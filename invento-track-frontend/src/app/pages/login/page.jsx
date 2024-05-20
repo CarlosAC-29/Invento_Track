@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { useRouter } from 'next/navigation';
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -16,6 +17,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import CardContent from "@mui/material/CardContent";
 import InventoryIcon from "@mui/icons-material/Inventory";
+import { useAppContext } from "@/app/context";
 
 import axios from 'axios'
 import { initializeApp } from 'firebase/app';
@@ -35,9 +37,12 @@ const app = initializeApp(firebaseConfig);
 // TODO remove, this demo shouldn't need to reset the theme.
 
 export default function Login() {
+  const { setUser } = useAppContext();
   const [showPassword, setShowPassword] = useState(false);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+
+  const router = useRouter();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -64,6 +69,8 @@ export default function Login() {
         })
           .then(response => {
             console.log('Respuesta del backend:', response.data);
+            setUser(response.data); // Guarda la respuesta en el contexto de la aplicación
+            router.push('/pages/home'); // Redirige a la página de inicio
             // Puedes hacer algo con la respuesta del backend si es necesario
           })
           .catch(error => {

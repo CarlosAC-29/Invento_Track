@@ -33,10 +33,10 @@ def gemini():
         lista_productos_texto = json.dumps(lista_productos)
 
         prompt = 'Necesito crear un json con esta estructura a partir del siguiente enunciado :' + data['text'] + '. Tengo una base de datos con los siguientes productos :'
-        json_result = '. El json resultante debe tener la siguiente estructura : {"id_cliente": numero,"total_pedido": numero,"productos": [{"id_producto": numero,"cantidad_producto": numero},{"id_producto": numero,"cantidad_producto": numero}]}.'
-        final = 'El campo id_cliente sera' + str(data['id_cliente']) + 'Dame solo el json resultante, sin texto adicional.'
+        json_result = '. El json resultante debe tener la siguiente estructura : {"id_cliente": numero, "id_vendedor": numero, "total_pedido": numero,"productos": [{"id_producto": numero,"cantidad_producto": numero},{"id_producto": numero,"cantidad_producto": numero}]}.'
+        final = 'El campo id_cliente sera' + str(data['id_cliente']) + 'y el campo id_vendedor sera' + str(data['id_vendedor']) + '. Dame solo el json resultante, sin texto adicional.'
         total = '. El campo total_pedido debe ser calculado multiplicando el precio de cada producto por su cantidad respectiva. Luego, suma todas estas multiplicaciones para obtener el total del pedido. Por ejemplo, si el pedido contiene 2 productos del id_producto 1 (cuyo precio es 10) y 3 productos del id_producto 2 (cuyo precio es 20), el total_pedido sería (2*10) + (3*20) = 80.'
-        aclaracion = 'si el enunciado no se entiende, devolver en json un mensaje de error con el texto "No se pudo generar el pedido"'
+        aclaracion = '. Si el enunciado no se entiende, devolver en json un mensaje de error con el texto "No se pudo generar el pedido"'
 
         response = model.generate_content(prompt + lista_productos_texto + json_result + final + total + aclaracion)
 
@@ -44,7 +44,7 @@ def gemini():
 
         agregar_producto_gemini(response.text)
         
-        return jsonify({'response': response.text})
+        return jsonify({'response': "Pedido agregado correctamente por voz"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -123,6 +123,24 @@ def agregar_cliente():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/clientes/<int:id>', methods=['GET'])
+def obtener_cliente(id):
+    try:
+        cliente = Cliente.query.get(id)
+        if cliente:
+            cliente_json = {
+                'id': cliente.id,
+                'nombre': cliente.nombre,
+                'apellido': cliente.apellido,
+                'email': cliente.email,
+                'direccion': cliente.direccion,
+                'telefono': cliente.telefono
+            }
+            return jsonify(cliente_json)
+        else:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/clientes/<int:id>', methods=['PUT'])
 def editar_cliente(id):
@@ -199,6 +217,25 @@ def agregar_vendedor():
         return jsonify({
             'mensaje': 'Vendedor agregado exitosamente!'
         }), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/vendedores/<int:id>', methods=['GET'])
+def obtener_vendedor(id):
+    try:
+        vendedor = Vendedor.query.get(id)
+        if vendedor:
+            vendedor_json = {
+                'id': vendedor.id,
+                'nombre': vendedor.nombre,
+                'apellido': vendedor.apellido,
+                'email': vendedor.email,
+                'estado': vendedor.estado,
+                'password': vendedor.password
+            }
+            return jsonify(vendedor_json)
+        else:
+            return jsonify({'error': 'Vendedor no encontrado'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -359,10 +396,12 @@ def agregar_pedido():
         data = request.json
 
         id_cliente = data['id_cliente']
+        id_vendedor = data['id_vendedor']
         total_pedido = data['total_pedido']
 
         nuevo_pedido = Pedido(
             id_cliente=id_cliente,
+            id_vendedor=id_vendedor,
             total_pedido=total_pedido
         )
         db.session.add(nuevo_pedido)
@@ -402,10 +441,13 @@ def agregar_producto_gemini(data_string):
     try:
         data = json.loads(data_string)
         id_cliente = data['id_cliente']
+        id_vendedor = data['id_vendedor']
         total_pedido = data['total_pedido']
+        print(id_vendedor)
 
         nuevo_pedido = Pedido(
             id_cliente=id_cliente,
+            id_vendedor=id_vendedor,
             total_pedido=total_pedido
         )
         db.session.add(nuevo_pedido)
@@ -454,6 +496,7 @@ def get_orders_products():
                 result.append({
                     'id_pedido': order.id_pedido,
                     'id_cliente': order.id_cliente,
+                    'id_vendedor': order.id_vendedor,
                     'total_pedido': order.total_pedido,
                     'fecha_pedido': order.fecha_pedido,
                     "estado_pedido": order.estado_pedido,
@@ -476,6 +519,7 @@ def get_orders():
             result.append({
                 'id_pedido': order.id_pedido,
                 'id_cliente': order.id_cliente,
+                'id_vendedor': order.id_vendedor,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
                 "estado_pedido": order.estado_pedido
