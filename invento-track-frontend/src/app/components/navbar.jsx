@@ -1,8 +1,9 @@
-import { Box, Typography, useTheme, useMediaQuery } from '@mui/material'
+import { Box, Typography, useTheme, useMediaQuery, IconButton } from '@mui/material'
 import React from 'react'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import { useRouter } from 'next/navigation';
 import './styles.css'
 
 function Navbar() {
@@ -10,10 +11,16 @@ function Navbar() {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+    const router = useRouter();
+
+    const handleAtras = () => {
+        router.push("/pages/home/");
+    }
+
     return (
         
         <Box id="toolbar">
-            <ArrowBackIosIcon id='backIcon' />
+            <IconButton onClick={handleAtras}><ArrowBackIosIcon id='backIcon' /></IconButton>
             <Typography
                 component="tittle"
                 variant="h5"

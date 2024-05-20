@@ -20,7 +20,7 @@ function ListaProductos() {
       <body>
         <Navbar />
 
-        <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '2%' }}>
+        <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '5%' }}>
           <div style={{ color: '#090069', marginBottom: '1%' }}>
             <h1>Lista de productos</h1>
           </div>
