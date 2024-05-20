@@ -325,6 +325,7 @@ export default function Pedido({ searchParams }) {
                       onRowsPerPageChange={handleChangeRowsPerPage}
                     />
                   </TableContainer>
+                  <Divider />
                   <Grid container sx={{ padding: '1.5%' }}>
                     <Grid xs={12}>
                       <div>

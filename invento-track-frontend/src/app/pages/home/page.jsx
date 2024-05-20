@@ -53,7 +53,7 @@ export default function page() {
   console.log("user info", user);
   return (
     <div>
-      <Navbar />
+      <Navbar atras={''}/>
       <Stack sx={{padding: "5%", width: "100%"}} justifyContent={"center"} alignItems={"center"}>
         <Stack spacing={2} direction={"column"} >
           <Button variant="contained" onClick={handleRegistroVendedor}><HailIcon sx={{marginRight : "1rem"}}/>Registo Vendedor</Button>
