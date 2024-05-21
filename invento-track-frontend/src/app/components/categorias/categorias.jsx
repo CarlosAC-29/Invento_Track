@@ -64,13 +64,13 @@ function Categorias({ selectedCategory, setSelectedCategory }) {
             Frutas
           </p>
           <p
-            id='verdura'
-            onClick={() => handleCategoryClick('Verdura')}
+            id='verduras'
+            onClick={() => handleCategoryClick('Verduras')}
             style={{
-              color: selectedCategory === 'Verdura' ? '#7BAFFB' : '',
+              color: selectedCategory === 'Verduras' ? '#7BAFFB' : '',
               cursor: 'pointer',
               transition: '0.4s',
-              fontWeight: selectedCategory === 'Verdura' ? 'bold' : ''
+              fontWeight: selectedCategory === 'Verduras' ? 'bold' : ''
             }}
           >
             Verduras

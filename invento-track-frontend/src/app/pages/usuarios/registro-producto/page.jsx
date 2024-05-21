@@ -15,14 +15,18 @@ import {
     FormControl,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { registrarProducto } from '@/app/api/api.routes';
+import Link from 'next/link';
 
-//https://v0.dev/r/67JR5Lqj6eb https://v0.dev/r/LSA2DRtklDL
 
 export default function RegistrarProducto() {
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
 
     const [data, setData] = useState('');
     const [errors, setErrors] = useState({});
+    const [imageURL, setImageURL] = useState('');
+    const [uploadError, setUploadError] = useState(false);
 
     const saveData = async (data) => {
         Swal.fire({
@@ -36,20 +40,21 @@ export default function RegistrarProducto() {
             },
         });
 
-        // Aquí harías la llamada a tu API
-        const response = await new Promise((resolve) =>
-            setTimeout(() => resolve({ success: true }), 2000)
-        ); // Simulación de la llamada API
+
+        const response = await registrarProducto(data)
+        console.log("XD",response)
 
         Swal.close();
 
-        if (response.success) {
+        if (response) {
+            console.log("what")
             Swal.fire({
                 title: 'Producto registrado con éxito',
                 icon: 'success',
                 confirmButtonText: 'Ok',
             });
         } else {
+            console.log("entré?")
             Swal.fire({
                 title: 'Error al registrar el producto',
                 icon: 'error',
@@ -93,6 +98,14 @@ export default function RegistrarProducto() {
         if (!data.referencia) {
             newErrors.referencia = 'Campo requerido';
             isValid = false;
+
+        }
+
+        if (!imageURL) {
+            newErrors.imagen = 'Imagen requerida';
+            isValid = false;
+        } else {
+            data.imagen = imageURL;
         }
 
         setErrors(newErrors);
@@ -101,6 +114,44 @@ export default function RegistrarProducto() {
             saveData(data);
         }
     };
+
+    const handleImageUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'ankiqjsc');
+
+        try {
+            const response = await fetch(
+                `https://api.cloudinary.com/v1_1/dm6kc0kyr/image/upload`,
+                {
+                    method: 'POST',
+                    body: formData,
+                }
+            );
+            
+            const imageUrl = await response.json();
+            setImageURL(imageUrl.secure_url);
+            setValue('image', imageUrl);
+            setUploadError(false);
+            Swal.fire({
+                title: 'Imagen subida con éxito',
+                icon: 'success',
+                confirmButtonText: 'Ok',
+            });
+        } catch (error) {
+            console.error('Error subiendo la imagen:', error);
+            setUploadError(true);
+            Swal.fire({
+                title: 'Error al subir la imagen. Intentelo de nuevo',
+                icon: 'error',
+                confirmButtonText: 'Ok',
+            });
+        }
+    };
+
 
     return (
         <div className={styles.main_container}>
@@ -114,6 +165,14 @@ export default function RegistrarProducto() {
                     height: '100vh',
                 }}
             >
+                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                    <Link href='../listas/productos'>
+                        <Box sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
+                            <ArrowBackIosIcon id='backIcon' />
+                            <Typography variant='h6' > Atrás </Typography>
+                        </Box>
+                    </Link>
+                </Box>
                 <Box
                     sx={{
                         bgcolor: 'white',
@@ -126,8 +185,15 @@ export default function RegistrarProducto() {
                 >
                     <form onSubmit={handleSubmit(processForm)}>
                         <Stack direction="column" spacing={2}>
-                            <Typography variant="h4">Registrar Producto</Typography>
-                            <Typography variant="subtitle1">Ingresa los detalles del nuevo producto</Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
+                                <Typography sx={{
+                                        color: '#090069',
+                                        fontSize: '1.8rem',
+                                        fontWeight: 'bold',
+                                    }}>
+                                    Registrar Producto
+                                </Typography>
+                            </Box>
                             <Stack direction="row" spacing={2}>
                                 <TextField
                                     label="Nombre"
@@ -164,10 +230,11 @@ export default function RegistrarProducto() {
                                         defaultValue=""
                                         {...register('categoria')}
                                     >
-                                        <MenuItem value="electronics">Electrónica</MenuItem>
-                                        <MenuItem value="clothing">Ropa</MenuItem>
-                                        <MenuItem value="home">Hogar</MenuItem>
-                                        <MenuItem value="sports">Deportes</MenuItem>
+                                        <MenuItem value="Lacteos">Lacteos</MenuItem>
+                                        <MenuItem value="Carnes">Carnes</MenuItem>
+                                        <MenuItem value="Frutas">Frutas</MenuItem>
+                                        <MenuItem value="Verduras">Verduras</MenuItem>
+                                        <MenuItem value="Utiles">Utiles</MenuItem>
                                     </Select>
                                     {errors.categoria && (
                                         <Typography variant="caption" color="error">
@@ -222,16 +289,27 @@ export default function RegistrarProducto() {
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    <CloudUploadIcon style={{ fontSize: '48px', color: '#bdbdbd' }} />
-                                    <Typography variant="body1" color="textSecondary">
-                                        <span style={{ fontWeight: 'bold' }}>Click para subir</span> o arrastra y suelta
-                                    </Typography>
-                                    <Typography variant="caption" color="textSecondary">
-                                        SVG, PNG, JPG o GIF (MAX. 800x400px)
-                                    </Typography>
-                                    <input id="image" type="file" style={{ display: 'none' }} />
+                                    {imageURL ? (
+                                        <img src={imageURL} alt="Uploaded" style={{ maxHeight: '100%', maxWidth: '100%' }} />
+                                    ) : (
+                                        <>
+                                            <CloudUploadIcon style={{ fontSize: '48px', color: '#bdbdbd' }} />
+                                            <Typography variant="body1" color="textSecondary">
+                                                <span style={{ fontWeight: 'bold' }}>Click para subir</span> o arrastra y suelta
+                                            </Typography>
+                                            <Typography variant="caption" color="textSecondary">
+                                                SVG, PNG, JPG o GIF (MAX. 800x400px)
+                                            </Typography>
+                                        </>
+                                    )}
+                                    <input id="image" type="file" style={{ display: 'none' }} onChange={handleImageUpload} />                               
                                 </label>
                             </Box>
+                            {errors.imagen && (
+                                <Typography variant="caption" color="error">
+                                    {errors.imagen}
+                                </Typography>
+                            )}
                             <Button
                                 type="submit"
                                 variant="contained"

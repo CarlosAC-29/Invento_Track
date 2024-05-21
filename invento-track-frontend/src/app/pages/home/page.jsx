@@ -63,7 +63,7 @@ export default function page() {
           <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{marginRight : "1rem"}}/>Registo Pedido</Button>
           <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{marginRight : "1rem"}}/>Registo Pedido Voz</Button>
           <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
-          <Button variant="contained"><LiquorIcon sx={{marginRight : "1rem"}}/>Registo Producto</Button>
+          <Button variant="contained" onClick={handleRegistroProducto}><LiquorIcon sx={{marginRight : "1rem"}}/>Registo Producto</Button>
           <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
         </Stack>
       </Stack>
