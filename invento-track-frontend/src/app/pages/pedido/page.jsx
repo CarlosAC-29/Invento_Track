@@ -168,7 +168,7 @@ export default function Pedido({ searchParams }) {
   // }
   const router = useRouter()
   const handleEdit = () => {
-    router.push('/pages/pedido/editar?id=1')
+    router.push('/pages/pedido/editar?id=' + searchParams.id)
   }
 
   useEffect(() => {

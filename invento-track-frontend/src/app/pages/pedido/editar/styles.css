@@ -1,7 +1,7 @@
 .edit-accordion {
-  margin: 2em;
+  margin: 0 2em;
   column-gap: 1.3%;
-  display: flex
+  display: flex;
 }
 
 .edit-buttons {
@@ -12,6 +12,7 @@
 }
 .accordion-class{
     width: 100%;
+    margin: 6em 2em 2em;
 }
 
 
