@@ -528,3 +528,38 @@ def get_orders():
         return jsonify(result)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/pedido/<int:id>', methods=['PUT'])
+def editar_pedido(id):
+    try:
+        data = request.json
+
+        pedido = Pedido.query.get(id)
+        if not pedido:
+            return jsonify({'mensaje': 'Pedido no encontrado'}), 404
+
+        if 'id_cliente' in data:
+            pedido.id_cliente = data['id_cliente']
+        if 'id_vendedor' in data:
+            pedido.id_vendedor = data['id_vendedor']
+        if 'total_pedido' in data:
+            pedido.total_pedido = data['total_pedido']
+
+        db.session.commit()
+
+        return jsonify({'mensaje': 'Pedido actualizado exitosamente!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/pedido/<int:id>', methods=['DELETE'])
+def eliminar_pedido(id):
+    try:
+        pedido = Pedido.query.get(id)
+        if pedido:
+            db.session.delete(pedido)
+            db.session.commit()
+            return jsonify({'mensaje': 'Pedido eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Pedido no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
