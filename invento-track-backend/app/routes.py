@@ -544,6 +544,8 @@ def editar_pedido(id):
             pedido.id_vendedor = data['id_vendedor']
         if 'total_pedido' in data:
             pedido.total_pedido = data['total_pedido']
+        if 'estado_pedido' in data:
+            pedido.estado_pedido = data['estado_pedido']
 
         db.session.commit()
 
