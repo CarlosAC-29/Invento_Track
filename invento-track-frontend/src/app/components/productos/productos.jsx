@@ -176,11 +176,10 @@ function Productos({ selectedCategory }) {
         {filteredProducts.map(({ id, imagen, nombre, precio, stock }) => {
           return (
             <div key={id} className="producto">
-              <div className='tarjeta'>
+              <div className='tarjeta' >
                 <div className='section1' onClick={() => handleClick(id)}>
-                <div className='imagen'>
-                  {/* <Image src={imagen} alt='imagen' className='imagen'/> */}
-                  <img src={imagen} alt='imagen' className='imagen' />
+                <div style={{width: '100px', height: '100px', objectFit: 'cover', margin: '0 auto' }}>
+                  <img src={imagen} alt='imagen' style={{ width: '100%', height: '100%'}}/>
                 </div>
                 
                 <div className='descripcion'>
