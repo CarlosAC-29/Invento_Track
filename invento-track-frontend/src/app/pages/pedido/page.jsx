@@ -1,5 +1,4 @@
 'use client'
-
 import Navbar from '@/app/components/navbar'
 import React, { useEffect, useState } from 'react'
 import { styled } from '@mui/material/styles';
@@ -24,6 +23,7 @@ import { getPedidoProducto, getCliente, getProducto, getVendedor } from '@/app/a
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 
+import { useRouter } from 'next/navigation'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -31,7 +31,6 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   margin: theme.spacing(2),
 }));
-
 
 
 // const cliente = [
@@ -167,6 +166,10 @@ export default function Pedido({ searchParams }) {
   //     setCliente(response);
   //   }
   // }
+  const router = useRouter()
+  const handleEdit = () => {
+    router.push('/pages/pedido/editar?id=1')
+  }
 
   useEffect(() => {
     handleDetallePedido();
@@ -198,7 +201,7 @@ export default function Pedido({ searchParams }) {
                       <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />}>Imprimir</Button>
                     </Grid>
                     <Grid>
-                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />}>Editar pedido</Button>
+                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />} onClick={handleEdit}>Editar pedido</Button>
                     </Grid>
                     <Grid>
                       <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />}>Cancelar orden</Button>
