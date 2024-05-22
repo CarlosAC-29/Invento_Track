@@ -19,9 +19,21 @@ import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { getPedidoProducto, getCliente, getProducto, getVendedor } from '@/app/api/api.routes';
+import { getPedidoProducto, getCliente, getProducto, getVendedor, deletePedido} from '@/app/api/api.routes';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+//Dialog imports
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
+//Transition:
+import Slide from '@mui/material/Slide';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 import { useRouter } from 'next/navigation'
 
@@ -105,6 +117,49 @@ export default function Pedido({ searchParams }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  //Dialog 
+  const [open, setOpen] = React.useState(false);
+  //Funciones del Dialog cancelar orden.
+  const handleCancelarOrden = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleAceptarCancelar = () => {
+    setOpen(false);
+    deletePedidoUtil()
+  }
+
+  const deletePedidoUtil = async () => {
+    Swal.fire({
+      title: 'El pedido se está eliminando, espere un momento...',
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      button: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+    const response = await deletePedido(searchParams.id)
+    
+    //En caso de que se borre exitosamente, volvemos a la lista
+    if (response) {
+      Swal.close();
+      router.push('/pages/listas/pedidos')
+    }
+    else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'El pedido no se ha podido eliminar, por favor inténtalo nuevamente',
+      });
+    }
+  }
+
+  /////
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -171,6 +226,7 @@ export default function Pedido({ searchParams }) {
     router.push('/pages/pedido/editar?id=' + searchParams.id)
   }
 
+
   useEffect(() => {
     handleDetallePedido();
     // handleCliente();
@@ -204,7 +260,7 @@ export default function Pedido({ searchParams }) {
                       <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />} onClick={handleEdit}>Editar pedido</Button>
                     </Grid>
                     <Grid>
-                      <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />}>Cancelar orden</Button>
+                      <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />} onClick={handleCancelarOrden}>Cancelar orden</Button>
                     </Grid>
                   </Grid>
                 </Grid>
@@ -343,6 +399,24 @@ export default function Pedido({ searchParams }) {
               </Grid>
             </Grid>
           </Box>
+          <Dialog
+            open={open}
+            TransitionComponent={Transition}
+            keepMounted
+            onClose={handleClose}
+            aria-describedby="alert-dialog-slide-description"
+          >
+            <DialogTitle sx={{color: "#090069", fontWeight: 'bold'}}>{"¿Estás seguro que deseas borrar el pedido?"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-slide-description" sx={{color: "black"}}>
+                Ten en cuenta que si borras el pedido ya no podrás recuperarlo. Deberás crear nuevamente la orden de pedido y te arriesgarás a perder la información !
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button sx={{ color: '#090069' }} onClick={handleAceptarCancelar}>Aceptar</Button>
+              <Button sx={{ color: '#090069' }} onClick={handleClose}>Cancelar</Button>
+            </DialogActions>
+          </Dialog>
         </main>
       </body>
     </>

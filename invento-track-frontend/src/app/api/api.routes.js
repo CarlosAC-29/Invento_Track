@@ -151,6 +151,21 @@ export const getPedido = async (data) => {
     return response.json()
 }
 
+export const deletePedido = async(id, data) =>{
+    const response = await fetch(`http://localhost:5000/pedido/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
 export const registrarPedidoSpeech = async (data, id) => {
     data.id_vendedor = id;
     const response = await fetch('http://localhost:5000/api/gemini', {

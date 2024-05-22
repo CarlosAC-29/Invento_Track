@@ -110,7 +110,6 @@ export default function AccordionUsage() {
     const getData = async () => {
         const response = await getPedidoProducto(idPedido)
         if (response) {
-            console.log("Los detalles son", response[0])
             setDetalles(response[0]);
             const responseCliente = await getCliente(response[0].id_cliente)
             if (responseCliente) {
@@ -152,7 +151,7 @@ export default function AccordionUsage() {
 
     //Manejadores de estados.
     const handleCancel = () => {
-        router.push("/pages/pedido")
+        router.push("/pages/pedido?id=" + idPedido)
     }
     const handleQuantityChange = (event, value, id) => {
         setProductos(prevProductos =>
