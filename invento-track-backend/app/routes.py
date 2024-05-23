@@ -555,10 +555,10 @@ def get_orders():
 def editar_pedido(id):
     try:
         data = request.json
-
         pedido = Pedido.query.get(id)
+
         if not pedido:
-            return jsonify({'mensaje': 'Pedido no encontrado'}), 404
+            return jsonify({'mensaje': 'El pedido que intenta actualizar no existe o el ID está vacío'}), 404
 
         if 'id_cliente' in data:
             pedido.id_cliente = data['id_cliente']
@@ -568,9 +568,18 @@ def editar_pedido(id):
             pedido.total_pedido = data['total_pedido']
         if 'estado_pedido' in data:
             pedido.estado_pedido = data['estado_pedido']
+        # Para no comparar, lo que hacemos es eliminar todos los productos anteriores y agregamos los nuevos.
+        ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).delete()
+        # Se relacionan los productos nuevos con el pedido.
+        for producto in data['productos']:
+            nuevo_producto = ProductoPedido(
+                id_pedido=pedido.id_pedido,
+                id_producto=producto['id_producto'],
+                cantidad_producto=producto['cantidad_producto']
+            )
+            db.session.add(nuevo_producto)
 
         db.session.commit()
-
         return jsonify({'mensaje': 'Pedido actualizado exitosamente!'})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
