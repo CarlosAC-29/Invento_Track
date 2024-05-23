@@ -19,7 +19,7 @@ import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import { getPedidoProducto, getCliente, getProducto, getVendedor, deletePedido} from '@/app/api/api.routes';
+import { getPedidoProducto, getCliente, getProducto, getVendedor, deletePedido } from '@/app/api/api.routes';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 //Dialog imports
@@ -144,7 +144,7 @@ export default function Pedido({ searchParams }) {
       }
     });
     const response = await deletePedido(searchParams.id)
-    
+
     //En caso de que se borre exitosamente, volvemos a la lista
     if (response) {
       Swal.close();
@@ -183,9 +183,12 @@ export default function Pedido({ searchParams }) {
     const response = await getPedidoProducto(searchParams.id)
     if (response) {
       setDetalles(response);
+      localStorage.setItem("detalles", JSON.stringify(response))
+
       const responseCliente = await getCliente(response[0].id_cliente)
       if (responseCliente) {
         setCliente(responseCliente);
+        localStorage.setItem("cliente", JSON.stringify(responseCliente))
       }
 
       const responseVendedor = await getVendedor(response[0].id_vendedor)
@@ -204,6 +207,7 @@ export default function Pedido({ searchParams }) {
       if (responseProductos) {
         Swal.close();
         setProductos(responseProductos.flat());
+        localStorage.setItem("productos", JSON.stringify(responseProductos.flat()))
       }
 
     } else {
@@ -406,9 +410,9 @@ export default function Pedido({ searchParams }) {
             onClose={handleClose}
             aria-describedby="alert-dialog-slide-description"
           >
-            <DialogTitle sx={{color: "#090069", fontWeight: 'bold'}}>{"¿Estás seguro que deseas borrar el pedido?"}</DialogTitle>
+            <DialogTitle sx={{ color: "#090069", fontWeight: 'bold' }}>{"¿Estás seguro que deseas borrar el pedido?"}</DialogTitle>
             <DialogContent>
-              <DialogContentText id="alert-dialog-slide-description" sx={{color: "black"}}>
+              <DialogContentText id="alert-dialog-slide-description" sx={{ color: "black" }}>
                 Ten en cuenta que si borras el pedido ya no podrás recuperarlo. Deberás crear nuevamente la orden de pedido y te arriesgarás a perder la información !
               </DialogContentText>
             </DialogContent>

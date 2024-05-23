@@ -31,69 +31,6 @@ import { useSearchParams, useRouter } from 'next/navigation'
 import postobon from '../../../../../public/images/postobon.webp'
 import './styles.css'
 import Navbar from '@/app/components/navbar';
-const cliente =
-{
-    id: 1,
-    nombre: 'Carlos',
-    apellido: 'Perez',
-    email: 'carlos.perez@gmail.com',
-    telefono: '1234567890',
-    direccion: 'Calle 123',
-}
-
-
-const detalles =
-{
-    id: 1,
-    fecha: '16 de Mayo de 2025',
-    vendedor: 'Sarah Paulson',
-    estado: 'En proceso',
-}
-
-const productos = [
-    {
-        id: 1,
-        imagen: postobon,
-        nombre: 'Producto 1',
-        referencia: '123456',
-        cantidad: 2,
-        precio: 100,
-    },
-    {
-        id: 2,
-        imagen: postobon,
-        nombre: 'Producto 2',
-        referencia: '123456',
-        cantidad: 3,
-        precio: 100,
-    },
-    {
-        id: 3,
-        imagen: postobon,
-        nombre: 'Producto 2',
-        referencia: '123456',
-        cantidad: 3,
-        precio: 100,
-    },
-    {
-        id: 4,
-        imagen: postobon,
-        nombre: 'Producto 2',
-        referencia: '123456',
-        cantidad: 3,
-        precio: 100,
-    },
-    {
-        id: 5,
-        imagen: postobon,
-        nombre: 'Producto 2',
-        referencia: '123456',
-        cantidad: 3,
-        precio: 100,
-    }
-]
-
-
 
 
 export default function AccordionUsage() {
@@ -108,6 +45,16 @@ export default function AccordionUsage() {
     const [productos, setProductos] = React.useState([]);
     // Funcion que trae todos los datos para popular.
     const getData = async () => {
+        const storedDetalles = JSON.parse(localStorage.getItem('detalles'));
+        const storedCliente = JSON.parse(localStorage.getItem('cliente'));
+        const storedProductos = JSON.parse(localStorage.getItem('productos'));
+        if(storedDetalles && storedCliente && storedProductos){
+            console.log("Hemos entrado xdd ")
+            setDetalles(storedDetalles[0])
+            setCliente(storedCliente[0])
+            setProductos(storedProductos)
+            return
+        }
         const response = await getPedidoProducto(idPedido)
         if (response) {
             setDetalles(response[0]);
