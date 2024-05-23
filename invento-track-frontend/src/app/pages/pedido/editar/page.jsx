@@ -2,11 +2,9 @@
 //Components imports
 import * as React from 'react';
 import Accordion from '@mui/material/Accordion';
-import AccordionActions from '@mui/material/AccordionActions';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Button from '@mui/material/Button';
-import Divider from '@mui/material/Divider';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import Table from '@mui/material/Table';
@@ -14,7 +12,6 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import QuantityInput from '../../../components/editar/numberinput';
-import Image from 'next/image';
 
 //Icons imports 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -23,12 +20,11 @@ import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutl
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 //Utils imports
-import { getPedidoProducto, getCliente, getProducto, getVendedor } from '@/app/api/api.routes';
+import { getPedidoProducto, getCliente, getProducto, editPedido } from '@/app/api/api.routes';
 
 //Next utils
 import { useSearchParams, useRouter } from 'next/navigation'
 //Static imports
-import postobon from '../../../../../public/images/postobon.webp'
 import './styles.css'
 import Navbar from '@/app/components/navbar';
 
@@ -40,6 +36,7 @@ export default function AccordionUsage() {
     const router = useRouter()
 
     //Traer los datos iniciales y popular.
+    const [detallesProductos, setDetallesProductos] = React.useState({})
     const [detalles, setDetalles] = React.useState([]);
     const [cliente, setCliente] = React.useState([]);
     const [productos, setProductos] = React.useState([]);
@@ -48,15 +45,26 @@ export default function AccordionUsage() {
         const storedDetalles = JSON.parse(localStorage.getItem('detalles'));
         const storedCliente = JSON.parse(localStorage.getItem('cliente'));
         const storedProductos = JSON.parse(localStorage.getItem('productos'));
-        if(storedDetalles && storedCliente && storedProductos){
-            console.log("Hemos entrado xdd ")
+        if (storedDetalles && storedCliente && storedProductos) {
             setDetalles(storedDetalles[0])
             setCliente(storedCliente[0])
             setProductos(storedProductos)
+            const diccionarioProductos = {};
+            storedDetalles.forEach(producto => {
+                diccionarioProductos[producto.id_producto] = producto.cantidad_producto;
+            });
+            setDetallesProductos(diccionarioProductos)
             return
         }
         const response = await getPedidoProducto(idPedido)
         if (response) {
+            //Creación de producto con cantidad
+            const diccionarioProductos = {};
+            response.forEach(producto => {
+                diccionarioProductos[producto.id_producto] = producto.cantidad_producto;
+            });
+            setDetallesProductos(diccionarioProductos)
+            ///
             setDetalles(response[0]);
             const responseCliente = await getCliente(response[0].id_cliente)
             if (responseCliente) {
@@ -69,6 +77,7 @@ export default function AccordionUsage() {
                     responseProductos.push(producto);
                 }
             }
+
             setProductos(responseProductos.flat())
         }
     }
@@ -77,10 +86,10 @@ export default function AccordionUsage() {
     }, []);
 
     // Funciones relacionadas con precios y total.
-    const calculateTotal = (products) => {
+    const calculateTotal = () => {
         let total = 0;
-        for (let i = 0; i < products.length; i++) {
-            total += products[i].precio * products[i].stock;
+        for (let i = 0; i < productos.length; i++) {
+            total += productos[i].precio * detallesProductos[productos[i].id];
         }
         return total;
     }
@@ -90,21 +99,41 @@ export default function AccordionUsage() {
     const [total, setTotal] = React.useState();
 
     React.useEffect(() => {
-        if (productos.length > 0) {
-            setTotal(calculateTotal(productos));
+        setTotal(calculateTotal);
+    }, [detallesProductos, productos]);
+
+
+    //Manejadores de eventos.
+    const handleGuardar = async () => {
+        var productosActualizados = []
+        for (let llave in detallesProductos) {
+            productosActualizados.push({ "id_producto": llave, "cantidad_producto": detallesProductos[llave] })
         }
-    }, [productos]);
+        const body = {
+            "total_pedido": total,
+            "estado_pedido": "PENDIENTE",
+            "productos": productosActualizados
+        }
+        const response = await editPedido(idPedido, body)
+        if (response) {
+            router.push("/pages/pedido?id=" + idPedido)
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'El pedido no se ha podido eliminar, por favor inténtalo nuevamente',
+            });
+        }
+    }
 
-
-    //Manejadores de estados.
     const handleCancel = () => {
         router.push("/pages/pedido?id=" + idPedido)
     }
-    const handleQuantityChange = (event, value, id) => {
-        setProductos(prevProductos =>
-            prevProductos.map(producto =>
-                producto.id === id ? { ...producto, stock: value } : producto
-            )
+    const handleQuantityChange = (_event, value, id) => {
+        setDetallesProductos(prevDetallesProductos => ({
+            ...prevDetallesProductos,
+            [id]: value
+        })
         );
     };
 
@@ -216,13 +245,13 @@ export default function AccordionUsage() {
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <QuantityInput onChange={(event, value) => handleQuantityChange(event, value, id)} defaultValue={stock} />
+                                                        <QuantityInput onChange={(event, value) => handleQuantityChange(event, value, id)} defaultValue={detallesProductos[id]} />
                                                     </TableCell>
                                                     <TableCell>
                                                         <p>${precio.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
                                                     </TableCell>
                                                     <TableCell>
-                                                        <p>${(stock * precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
+                                                        <p>${(detallesProductos[id] * precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
                                                     </TableCell>
                                                 </TableRow>
                                             )
@@ -242,7 +271,7 @@ export default function AccordionUsage() {
                         </div>
                     </Accordion>
                     <div class="edit-buttons">
-                        <Button variant="contained" sx={{ textTransform: 'none', background: '#090069' }}>Guardar cambios</Button>
+                        <Button variant="contained" sx={{ textTransform: 'none', background: '#090069' }} onClick={handleGuardar}>Guardar cambios</Button>
                         <Button variant="outlined" sx={{ textTransform: 'none', background: 'white', color: '#090069', borderColor: '#090069' }} startIcon={<CancelOutlinedIcon />} onClick={handleCancel}>Cancelar</Button>
                     </div>
                 </div>
