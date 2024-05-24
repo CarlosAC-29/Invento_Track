@@ -1,55 +1,65 @@
-﻿from flask import request, jsonify
-from app import app, db
+﻿from sqlalchemy import text
+from flask import request, jsonify
+from flask_mail import Mail, Message
+from app import app, db, mail
 from app.models import Cliente, Vendedor, Administrador, Producto, Pedido, ProductoPedido
 import google.generativeai as genai
 from dotenv import load_dotenv
-import os, json   
+import os
+import json
+
+# inventotrack.mindsoft
+# Univalle**2024
+
 
 @app.route('/')
 def index():
     return 'Hola, mundo!'
+
 
 API_KEY = os.getenv("API_KEY")
 genai.configure(api_key=API_KEY)
 model = genai.GenerativeModel('gemini-pro')
 
 
-from sqlalchemy import text
-
 @app.route('/api/gemini', methods=['POST'])
 def gemini():
     try:
-        
+
         data = request.json
-        
+
         productos = Producto.get_all_products()
-        
 
         lista_productos = [producto.to_dict() for producto in productos]
         lista_productos_texto = json.dumps(lista_productos)
 
-        prompt = 'Necesito crear un json con esta estructura a partir del siguiente enunciado :' + data['text'] + '. Tengo una base de datos con los siguientes productos :'
-        json_result = '. El json resultante debe tener la siguiente estructura : {"id_cliente": numero,"total_pedido": numero,"productos": [{"id_producto": numero,"cantidad_producto": numero},{"id_producto": numero,"cantidad_producto": numero}]}.'
-        final = 'El campo id_cliente sera' + str(data['id_cliente']) + 'Dame solo el json resultante, sin texto adicional.'
+        prompt = 'Necesito crear un json con esta estructura a partir del siguiente enunciado :' + \
+            data['text'] + '. Tengo una base de datos con los siguientes productos :'
+        json_result = '. El json resultante debe tener la siguiente estructura : {"id_cliente": numero, "id_vendedor": numero, "total_pedido": numero,"productos": [{"id_producto": numero,"cantidad_producto": numero},{"id_producto": numero,"cantidad_producto": numero}]}.'
+        final = 'El campo id_cliente sera' + str(data['id_cliente']) + 'y el campo id_vendedor sera' + str(
+            data['id_vendedor']) + '. Dame solo el json resultante, sin texto adicional.'
         total = '. El campo total_pedido debe ser calculado multiplicando el precio de cada producto por su cantidad respectiva. Luego, suma todas estas multiplicaciones para obtener el total del pedido. Por ejemplo, si el pedido contiene 2 productos del id_producto 1 (cuyo precio es 10) y 3 productos del id_producto 2 (cuyo precio es 20), el total_pedido sería (2*10) + (3*20) = 80.'
-        aclaracion = 'si el enunciado no se entiende, devolver en json un mensaje de error con el texto "No se pudo generar el pedido"'
+        aclaracion = '. Si el enunciado no se entiende, devolver en json un mensaje de error con el texto "No se pudo generar el pedido"'
 
-        response = model.generate_content(prompt + lista_productos_texto + json_result + final + total + aclaracion)
+        response = model.generate_content(
+            prompt + lista_productos_texto + json_result + final + total + aclaracion)
 
         print(response.text)
 
         agregar_producto_gemini(response.text)
-        
-        return jsonify({'response': response.text})
+
+        return jsonify({'response': "Pedido agregado correctamente por voz"})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 # Rutas para autenticación
+
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
-        data = request.json 
-        email = data.get('email') 
+        data = request.json
+        email = data.get('email')
 
         vendedor = Vendedor.query.filter_by(email=email).first()
         if vendedor:
@@ -57,12 +67,13 @@ def login():
 
         administrador = Administrador.query.filter_by(email=email).first()
         if administrador:
-            return jsonify({'id': administrador.id, 'rol': 'admin'})  
+            return jsonify({'id': administrador.id, 'rol': 'admin'})
 
         return jsonify({'error': 'Usuario no encontrado'})
-    
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/test-db')
 def test_db_connection():
@@ -79,7 +90,11 @@ def test_db_connection():
 @app.route('/clientes', methods=['GET'])
 def list_clients():
     try:
-        clientes = Cliente.get_all_clients()
+        id_cliente = request.args.get('id_cliente')
+        if id_cliente:
+            clientes = Cliente.query.filter_by(id=id_cliente).all()
+        else:
+            clientes = Cliente.get_all_clients()
         clientes_json = [{
             'id': cliente.id,
             'nombre': cliente.nombre,
@@ -88,10 +103,11 @@ def list_clients():
             'direccion': cliente.direccion,
             'telefono': cliente.telefono
         } for cliente in clientes]
-        
+
         return jsonify(clientes_json)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/clientes', methods=['POST'])
 def agregar_cliente():
@@ -116,6 +132,26 @@ def agregar_cliente():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/clientes/<int:id>', methods=['GET'])
+def obtener_cliente(id):
+    try:
+        cliente = Cliente.query.get(id)
+        if cliente:
+            cliente_json = {
+                'id': cliente.id,
+                'nombre': cliente.nombre,
+                'apellido': cliente.apellido,
+                'email': cliente.email,
+                'direccion': cliente.direccion,
+                'telefono': cliente.telefono
+            }
+            return jsonify(cliente_json)
+        else:
+            return jsonify({'error': 'Cliente no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/clientes/<int:id>', methods=['PUT'])
 def editar_cliente(id):
     try:
@@ -135,7 +171,8 @@ def editar_cliente(id):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+
 @app.route('/clientes/<int:id>', methods=['DELETE'])
 def eliminar_cliente(id):
     try:
@@ -152,10 +189,16 @@ def eliminar_cliente(id):
 ########################################################################################
 
 # Rutas para vendedores
+
+
 @app.route('/vendedores', methods=['GET'])
 def list_sellers():
     try:
-        vendedores = Vendedor.get_all_sellers()
+        id_vendedor = request.args.get('id_vendedor')
+        if id_vendedor:
+            vendedores = Vendedor.query.filter_by(id=id_vendedor).all()
+        else:
+            vendedores = Vendedor.get_all_sellers()
         vendedores_json = [{
             'id': vendedor.id,
             'nombre': vendedor.nombre,
@@ -168,6 +211,7 @@ def list_sellers():
         return jsonify(vendedores_json)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 @app.route('/vendedores', methods=['POST'])
 def agregar_vendedor():
@@ -190,6 +234,27 @@ def agregar_vendedor():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+@app.route('/vendedores/<int:id>', methods=['GET'])
+def obtener_vendedor(id):
+    try:
+        vendedor = Vendedor.query.get(id)
+        if vendedor:
+            vendedor_json = {
+                'id': vendedor.id,
+                'nombre': vendedor.nombre,
+                'apellido': vendedor.apellido,
+                'email': vendedor.email,
+                'estado': vendedor.estado,
+                'password': vendedor.password
+            }
+            return jsonify(vendedor_json)
+        else:
+            return jsonify({'error': 'Vendedor no encontrado'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/vendedores/<int:id>', methods=['PUT'])
 def editar_vendedor(id):
     try:
@@ -208,7 +273,8 @@ def editar_vendedor(id):
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
+
+
 @app.route('/vendedores/<int:id>', methods=['DELETE'])
 def eliminar_vendedor(id):
     try:
@@ -230,8 +296,11 @@ def eliminar_vendedor(id):
 def list_product():
     try:
         categoria = request.args.get('categoria')
+        id_producto = request.args.get('id_producto')
         if categoria:
             productos = Producto.get_products_by_category(categoria)
+        elif id_producto:
+            productos = Producto.query.filter_by(id=id_producto).all()
         else:
             productos = Producto.get_all_products()
 
@@ -245,7 +314,7 @@ def list_product():
             'referencia': producto.referencia,
             'imagen': producto.imagen
         } for producto in productos]
-        
+
         return jsonify(productos_json)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -275,6 +344,7 @@ def agregar_producto():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @app.route('/productos/<int:id>', methods=['PUT'])
 def update_producto(id):
     data = request.json
@@ -300,6 +370,7 @@ def update_producto(id):
 
     return 'Producto actualizado correctamente', 200
 
+
 @app.route('/productos/<int:id>', methods=['DELETE'])
 def delete_producto(id):
     try:
@@ -314,25 +385,48 @@ def delete_producto(id):
         return jsonify({'error': str(e)}), 500
 
 
-
 ########################################################################################
 
 
 # Rutas para pedidos
+def enviar_correo_pedido(cliente, total_pedido, productos_info):
+    mensaje = Message('Detalles de su pedido', recipients=[
+                      app.config['MAIL_DEFAULT_SENDER']])
+    mensaje.body = f"""
+    ¡Hola {cliente.nombre}!
+
+    Gracias por su compra. Aquí están los detalles de su pedido:
+
+    Total del pedido: ${total_pedido}
+
+    Productos comprados:
+    """
+    for producto in productos_info:
+        mensaje.body += f"\n- {producto['nombre_producto']} x{producto['cantidad']} - ${producto['precio']} cada uno"
+
+    mensaje.body += "\n\nGracias por su preferencia."
+
+    mail.send(mensaje)
+
+
 @app.route('/pedido', methods=['POST'])
 def agregar_pedido():
     try:
         data = request.json
 
         id_cliente = data['id_cliente']
+        id_vendedor = data['id_vendedor']
         total_pedido = data['total_pedido']
 
         nuevo_pedido = Pedido(
             id_cliente=id_cliente,
+            id_vendedor=id_vendedor,
             total_pedido=total_pedido
         )
         db.session.add(nuevo_pedido)
         db.session.commit()
+
+        productos_info = []
 
         for producto_pedido in data['productos']:
             nuevo_pedido_producto = ProductoPedido(
@@ -342,7 +436,19 @@ def agregar_pedido():
             )
             db.session.add(nuevo_pedido_producto)
 
+            producto = db.session.query(Producto).filter_by(
+                id=producto_pedido['id_producto']).first()
+            productos_info.append({
+                'nombre_producto': producto.nombre,
+                'cantidad': producto_pedido['cantidad_producto'],
+                'precio': producto.precio
+            })
+
         db.session.commit()
+
+        cliente = db.session.query(Cliente).filter_by(id=id_cliente).first()
+
+        enviar_correo_pedido(cliente, total_pedido, productos_info)
 
         return jsonify({
             'mensaje': 'Pedido realizado exitosamente!'
@@ -355,15 +461,19 @@ def agregar_producto_gemini(data_string):
     try:
         data = json.loads(data_string)
         id_cliente = data['id_cliente']
+        id_vendedor = data['id_vendedor']
         total_pedido = data['total_pedido']
+        print(id_vendedor)
 
         nuevo_pedido = Pedido(
             id_cliente=id_cliente,
+            id_vendedor=id_vendedor,
             total_pedido=total_pedido
         )
         db.session.add(nuevo_pedido)
         db.session.commit()
 
+        productos_info = []
         for producto_pedido in data['productos']:
             nuevo_producto = ProductoPedido(
                 id_pedido=nuevo_pedido.id_pedido,
@@ -371,7 +481,20 @@ def agregar_producto_gemini(data_string):
                 cantidad_producto=producto_pedido['cantidad_producto']
             )
             db.session.add(nuevo_producto)
+
+            producto = db.session.query(Producto).filter_by(
+                id=producto_pedido['id_producto']).first()
+            productos_info.append({
+                'nombre_producto': producto.nombre,
+                'cantidad': producto_pedido['cantidad_producto'],
+                'precio': producto.precio
+            })
+
         db.session.commit()
+
+        cliente = db.session.query(Cliente).filter_by(id=id_cliente).first()
+
+        enviar_correo_pedido(cliente, total_pedido, productos_info)
 
         print('Pedido de Gemini agregado exitosamente!', total_pedido)
         return jsonify({'mensaje': 'Pedido de Gemini agregado exitosamente!'})
@@ -379,33 +502,98 @@ def agregar_producto_gemini(data_string):
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/pedido-producto', methods=['GET'])
+def get_orders_products():
+    try:
+        id_pedido = request.args.get('id_pedido')
+        if id_pedido:
+            orders = Pedido.get_orders_by_id(id_pedido)
+        else:
+            orders = Pedido.get_all_orders()
+        result = []
+
+        for order in orders:
+            for product_order in order.producto:
+                result.append({
+                    'id_pedido': order.id_pedido,
+                    'id_cliente': order.id_cliente,
+                    'id_vendedor': order.id_vendedor,
+                    'total_pedido': order.total_pedido,
+                    'fecha_pedido': order.fecha_pedido,
+                    "estado_pedido": order.estado_pedido,
+                    'id_producto': product_order.id_producto,
+                    'cantidad_producto': product_order.cantidad_producto
+                })
+
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 @app.route('/pedido', methods=['GET'])
 def get_orders():
-    orders = Pedido.get_all_orders()
-    result = []
+    try:
+        orders = Pedido.get_all_orders()
+        result = []
 
-    for order in orders:
-        for product_order in order.producto:
+        for order in orders:
             result.append({
                 'id_pedido': order.id_pedido,
                 'id_cliente': order.id_cliente,
+                'id_vendedor': order.id_vendedor,
                 'total_pedido': order.total_pedido,
                 'fecha_pedido': order.fecha_pedido,
-                'id_producto': product_order.id_producto,
-                'cantidad_producto': product_order.cantidad_producto
+                "estado_pedido": order.estado_pedido
             })
 
-    return jsonify(result)
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-@app.route('/pedido', methods=['DELETE'])
-def delete_orders():
+
+@app.route('/pedido/<int:id>', methods=['PUT'])
+def editar_pedido(id):
     try:
-        for pedido in Pedido.query.all():
-            db.session.delete(pedido)
-        for pedidos in ProductoPedido.query.all():
-            db.session.delete(pedidos)
+        data = request.json
+        pedido = Pedido.query.get(id)
+
+        if not pedido:
+            return jsonify({'mensaje': 'El pedido que intenta actualizar no existe o el ID está vacío'}), 404
+
+        if 'id_cliente' in data:
+            pedido.id_cliente = data['id_cliente']
+        if 'id_vendedor' in data:
+            pedido.id_vendedor = data['id_vendedor']
+        if 'total_pedido' in data:
+            pedido.total_pedido = data['total_pedido']
+        if 'estado_pedido' in data:
+            pedido.estado_pedido = data['estado_pedido']
+        # Para no comparar, lo que hacemos es eliminar todos los productos anteriores y agregamos los nuevos.
+        ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).delete()
+        # Se relacionan los productos nuevos con el pedido.
+        for producto in data['productos']:
+            nuevo_producto = ProductoPedido(
+                id_pedido=pedido.id_pedido,
+                id_producto=producto['id_producto'],
+                cantidad_producto=producto['cantidad_producto']
+            )
+            db.session.add(nuevo_producto)
 
         db.session.commit()
-        return jsonify({'mensaje': 'Pedidos eliminados exitosamente!'})
+        return jsonify({'mensaje': 'Pedido actualizado exitosamente!'})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/pedido/<int:id>', methods=['DELETE'])
+def eliminar_pedido(id):
+    try:
+        pedido = Pedido.query.get(id)
+        if pedido:
+            db.session.delete(pedido)
+            db.session.commit()
+            return jsonify({'mensaje': 'Pedido eliminado exitosamente!'})
+        else:
+            return jsonify({'error': 'Pedido no encontrado'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500

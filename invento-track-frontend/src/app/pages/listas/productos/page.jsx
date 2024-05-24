@@ -4,11 +4,18 @@ import React, { useState } from 'react'
 import Navbar from '@/app/components/navbar'
 import Categorias from '@/app/components/categorias/categorias'
 import './styles.css'
-import { Divider } from '@mui/material'
+import { Divider, Button  } from '@mui/material'
 import Productos from '@/app/components/productos/productos'
+import { useRouter } from 'next/navigation';
+
 function ListaProductos() {
   
   const [selectedCategory, setSelectedCategory] = useState('Todo');
+  const router = useRouter();
+
+  const handleClick = () => {
+    router.push('../usuarios/registro-producto');
+  };
 
   return (
     <>
@@ -18,11 +25,12 @@ function ListaProductos() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Navbar />
+        <Navbar atras={'../home'}/>
 
-        <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '2%' }}>
-          <div style={{ color: '#090069', marginBottom: '1%' }}>
+        <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '5%' }}>
+          <div style={{ color: '#090069', marginBottom: '1%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1>Lista de productos</h1>
+            <Button variant="contained" onClick={handleClick} sx={{backgroundColor: '#090069','&:hover': {backgroundColor: '#1d35f7',} , color: 'white'}}>Registrar Producto</Button>
           </div>
 
           <Divider />

@@ -1,0 +1,18 @@
+.edit-accordion {
+  margin: 0 2em;
+  column-gap: 1.3%;
+  display: flex;
+}
+
+.edit-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 2%;
+  margin-top: 2%;
+}
+.accordion-class{
+    width: 100%;
+    margin: 6em 2em 2em;
+}
+
+

@@ -1,4 +1,17 @@
+export const registrarProducto = async (data) => {
+    const response = await fetch('http://localhost:5000/productos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
 
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
 
 export const registarVendedor = async (data) => {
     const response = await fetch('http://localhost:5000/vendedores', {
@@ -45,6 +58,7 @@ export const editCliente = async (id, data) => {
     return response.json()
 }
 
+
 export const registarClientes = async (data) => {
     const response = await fetch('http://localhost:5000/clientes', {
         method: 'POST',
@@ -68,6 +82,22 @@ export const getProductos = async (data) => {
         },
         body: JSON.stringify(data)
     })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+
+export const getProducto = async (id, data) => {
+    const response = await fetch(`http://localhost:5000/productos?id_producto=${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
     
     if(!response.ok){
         return false
@@ -75,7 +105,8 @@ export const getProductos = async (data) => {
     return response.json()
 }
 
-export const registrarPedido = async (data) => {
+export const registrarPedido = async (data, id) => {
+    data.id_vendedor = id;
     const response = await fetch('http://localhost:5000/pedido', {
         method: 'POST',
         headers: {
@@ -83,16 +114,16 @@ export const registrarPedido = async (data) => {
         },
         body: JSON.stringify(data)
     })
-    
-    if(!response.ok){
+
+    if (!response.ok) {
         return false
     }
     return response.json()
 }
 
-export const registrarPedidoSpeech = async (data) => {
-    const response = await fetch('http://localhost:5000/api/gemini', {
-        method: 'POST',
+export const getPedidoProducto = async (id, data) => {
+    const response = await fetch(`http://localhost:5000/pedido-producto?id_pedido=${id}`, {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json'
         },
@@ -104,6 +135,98 @@ export const registrarPedidoSpeech = async (data) => {
     }
     return response.json()
 }
+
+export const getPedido = async (data) => {
+    const response = await fetch('http://localhost:5000/pedido', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+export const deletePedido = async(id, data) =>{
+    const response = await fetch(`http://localhost:5000/pedido/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+export const editPedido = async(id, data) =>{
+    const response = await fetch(`http://localhost:5000/pedido/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+export const registrarPedidoSpeech = async (data, id) => {
+    data.id_vendedor = id;
+    const response = await fetch('http://localhost:5000/api/gemini', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+export const getVendedor = async (id, data) => {
+    const response = await fetch(`http://localhost:5000/vendedores?id_vendedor=${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
+export const getCliente = async (id, data) => {
+    const response = await fetch(`http://localhost:5000/clientes?id_cliente=${id}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+
+    if (!response.ok) {
+        return false
+    }
+    return response.json()
+}
+
 
 export const listarClientes = async (data) => {
     const response = await fetch('http://localhost:5000/clientes', {
@@ -150,6 +273,17 @@ export const eliminarCliente = async (id) => {
     try {
         const response = await fetch(`http://localhost:5000/clientes/${id}`, {
             method: 'DELETE',
+        });
+        return response.json();
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+export const listaVendedores = async () => {
+    try {
+        const response = await fetch(`http://localhost:5000/vendedores`, {
+            method: 'GET',
         });
         return response.json();
     } catch (error) {

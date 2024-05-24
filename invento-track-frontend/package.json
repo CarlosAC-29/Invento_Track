@@ -9,16 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cloudinary/react": "^1.13.0",
+    "@cloudinary/url-gen": "^1.19.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
+    "@mui/x-data-grid": "^7.5.0",
+    "@mui/x-date-pickers": "^7.5.0",
     "axios": "^1.6.8",
+    "base-64": "^1.0.0",
+    "cloudinary": "^2.2.0",
+    "dayjs": "^1.11.11",
     "firebase": "^10.11.1",
     "next": "14.2.2",
+    "next-cloudinary": "^6.5.2",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.51.3",
+    "react-to-print": "^2.15.1",
     "sweetalert2": "^11.10.8"
   },
   "devDependencies": {

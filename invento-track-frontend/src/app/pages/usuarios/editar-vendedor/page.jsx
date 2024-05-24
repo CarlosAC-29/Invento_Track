@@ -20,6 +20,8 @@ import Link from 'next/link';
 
 export default function EditarVendedor({ searchParams }) {
 
+    console.log(searchParams)   
+
 
 
     const { register, handleSubmit } = useForm(
