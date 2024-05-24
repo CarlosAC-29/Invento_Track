@@ -1,6 +1,7 @@
 'use client'
 import Navbar from '@/app/components/navbar'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState,  useRef  } from 'react'
+import { useReactToPrint } from 'react-to-print';
 import { styled } from '@mui/material/styles';
 import './styles.css'
 import { Badge, Box, Button, Chip, Divider } from '@mui/material'
@@ -116,6 +117,8 @@ export default function Pedido({ searchParams }) {
   const [productos, setProductos] = useState([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const printRef = useRef();
+
 
   //Dialog 
   const [open, setOpen] = React.useState(false);
@@ -229,6 +232,9 @@ export default function Pedido({ searchParams }) {
   const handleEdit = () => {
     router.push('/pages/pedido/editar?id=' + searchParams.id)
   }
+  const handlePrint = useReactToPrint({
+    content: () => printRef.current,
+  });
 
 
   useEffect(() => {
@@ -258,7 +264,7 @@ export default function Pedido({ searchParams }) {
                 <Grid xs={6}>
                   <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Grid>
-                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />}>Imprimir</Button>
+                     <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />} onClick={handlePrint}>Imprimir</Button>
                     </Grid>
                     <Grid>
                       <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />} onClick={handleEdit}>Editar pedido</Button>
@@ -270,6 +276,7 @@ export default function Pedido({ searchParams }) {
                 </Grid>
               </Grid>
             </Box>
+            <div ref={printRef}>
             <Grid className='elementos' container spacing={1} columns={2}>
               <Grid xs={6} md={1}>
                 <Item>
@@ -402,6 +409,7 @@ export default function Pedido({ searchParams }) {
                 </Item>
               </Grid>
             </Grid>
+            </div>
           </Box>
           <Dialog
             open={open}
