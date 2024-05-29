@@ -438,6 +438,9 @@ def agregar_pedido():
 
             producto = db.session.query(Producto).filter_by(
                 id=producto_pedido['id_producto']).first()
+            if producto.stock < producto_pedido['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto_pedido['cantidad_producto']
             productos_info.append({
                 'nombre_producto': producto.nombre,
                 'cantidad': producto_pedido['cantidad_producto'],
@@ -484,6 +487,9 @@ def agregar_producto_gemini(data_string):
 
             producto = db.session.query(Producto).filter_by(
                 id=producto_pedido['id_producto']).first()
+            if producto.stock < producto_pedido['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto_pedido['cantidad_producto']
             productos_info.append({
                 'nombre_producto': producto.nombre,
                 'cantidad': producto_pedido['cantidad_producto'],
@@ -568,6 +574,13 @@ def editar_pedido(id):
             pedido.total_pedido = data['total_pedido']
         if 'estado_pedido' in data:
             pedido.estado_pedido = data['estado_pedido']
+
+        productos_originales = ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).all()
+
+        for producto_original in productos_originales:
+            producot = Producto.query.get(producto_original.id_producto)
+            producto.stock += producto_original.cantidad_producto
+        
         # Para no comparar, lo que hacemos es eliminar todos los productos anteriores y agregamos los nuevos.
         ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).delete()
         # Se relacionan los productos nuevos con el pedido.
@@ -578,6 +591,12 @@ def editar_pedido(id):
                 cantidad_producto=producto['cantidad_producto']
             )
             db.session.add(nuevo_producto)
+
+            # Restar la cantidad de productos del stock.
+            producto = Producto.query.get(producto['id_producto'])
+            if producto.stock < producto['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto['cantidad_producto']
 
         db.session.commit()
         return jsonify({'mensaje': 'Pedido actualizado exitosamente!'})
