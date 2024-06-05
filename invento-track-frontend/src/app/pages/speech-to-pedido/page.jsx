@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import styles from './styles.module.css';
 import { useAppContext } from "@/app/context";
+import { useRouter } from 'next/navigation';
+
 
 
 
@@ -17,6 +19,7 @@ import { useAppContext } from "@/app/context";
 
 
 export default function SpeechToText() {
+    const router = useRouter();
     const [transcript, setTranscript] = useState('');
     const [isListening, setIsListening] = useState(false);
     const [clientes, setClientes] = useState("");
@@ -38,7 +41,7 @@ export default function SpeechToText() {
     )
 
     const handleClick = () => {
-        // Tu lógica para redirigir al usuario
+        router.push('/pages/home');
     };
 
     const getInfo = async () => {
