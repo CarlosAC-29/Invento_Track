@@ -31,7 +31,7 @@ function Navbar({ atras }) {
   };
 
   const handleLogout = async () => {
-    setUser({ userID: null, role: null });
+    setUser({ userID: null, rol: null });
     router.push('/');
 
   };
@@ -58,7 +58,7 @@ function Navbar({ atras }) {
       >
         {isMobile ? 'IT' : 'InventoTrack'} <InventoryIcon />
       </Typography>
-      <h4>{isMobile ? '' : "Bienvenido, admin"}</h4>
+      <h4>{isMobile ? '' : "Bienvenido"}</h4>
       <Button
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
