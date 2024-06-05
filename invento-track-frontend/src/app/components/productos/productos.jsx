@@ -223,7 +223,7 @@ function Productos({ selectedCategory }) {
                       color: (theme) => theme.palette.error.light,
                     }}
                   >
-                    {user.role === 'admin' ?
+                    {user.rol === 'admin' ?
                       <DeleteIcon />
                       :
                       ''
@@ -276,7 +276,7 @@ function Productos({ selectedCategory }) {
                 color: (theme) => theme.palette.success.light,
               }}
             >
-              {user.role === 'admin' ?
+              {user.rol === 'admin' ?
                 <EditIcon />
                 :
                 ''
@@ -285,10 +285,10 @@ function Productos({ selectedCategory }) {
             <Divider />
             {productos.find(p => p.id === viewDetail) ? (
               <>
-                <div className='detalles'>
+                <Stack direction={"row"} sx={{padding : "2rem"}}>
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
                   <img className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
-                  <Stack direction={"column"}>
+                  <Stack direction={"column"} sx={{width : "100%"}}>
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
                     <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
@@ -296,7 +296,7 @@ function Productos({ selectedCategory }) {
                     <h2 style={{ marginTop: '5%' }}>Descripción</h2>
                     <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
                   </Stack>
-                </div>
+                </Stack>
               </>
             ) : (
               <p>Producto no encontrado</p>

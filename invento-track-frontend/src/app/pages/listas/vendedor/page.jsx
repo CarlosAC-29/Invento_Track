@@ -200,7 +200,7 @@ function ListaVendedores() {
 
   return (
     <>
-      <Navbar atras={''}/>
+      <Navbar atras={'/pages/home'}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de Vendedores</h1>

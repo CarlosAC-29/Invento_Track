@@ -32,7 +32,7 @@ function ListaProductos() {
         <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '5%' }}>
           <div style={{ color: '#090069', marginBottom: '1%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1>Lista de productos</h1>
-            {user.role === 'admin' ?
+            {user.rol === 'admin' ?
               <Button variant="contained" onClick={handleClick} sx={{ backgroundColor: '#090069', '&:hover': { backgroundColor: '#1d35f7', }, color: 'white' }}>Registrar Producto</Button>
               :
               ''

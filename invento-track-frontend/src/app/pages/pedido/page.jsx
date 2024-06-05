@@ -273,7 +273,7 @@ export default function Pedido({ searchParams }) {
                     <Grid>
                       <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />} onClick={handleEdit}>Editar pedido</Button>
                     </Grid>
-                    {user.role === 'addmin' ?
+                    {user.rol === 'admin' ?
                       <Grid>
                         <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />} onClick={handleCancelarOrden}>Cancelar orden</Button>
                       </Grid>
