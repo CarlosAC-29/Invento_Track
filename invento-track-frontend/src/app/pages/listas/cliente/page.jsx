@@ -156,7 +156,7 @@ function ListaClientes() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Navbar atras={''} />
+        <Navbar atras={'/pages/home'} />
         <Box sx={{ marginTop: "5%" }}>
           <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
             <h1>Lista de clientes</h1>

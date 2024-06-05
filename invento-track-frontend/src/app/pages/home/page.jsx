@@ -12,8 +12,10 @@ import { useRouter } from 'next/navigation';
 
 
 export default function page() {
-  const {user} = useAppContext();
+  const { user } = useAppContext();
   const router = useRouter();
+
+  const [rol, setRol] = React.useState(user.rol);
 
   const handleRegistroVendedor = () => {
     router.push("/pages/usuarios/registro-vendedor");
@@ -53,18 +55,33 @@ export default function page() {
   console.log("user info", user);
   return (
     <div>
-      <Navbar atras={''}/>
-      <Stack sx={{padding: "5%", width: "100%"}} justifyContent={"center"} alignItems={"center"}>
+      <Navbar atras={''} />
+      <Stack sx={{ padding: "5%", width: "100%" }} justifyContent={"center"} alignItems={"center"}>
         <Stack spacing={2} direction={"column"} >
-          <Button variant="contained" onClick={handleRegistroVendedor}><HailIcon sx={{marginRight : "1rem"}}/>Registo Vendedor</Button>
-          <Button variant="contained" onClick={handleListarVendedores}>Listar Vendedores</Button>
-          <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{marginRight : "1rem"}}/>Registo Cliente</Button>
-          <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
-          <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{marginRight : "1rem"}}/>Registo Pedido</Button>
-          <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{marginRight : "1rem"}}/>Registo Pedido Voz</Button>
-          <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
-          <Button variant="contained" onClick={handleRegistroProducto}><LiquorIcon sx={{marginRight : "1rem"}}/>Registo Producto</Button>
-          <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
+          {rol === "vendedor" ?
+            <Stack spacing={2} direction={"column"} >
+              <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{ marginRight: "1rem" }} />Registo Cliente</Button>
+              <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
+              <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{ marginRight: "1rem" }} />Registo Pedido</Button>
+              <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{ marginRight: "1rem" }} />Registo Pedido Voz</Button>
+              <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
+              <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
+            </Stack>
+            :
+            <Stack spacing={2} direction={"column"} >
+              <Button variant="contained" onClick={handleRegistroVendedor}><HailIcon sx={{ marginRight: "1rem" }} />Registo Vendedor</Button>
+              <Button variant="contained" onClick={handleListarVendedores}>Listar Vendedores</Button>
+              <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{ marginRight: "1rem" }} />Registo Cliente</Button>
+              <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
+              <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{ marginRight: "1rem" }} />Registo Pedido</Button>
+              <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{ marginRight: "1rem" }} />Registo Pedido Voz</Button>
+              <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
+              <Button variant="contained" onClick={handleRegistroProducto}><LiquorIcon sx={{ marginRight: "1rem" }} />Registo Producto</Button>
+              <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
+            </Stack>
+          }
+
+
         </Stack>
       </Stack>
     </div>
