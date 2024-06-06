@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import styles from './styles.module.css'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -18,11 +18,23 @@ import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import { initializeApp } from 'firebase/app';
+import { getAuth, updatePassword, updateEmail } from 'firebase/auth'
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
+    authDomain: "logininventotrack.firebaseapp.com",
+    projectId: "logininventotrack",
+    storageBucket: "logininventotrack.appspot.com",
+    messagingSenderId: "692002139318",
+    appId: "1:692002139318:web:c627ac41ca3cc4b1d64a17"
+  };
+  
+const app = initializeApp(firebaseConfig);
+
 export default function EditarVendedor({ searchParams }) {
 
     console.log(searchParams)   
-
-
 
     const { register, handleSubmit } = useForm(
         {
@@ -41,6 +53,7 @@ export default function EditarVendedor({ searchParams }) {
     };
 
     const [data, setData] = useState('')
+    const [originalEmail, setOriginalEmail] = useState(searchParams.email);
 
     const [nombreError, setNombreError] = useState('')
     const [apellidoError, setApellidoeError] = useState('')
@@ -48,6 +61,13 @@ export default function EditarVendedor({ searchParams }) {
     const [confPasswordError, setConfPasswordError] = useState('')
     const [emailError, setEmailError] = useState('')
 
+    // useEffect(() => {
+    //     setOriginalEmail(searchParams.email);
+    // }, [searchParams.email]);
+
+    // useEffect(() => {
+    //     console.log('soy el nuevo email', originalEmail);
+    // }, [originalEmail]);
 
     const saveData = async (data) => {
 
@@ -62,9 +82,11 @@ export default function EditarVendedor({ searchParams }) {
             }
         })
 
-        const response = await editVendedor(searchParams.id, data)
-        console.log(response)
-
+        const response = await editVendedor(searchParams.id, data, originalEmail)
+        // console.log('soy el email original: ', originalEmail)
+        console.log("Soy el response email", response.email)
+        setOriginalEmail(response.email)
+        // console.log('soy el nuevo email', originalEmail)
         if (response) {
             Swal.close()
             Swal.fire({

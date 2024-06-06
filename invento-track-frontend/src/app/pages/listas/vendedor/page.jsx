@@ -95,7 +95,7 @@ function ListaVendedores() {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, email) => {
     Swal.fire({
       title: "¿Estás seguro que deseas eliminar el Vendedor?",
       text: "Esta acción es irreversible.",
@@ -106,7 +106,7 @@ function ListaVendedores() {
       confirmButtonText: "Sí, deseo borrarlo."
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await eliminarVendedor(id);
+        const response = await eliminarVendedor(id, email);
         if (response) {
           const newVendedores = vendedor.filter(vendedor => vendedor.id !== id);
           setVendedor(newVendedores);
@@ -181,8 +181,8 @@ function ListaVendedores() {
               <BorderColorOutlinedIcon sx={{ color: "#090069" }} />
             </IconButton>
           </Link>
-          <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
-            <DeleteOutlinedIcon sx={{ color: "#090069" }} />
+          <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id, params.row.email)}>
+            <DeleteOutlinedIcon sx={{ color: "#090069" }}/>
           </IconButton>
         </div>
       ),
