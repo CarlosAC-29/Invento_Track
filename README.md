@@ -47,14 +47,6 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Configurar PostgreSQL
-.-Crea una nueva base de datos en PostgreSQL para el proyecto.
-.-Actualiza la URI de conexión en el archivo config.py con los detalles de tu base de datos.
-
-```bash
-psql -U tu_usuario -c "CREATE DATABASE inventoTrack;"
-```
-
 ## Ejecutar la aplicación:
 
 ```bash
