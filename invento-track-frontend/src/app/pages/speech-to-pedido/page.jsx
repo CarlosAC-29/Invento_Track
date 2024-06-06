@@ -1,4 +1,5 @@
 "use client"
+import Navbar from '@/app/components/navbar'
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Stack, TextField, Button, Autocomplete, Divide, Autocompleter } from '@mui/material';
 import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
@@ -155,13 +156,9 @@ export default function SpeechToText() {
     };
 
     return (
+        <>
+        <Navbar atras={'./listas/pedidos'} />
         <div className={styles.main_container}>
-            <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                <Box onClick={handleClick} sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6'> Atrás </Typography>
-                </Box>
-            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <form onSubmit={handleSubmit(processPedido)}>
                     <Stack spacing={2} direction={"column"} sx={{ background: "#fff", padding: "3rem", borderRadius: "1rem" }}>
@@ -190,6 +187,7 @@ export default function SpeechToText() {
                 </form>
             </Box>
         </div>
+        </>
     );
 };
 
