@@ -2,6 +2,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url("/images/bg.png");
+    background-color: #dde4f6;
     background-size: contain;
 }

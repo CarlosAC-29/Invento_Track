@@ -200,7 +200,7 @@ function ListaVendedores() {
 
   return (
     <>
-      <Navbar atras={''}/>
+      <Navbar atras={'../home'}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de Vendedores</h1>
@@ -252,6 +252,9 @@ function ListaVendedores() {
           <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto' }}>
             <DataGrid
               sx={{
+              
+                borderRadius: '1rem',
+                padding: '2rem 1.5rem',
                 backgroundColor: '#fff',
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: 'lightblue',

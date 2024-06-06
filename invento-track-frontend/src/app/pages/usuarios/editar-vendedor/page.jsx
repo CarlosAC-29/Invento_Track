@@ -17,6 +17,7 @@ import { editVendedor } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from '@/app/components/navbar';
 
 export default function EditarVendedor({ searchParams }) {
 
@@ -131,7 +132,10 @@ export default function EditarVendedor({ searchParams }) {
 
 
     return (
+        <div>
+            <Navbar atras={'../listas/vendedor'} />
         <div className={styles.main_container}>
+          
             <Stack
                 direction='column'
                 alignItems="center"
@@ -142,14 +146,7 @@ export default function EditarVendedor({ searchParams }) {
                     height: '100vh',
                 }}
             >
-                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Link href='../listas/vendedor'>
-                        <Box sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
-                            <ArrowBackIosIcon id='backIcon' />
-                            <Typography variant='h6' > Atrás </Typography>
-                        </Box>
-                    </Link>
-                </Box>
+               
                 <Box
                     sx={{
                         bgcolor: 'white',
@@ -244,6 +241,7 @@ export default function EditarVendedor({ searchParams }) {
                     </form>
                 </Box>
             </Stack>
+        </div>
         </div>
     );
 }

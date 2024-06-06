@@ -278,6 +278,8 @@ function ListaPedidos() {
                 Toolbar: GridToolbar,
               }}
               sx={{
+                borderRadius: '1rem',
+                padding: '1.5rem 1.5rem',
                 backgroundColor: '#fff',
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: 'lightblue',
