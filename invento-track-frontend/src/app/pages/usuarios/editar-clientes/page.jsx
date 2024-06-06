@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { getCliente, editCliente } from '@/app/api/api.routes';
 import Link from 'next/link';
+import Navbar from '@/app/components/navbar';
 
 export default function EditarVendedor({ searchParams }) {
 
@@ -163,6 +164,8 @@ export default function EditarVendedor({ searchParams }) {
     };
 
     return (
+        <div>
+            <Navbar atras={'../listas/cliente'}/>
         <div className={styles.main_container}>
             <Stack
                 direction='column'
@@ -174,14 +177,7 @@ export default function EditarVendedor({ searchParams }) {
                     height: '100vh',
                 }}
             >
-                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Link href="../listas/cliente">
-                        <Box  sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
-                            <ArrowBackIosIcon id='backIcon' />
-                            <Typography variant='h6' > Atrás </Typography>
-                        </Box>
-                    </Link>
-                </Box>
+          
                 <Box
                     sx={{
                         bgcolor: 'white',
@@ -278,6 +274,7 @@ export default function EditarVendedor({ searchParams }) {
                     </form>
                 </Box>
             </Stack>
+        </div>
         </div>
     );
 }

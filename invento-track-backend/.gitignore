@@ -10,16 +10,16 @@ __pycache__/
 *.swp
 *.swo
 
-# Archivo de configuración local
+# Archivo de configuraciï¿½n local
 .env
 
-# Archivos de registro y caché
+# Archivos de registro y cachï¿½
 logs/
 *.log
 *.sqlite3
 *.db
 
-# Archivo de configuración de IDE
+# Archivo de configuraciï¿½n de IDE
 .idea/
 .vscode/
 
@@ -33,3 +33,6 @@ build/
 *.swp
 *.swo
 *.DS_Store
+
+#firebase
+logininventotrack-firebase-adminsdk-bz2p6-16707a819b.json

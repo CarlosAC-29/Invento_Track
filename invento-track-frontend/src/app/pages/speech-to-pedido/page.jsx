@@ -1,4 +1,5 @@
 "use client"
+import Navbar from '@/app/components/navbar'
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Stack, TextField, Button, Autocomplete, Divide, Autocompleter } from '@mui/material';
 import { listarClientes, getProductos, registrarPedido } from '@/app/api/api.routes';
@@ -9,6 +10,8 @@ import Swal from 'sweetalert2';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import styles from './styles.module.css';
 import { useAppContext } from "@/app/context";
+import { useRouter } from 'next/navigation';
+
 
 
 
@@ -17,6 +20,7 @@ import { useAppContext } from "@/app/context";
 
 
 export default function SpeechToText() {
+    const router = useRouter();
     const [transcript, setTranscript] = useState('');
     const [isListening, setIsListening] = useState(false);
     const [clientes, setClientes] = useState("");
@@ -38,7 +42,7 @@ export default function SpeechToText() {
     )
 
     const handleClick = () => {
-        // Tu lógica para redirigir al usuario
+        router.push('/pages/home');
     };
 
     const getInfo = async () => {
@@ -152,13 +156,9 @@ export default function SpeechToText() {
     };
 
     return (
+        <>
+        <Navbar atras={'./listas/pedidos'} />
         <div className={styles.main_container}>
-            <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                <Box onClick={handleClick} sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6'> Atrás </Typography>
-                </Box>
-            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
                 <form onSubmit={handleSubmit(processPedido)}>
                     <Stack spacing={2} direction={"column"} sx={{ background: "#fff", padding: "3rem", borderRadius: "1rem" }}>
@@ -187,6 +187,7 @@ export default function SpeechToText() {
                 </form>
             </Box>
         </div>
+        </>
     );
 };
 

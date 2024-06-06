@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
-import styles from './styles.module.css';
+//import styles from './styles.module.css';
 import { useForm } from 'react-hook-form';
 import {
     Box,
@@ -18,6 +18,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { registrarProducto } from '@/app/api/api.routes';
 import Link from 'next/link';
+import Navbar from '@/app/components/navbar';
 
 
 export default function RegistrarProducto() {
@@ -154,7 +155,12 @@ export default function RegistrarProducto() {
 
 
     return (
-        <div className={styles.main_container}>
+        <>
+        <head>
+            <title>Registrar Producto</title>
+        </head>
+        <Navbar atras={'../listas/productos'}/>
+        <div >
             <Stack
                 direction="column"
                 alignItems="center"
@@ -163,27 +169,26 @@ export default function RegistrarProducto() {
                 sx={{
                     width: '100%',
                     height: '100vh',
+                    marginTop: '3rem',
                 }}
             >
-                <Box sx={{ paddingLeft: '1rem', width: "100%", display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Link href='../listas/productos'>
-                        <Box sx={{ cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems: "center" }}>
-                            <ArrowBackIosIcon id='backIcon' />
-                            <Typography variant='h6' > Atrás </Typography>
-                        </Box>
-                    </Link>
-                </Box>
                 <Box
                     sx={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
                         bgcolor: 'white',
                         borderRadius: '1rem',
                         padding: '2rem 4rem',
                         marginBottom: '1rem',
                         width: '100%',
                         maxWidth: '600px',
+                        height: '100%',
+                        maxHeight: '650px',
+                        minHeight: '500px',
                     }}
                 >
-                    <form onSubmit={handleSubmit(processForm)}>
+                    <form onSubmit={handleSubmit(processForm)} sx={{display:'flex',flexDirection: 'column',justifyContent:'space-between'}}>
                         <Stack direction="column" spacing={2}>
                             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent:'center' }}>
                                 <Typography sx={{
@@ -202,6 +207,7 @@ export default function RegistrarProducto() {
                                     {...register('nombre')}
                                     error={Boolean(errors.nombre)}
                                     helperText={errors.nombre}
+                                    sx={{height: '20px'}}
                                 />
                                 <TextField
                                     label="Precio"
@@ -266,7 +272,8 @@ export default function RegistrarProducto() {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    height: '200px',
+                                    maxHeight: '200px',
+                                    height: '100%',
                                     border: '2px dashed grey',
                                     borderRadius: '8px',
                                     bgcolor: '#f5f5f5',
@@ -328,5 +335,6 @@ export default function RegistrarProducto() {
                 </Box>
             </Stack>
         </div>
+        </>
     );
 }

@@ -16,6 +16,7 @@ import {
 import { registarClientes } from '@/app/api/api.routes';
 import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import Navbar from '@/app/components/navbar';
 
 
 export default function EditarVendedor() {
@@ -129,6 +130,8 @@ export default function EditarVendedor() {
     
 
     return (
+        <div>
+        <Navbar atras={'../listas/cliente'} />
         <div className={styles.main_container}>
             <Stack
             direction='column'
@@ -140,12 +143,7 @@ export default function EditarVendedor() {
                 height: '100vh',
             }}
             >
-                <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6' > Atrás </Typography>
-                    </Box>
-                </Box>
+              
                 <Box
                     sx={{
                         bgcolor: 'white',
@@ -240,6 +238,8 @@ export default function EditarVendedor() {
                     </form>
                 </Box>
             </Stack>
+
+        </div>
         </div>
     );
 }

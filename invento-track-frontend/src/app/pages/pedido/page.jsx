@@ -1,6 +1,6 @@
 'use client'
 import Navbar from '@/app/components/navbar'
-import React, { useEffect, useState,  useRef  } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useReactToPrint } from 'react-to-print';
 import { styled } from '@mui/material/styles';
 import './styles.css'
@@ -31,6 +31,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 //Transition:
 import Slide from '@mui/material/Slide';
+import { useAppContext } from '@/app/context';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -110,6 +111,9 @@ const Item = styled(Paper)(({ theme }) => ({
 // ]
 
 export default function Pedido({ searchParams }) {
+
+  const { user, setUser } = useAppContext();
+
 
   const [detalles, setDetalles] = useState([]);
   const [cliente, setCliente] = useState([]);
@@ -264,151 +268,155 @@ export default function Pedido({ searchParams }) {
                 <Grid xs={6}>
                   <Grid container spacing={2} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                     <Grid>
-                     <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />} onClick={handlePrint}>Imprimir</Button>
+                      <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<LocalPrintshopOutlinedIcon />} onClick={handlePrint}>Imprimir</Button>
                     </Grid>
                     <Grid>
                       <Button variant="outlined" className='imprimir' sx={{ textTransform: 'none' }} startIcon={<ModeEditOutlineOutlinedIcon />} onClick={handleEdit}>Editar pedido</Button>
                     </Grid>
-                    <Grid>
-                      <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />} onClick={handleCancelarOrden}>Cancelar orden</Button>
-                    </Grid>
+                    {user.rol === 'admin' ?
+                      <Grid>
+                        <Button variant="outlined" color='error' sx={{ textTransform: 'none' }} startIcon={<CancelOutlinedIcon />} onClick={handleCancelarOrden}>Cancelar orden</Button>
+                      </Grid>
+                      :
+                      ''
+                    }
                   </Grid>
                 </Grid>
               </Grid>
             </Box>
             <div ref={printRef}>
-            <Grid className='elementos' container spacing={1} columns={2}>
-              <Grid xs={6} md={1}>
-                <Item>
-                  <h2>Detalles del cliente</h2>
-                  <Divider />
-                  {cliente.map(({ id, nombre, apellido, email, telefono, direccion }) => {
-                    return (
-                      <div key={id} className='detalles'>
-                        <div>
-                          <p className='subtitulo'>Nombre</p>
-                          <p>{nombre} {apellido}</p>
+              <Grid className='elementos' container spacing={1} columns={2}>
+                <Grid xs={6} md={1}>
+                  <Item>
+                    <h2>Detalles del cliente</h2>
+                    <Divider />
+                    {cliente.map(({ id, nombre, apellido, email, telefono, direccion }) => {
+                      return (
+                        <div key={id} className='detalles'>
+                          <div>
+                            <p className='subtitulo'>Nombre</p>
+                            <p>{nombre} {apellido}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Email</p>
+                            <p>{email}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Telefono</p>
+                            <p>{telefono}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Direccion</p>
+                            <p>{direccion}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className='subtitulo'>Email</p>
-                          <p>{email}</p>
+                      )
+                    })}
+                  </Item>
+                </Grid>
+                <Grid xs={6} md={1}>
+                  <Item>
+                    <h2>Detalles del pedido</h2>
+                    <Divider />
+                    {detalles.map(({ id_pedido, fecha_pedido, estado_pedido }) => {
+                      return (
+                        <div key={id_pedido} className='detalles'>
+                          <div>
+                            <p className='subtitulo'>Pedido No.</p>
+                            <p>{id_pedido}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Fecha</p>
+                            <p>{fecha_pedido}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Vendedor</p>
+                            <p>{vendedor.map(({ nombre }) => nombre)} {vendedor.map(({ apellido }) => apellido)}</p>
+                          </div>
+                          <div>
+                            <p className='subtitulo'>Estado</p>
+                            {/* <Chip className='chip' icon={<AccessTimeIcon/>} label={estado_pedido} variant="outlined"/> */}
+                            <p><b>{estado_pedido}</b></p>
+                          </div>
                         </div>
-                        <div>
-                          <p className='subtitulo'>Telefono</p>
-                          <p>{telefono}</p>
-                        </div>
-                        <div>
-                          <p className='subtitulo'>Direccion</p>
-                          <p>{direccion}</p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </Item>
-              </Grid>
-              <Grid xs={6} md={1}>
-                <Item>
-                  <h2>Detalles del pedido</h2>
-                  <Divider />
-                  {detalles.map(({ id_pedido, fecha_pedido, estado_pedido }) => {
-                    return (
-                      <div key={id_pedido} className='detalles'>
-                        <div>
-                          <p className='subtitulo'>Pedido No.</p>
-                          <p>{id_pedido}</p>
-                        </div>
-                        <div>
-                          <p className='subtitulo'>Fecha</p>
-                          <p>{fecha_pedido}</p>
-                        </div>
-                        <div>
-                          <p className='subtitulo'>Vendedor</p>
-                          <p>{vendedor.map(({ nombre }) => nombre)} {vendedor.map(({ apellido }) => apellido)}</p>
-                        </div>
-                        <div>
-                          <p className='subtitulo'>Estado</p>
-                          {/* <Chip className='chip' icon={<AccessTimeIcon/>} label={estado_pedido} variant="outlined"/> */}
-                          <p><b>{estado_pedido}</b></p>
-                        </div>
-                      </div>
-                    )
-                  })[0]}
-                </Item>
-              </Grid>
-              <Grid xs={12}>
-                <Item>
-                  <h2 style={{ padding: '1%' }}>Productos</h2>
-                  <Divider />
-                  <TableContainer>
-                    <Table>
-                      <TableHead>
-                        <TableRow hover>
-                          <TableCell>
-                            <p className='elemento-producto'>Producto</p>
-                          </TableCell>
-                          <TableCell>
-                            <p className='elemento-producto'>Cantidad</p>
-                          </TableCell>
-                          <TableCell>
-                            <p className='elemento-producto'>Precio unitario</p>
-                          </TableCell>
-                          <TableCell>
-                            <p className='elemento-producto'>Total</p>
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(({ id, imagen, nombre, referencia, precio }) => {
-                          const cantidad = detalles.find(({ id_producto }) => id_producto === id).cantidad_producto;
-                          return (
-                            <TableRow key={id} hover>
-                              <TableCell>
-                                <div className='producto'>
-                                  <img src={imagen} alt='imagen' style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px', backgroundColor: '#f6f6f6', float: 'left' }} />
-                                  <div style={{ display: 'block', width: '100%' }}>
-                                    <p>{nombre}</p>
-                                    <p style={{ color: 'gray' }}>SKU: {referencia}</p>
+                      )
+                    })[0]}
+                  </Item>
+                </Grid>
+                <Grid xs={12}>
+                  <Item>
+                    <h2 style={{ padding: '1%' }}>Productos</h2>
+                    <Divider />
+                    <TableContainer>
+                      <Table>
+                        <TableHead>
+                          <TableRow hover>
+                            <TableCell>
+                              <p className='elemento-producto'>Producto</p>
+                            </TableCell>
+                            <TableCell>
+                              <p className='elemento-producto'>Cantidad</p>
+                            </TableCell>
+                            <TableCell>
+                              <p className='elemento-producto'>Precio unitario</p>
+                            </TableCell>
+                            <TableCell>
+                              <p className='elemento-producto'>Total</p>
+                            </TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {productos.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(({ id, imagen, nombre, referencia, precio }) => {
+                            const cantidad = detalles.find(({ id_producto }) => id_producto === id).cantidad_producto;
+                            return (
+                              <TableRow key={id} hover>
+                                <TableCell>
+                                  <div className='producto'>
+                                    <img src={imagen} alt='imagen' style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '5px', backgroundColor: '#f6f6f6', float: 'left' }} />
+                                    <div style={{ display: 'block', width: '100%' }}>
+                                      <p>{nombre}</p>
+                                      <p style={{ color: 'gray' }}>SKU: {referencia}</p>
+                                    </div>
                                   </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                <p>{cantidad}</p>
-                              </TableCell>
-                              <TableCell>
-                                <p>${precio.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
-                              </TableCell>
-                              <TableCell>
-                                <p>${(cantidad * precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
-                              </TableCell>
-                            </TableRow>
-                          )
-                        })}
-                      </TableBody>
-                    </Table>
-                    <TablePagination
-                      rowsPerPageOptions={[5, 10, 25]}
-                      component="div"
-                      count={productos.length}
-                      rowsPerPage={rowsPerPage}
-                      page={page}
-                      onPageChange={handleChangePage}
-                      onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-                  </TableContainer>
-                  <Divider />
-                  <Grid container sx={{ padding: '1.5%' }}>
-                    <Grid xs={12}>
-                      <div>
-                        <p className='total'>Total del pedido</p>
-                        <p style={{ fontSize: '1.4em' }}>
-                          ${detalles.map(({ total_pedido }) => total_pedido.toLocaleString('es-CO', { minimumFractionDigits: 2 }))[0]}
-                        </p>
-                      </div>
+                                </TableCell>
+                                <TableCell>
+                                  <p>{cantidad}</p>
+                                </TableCell>
+                                <TableCell>
+                                  <p>${precio.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
+                                </TableCell>
+                                <TableCell>
+                                  <p>${(cantidad * precio).toLocaleString('es-CO', { minimumFractionDigits: 2 })}</p>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })}
+                        </TableBody>
+                      </Table>
+                      <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={productos.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                      />
+                    </TableContainer>
+                    <Divider />
+                    <Grid container sx={{ padding: '1.5%' }}>
+                      <Grid xs={12}>
+                        <div>
+                          <p className='total'>Total del pedido</p>
+                          <p style={{ fontSize: '1.4em' }}>
+                            ${detalles.map(({ total_pedido }) => total_pedido.toLocaleString('es-CO', { minimumFractionDigits: 2 }))[0]}
+                          </p>
+                        </div>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Item>
+                  </Item>
+                </Grid>
               </Grid>
-            </Grid>
             </div>
           </Box>
           <Dialog

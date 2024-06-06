@@ -95,7 +95,7 @@ function ListaVendedores() {
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (id, email) => {
     Swal.fire({
       title: "¿Estás seguro que deseas eliminar el Vendedor?",
       text: "Esta acción es irreversible.",
@@ -106,7 +106,7 @@ function ListaVendedores() {
       confirmButtonText: "Sí, deseo borrarlo."
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const response = await eliminarVendedor(id);
+        const response = await eliminarVendedor(id, email);
         if (response) {
           const newVendedores = vendedor.filter(vendedor => vendedor.id !== id);
           setVendedor(newVendedores);
@@ -181,8 +181,8 @@ function ListaVendedores() {
               <BorderColorOutlinedIcon sx={{ color: "#090069" }} />
             </IconButton>
           </Link>
-          <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
-            <DeleteOutlinedIcon sx={{ color: "#090069" }} />
+          <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id, params.row.email)}>
+            <DeleteOutlinedIcon sx={{ color: "#090069" }}/>
           </IconButton>
         </div>
       ),
@@ -200,7 +200,7 @@ function ListaVendedores() {
 
   return (
     <>
-      <Navbar atras={''}/>
+      <Navbar atras={'../home'}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de Vendedores</h1>
@@ -252,6 +252,9 @@ function ListaVendedores() {
           <Box sx={{ height: 400, width: '80%', marginTop: '2rem', marginLeft: 'auto', marginRight: 'auto' }}>
             <DataGrid
               sx={{
+              
+                borderRadius: '1rem',
+                padding: '2rem 1.5rem',
                 backgroundColor: '#fff',
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: 'lightblue',

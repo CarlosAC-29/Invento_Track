@@ -18,6 +18,7 @@ import { Password } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
+import Navbar from '@/app/components/navbar';
 
 const firebaseConfig = {
     apiKey: "AIzaSyAWrC4NNeZpkbsDnmFM4ZirY3uzJu_GDHA",
@@ -160,6 +161,9 @@ export default function EditarVendedor() {
     
 
     return (
+        <div>
+            <Navbar atras={'../listas/vendedor'} />
+       
         <div className={styles.main_container}>
             <Stack
             direction='column'
@@ -171,12 +175,7 @@ export default function EditarVendedor() {
                 height: '100vh',
             }}
             >
-                <Box sx={{paddingLeft: '1rem',width: "100%", display: 'flex', justifyContent: 'left', alignItems:'center' }}>
-                    <Box onClick={handleClick} sx={{cursor: 'pointer', display: 'flex', color: "#fff", justifyContent: "center", alignItems:"center"}}>
-                    <ArrowBackIosIcon id='backIcon' />
-                    <Typography variant='h6' > Atrás </Typography>
-                    </Box>
-                </Box>
+             
                 <Box
                     sx={{
                         bgcolor: 'white',
@@ -271,6 +270,7 @@ export default function EditarVendedor() {
                     </form>
                 </Box>
             </Stack>
+        </div>
         </div>
     );
 }

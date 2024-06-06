@@ -7,6 +7,16 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import json
+import firebase_admin
+from firebase_admin import credentials, auth
+
+load_dotenv()
+
+# Ruta al archivo JSON de la clave privada de Firebase
+ruta_credencial = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+cred = credentials.Certificate(ruta_credencial)
+# Inicializa la aplicación de Firebase Admin
+firebase_admin.initialize_app(cred)
 
 # inventotrack.mindsoft
 # Univalle**2024
@@ -63,7 +73,7 @@ def login():
 
         vendedor = Vendedor.query.filter_by(email=email).first()
         if vendedor:
-            return jsonify({'id': vendedor.id, 'rol': 'vendedor'})
+            return jsonify({'id': vendedor.id, 'rol': vendedor.role})
 
         administrador = Administrador.query.filter_by(email=email).first()
         if administrador:
@@ -263,13 +273,26 @@ def editar_vendedor(id):
         vendedor = Vendedor.query.get(id)
         vendedor.nombre = data['nombre']
         vendedor.apellido = data['apellido']
-        vendedor.email = data['email']
+        vendedor.email = data['email'].lower()
         vendedor.password = data['password']
+
+        vendedor.originalEmail = data['originalEmail'].lower()
+        print('correo original ', vendedor.originalEmail)
+        user = auth.get_user_by_email(vendedor.originalEmail)
+
+        auth.update_user(
+            user.uid,
+            email=vendedor.email,
+            password=vendedor.password 
+        )
+
+        # print('soy el uid ', user.uid)
 
         db.session.commit()
 
         return jsonify({
-            'mensaje': 'Vendedor actualizado exitosamente!'
+            'mensaje': 'Vendedor actualizado exitosamente!',
+            'email': vendedor.email
         })
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -278,9 +301,16 @@ def editar_vendedor(id):
 @app.route('/vendedores/<int:id>', methods=['DELETE'])
 def eliminar_vendedor(id):
     try:
+        data = request.json
+        email = data['email'].lower()
+        print('soy el email', email)
+
         vendedor = Vendedor.query.get(id)
         if vendedor:
             db.session.delete(vendedor)
+
+            user = auth.get_user_by_email(email)
+            auth.delete_user(user.uid)
             db.session.commit()
             return jsonify({'mensaje': 'Vendedor eliminado exitosamente!'})
         else:
@@ -438,6 +468,9 @@ def agregar_pedido():
 
             producto = db.session.query(Producto).filter_by(
                 id=producto_pedido['id_producto']).first()
+            if producto.stock < producto_pedido['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto_pedido['cantidad_producto']
             productos_info.append({
                 'nombre_producto': producto.nombre,
                 'cantidad': producto_pedido['cantidad_producto'],
@@ -484,6 +517,9 @@ def agregar_producto_gemini(data_string):
 
             producto = db.session.query(Producto).filter_by(
                 id=producto_pedido['id_producto']).first()
+            if producto.stock < producto_pedido['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto_pedido['cantidad_producto']
             productos_info.append({
                 'nombre_producto': producto.nombre,
                 'cantidad': producto_pedido['cantidad_producto'],
@@ -568,6 +604,13 @@ def editar_pedido(id):
             pedido.total_pedido = data['total_pedido']
         if 'estado_pedido' in data:
             pedido.estado_pedido = data['estado_pedido']
+
+        productos_originales = ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).all()
+
+        for producto_original in productos_originales:
+            producot = Producto.query.get(producto_original.id_producto)
+            producto.stock += producto_original.cantidad_producto
+        
         # Para no comparar, lo que hacemos es eliminar todos los productos anteriores y agregamos los nuevos.
         ProductoPedido.query.filter_by(id_pedido=pedido.id_pedido).delete()
         # Se relacionan los productos nuevos con el pedido.
@@ -578,6 +621,12 @@ def editar_pedido(id):
                 cantidad_producto=producto['cantidad_producto']
             )
             db.session.add(nuevo_producto)
+
+            # Restar la cantidad de productos del stock.
+            producto = Producto.query.get(producto['id_producto'])
+            if producto.stock < producto['cantidad_producto']:
+                return jsonify({'error': f'No hay suficiente stock para el producto {producto.nombre}'}), 400
+            producto.stock -= producto['cantidad_producto']
 
         db.session.commit()
         return jsonify({'mensaje': 'Pedido actualizado exitosamente!'})

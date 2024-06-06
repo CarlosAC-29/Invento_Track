@@ -162,9 +162,9 @@ function ListaPedidos() {
       disableColumnMenu: true,
       renderCell: (params) => (
         <div>
-          <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
+          {/* <IconButton aria-label="delete" onClick={() => handleDelete(params.row.id)}>
             <DeleteIcon sx={{ color: "#090069" }} />
-          </IconButton>
+          </IconButton> */}
           <Link
             href={{
               pathname: '../pedido',
@@ -192,7 +192,7 @@ function ListaPedidos() {
 
   return (
     <>
-      <Navbar atras={''}/>
+      <Navbar atras={'/pages/home'}/>
       <Box sx={{ marginTop: "5%" }}>
         <div style={{ display: 'flex', alignItems: 'center', marginLeft: '5%', marginTop: '2%', color: '#090069' }}>
           <h1>Lista de pedidos</h1>
@@ -278,6 +278,8 @@ function ListaPedidos() {
                 Toolbar: GridToolbar,
               }}
               sx={{
+                borderRadius: '1rem',
+                padding: '1.5rem 1.5rem',
                 backgroundColor: '#fff',
                 '& .MuiDataGrid-columnHeaders': {
                   backgroundColor: 'lightblue',
