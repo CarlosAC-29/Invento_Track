@@ -1,6 +1,6 @@
 'use client'
 
-import { Backdrop, Box, Divider, Fade, Modal, TextField, Button } from '@mui/material'
+import { Backdrop, Box, Divider, Fade, Modal, TextField, Button, Stack } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 
 import './styles.css'
@@ -10,9 +10,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Swal from 'sweetalert2';
+import { useAppContext } from "@/app/context";
 
 
 function Productos({ selectedCategory }) {
+  const { user, setUser } = useAppContext();
+
 
   const [productos, setProductos] = useState([]);
   const [open, setOpen] = useState(false);
@@ -34,61 +37,61 @@ function Productos({ selectedCategory }) {
     setOpen(true);
     setViewDetail(id)
   }
- const saveItemsAttributes = () => {
-  const newProduct = {
-    nombre: nombre,
-    precio: precio,
-    stock: stock,
-    descripcion: descripcion,
-    categoria: categoria,
-    referencia: referencia,
+  const saveItemsAttributes = () => {
+    const newProduct = {
+      nombre: nombre,
+      precio: precio,
+      stock: stock,
+      descripcion: descripcion,
+      categoria: categoria,
+      referencia: referencia,
+    }
+    var url = "http://localhost:5000/productos/" + viewDetail
+
+    // Mostrar alerta de SweetAlert indicando que se están aplicando cambios
+    Swal.fire({
+      title: 'Aplicando cambios',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Promesa para esperar al menos 2 segundos antes de resolver
+    const wait = new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Realizar la solicitud y esperar al menos 2 segundos
+    Promise.all([
+      fetch(url, {
+        method: 'PUT', // Método PUT
+        headers: {
+          'Content-Type': 'application/json', // Encabezado para JSON
+        },
+        body: JSON.stringify(newProduct), // Convertir el objeto a cadena JSON
+      }),
+      wait
+    ])
+      .then(([response]) => {
+        if (response.ok) {
+          // Actualizar el estado local después de guardar los atributos
+          // Esto garantizará que la lista de productos se actualice en la interfaz
+          fetchProducts();
+          // Opcionalmente, puedes cerrar el modal de edición
+          handleCloseEdit();
+        } else {
+          // Manejar errores si la solicitud no fue exitosa
+          console.error('Error al guardar los atributos del producto:', response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al guardar los atributos del producto:', error);
+      })
+      .finally(() => {
+        // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
+        Swal.close();
+      });
   }
-  var url = "http://localhost:5000/productos/" + viewDetail
-
-  // Mostrar alerta de SweetAlert indicando que se están aplicando cambios
-  Swal.fire({
-    title: 'Aplicando cambios',
-    allowEscapeKey: false,
-    allowOutsideClick: false,
-    didOpen: () => {
-      Swal.showLoading();
-    }
-  });
-
-  // Promesa para esperar al menos 2 segundos antes de resolver
-  const wait = new Promise(resolve => setTimeout(resolve, 2000));
-
-  // Realizar la solicitud y esperar al menos 2 segundos
-  Promise.all([
-    fetch(url, {
-      method: 'PUT', // Método PUT
-      headers: {
-        'Content-Type': 'application/json', // Encabezado para JSON
-      },
-      body: JSON.stringify(newProduct), // Convertir el objeto a cadena JSON
-    }),
-    wait
-  ])
-  .then(([response]) => {
-    if (response.ok) {
-      // Actualizar el estado local después de guardar los atributos
-      // Esto garantizará que la lista de productos se actualice en la interfaz
-      fetchProducts();
-      // Opcionalmente, puedes cerrar el modal de edición
-      handleCloseEdit();
-    } else {
-      // Manejar errores si la solicitud no fue exitosa
-      console.error('Error al guardar los atributos del producto:', response.statusText);
-    }
-  })
-  .catch((error) => {
-    console.error('Error al guardar los atributos del producto:', error);
-  })
-  .finally(() => {
-    // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
-    Swal.close();
-  });
-}
   const handleEditSave = () => {
     saveItemsAttributes()
     handleCloseEdit()
@@ -111,7 +114,7 @@ function Productos({ selectedCategory }) {
   }
   const deleteProduct = (id) => {
     var url = "http://localhost:5000/productos/" + id
-  
+
     // Mostrar alerta de SweetAlert indicando que se está eliminando el producto
     Swal.fire({
       title: 'Eliminando producto',
@@ -121,10 +124,10 @@ function Productos({ selectedCategory }) {
         Swal.showLoading();
       }
     });
-  
+
     // Realizar la solicitud y esperar al menos 2 segundos
     const wait = new Promise(resolve => setTimeout(resolve, 2000));
-  
+
     // Realizar la solicitud de eliminación y esperar al menos 2 segundos
     Promise.all([
       fetch(url, {
@@ -135,23 +138,23 @@ function Productos({ selectedCategory }) {
       }),
       wait
     ])
-    .then(([response]) => {
-      if (response.ok) {
-        // Actualizar el estado local después de eliminar el producto
-        // Esto garantizará que la lista de productos se actualice en la interfaz
-        fetchProducts();
-      } else {
-        // Manejar errores si la solicitud no fue exitosa
-        console.error('Error al eliminar el producto:', response.statusText);
-      }
-    })
-    .catch((error) => {
-      console.error('Error al eliminar el producto:', error);
-    })
-    .finally(() => {
-      // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
-      Swal.close();
-    });
+      .then(([response]) => {
+        if (response.ok) {
+          // Actualizar el estado local después de eliminar el producto
+          // Esto garantizará que la lista de productos se actualice en la interfaz
+          fetchProducts();
+        } else {
+          // Manejar errores si la solicitud no fue exitosa
+          console.error('Error al eliminar el producto:', response.statusText);
+        }
+      })
+      .catch((error) => {
+        console.error('Error al eliminar el producto:', error);
+      })
+      .finally(() => {
+        // Una vez que se complete la solicitud o pasen al menos 2 segundos, cerrar la alerta de SweetAlert
+        Swal.close();
+      });
   }
   const filteredProducts = productos.filter(producto => selectedCategory === 'Todo' || producto.categoria === selectedCategory);
   useEffect(() => {
@@ -178,19 +181,19 @@ function Productos({ selectedCategory }) {
             <div key={id} className="producto">
               <div className='tarjeta' >
                 <div className='section1' onClick={() => handleClick(id)}>
-                <div style={{width: '100px', height: '100px', objectFit: 'cover', margin: '0 auto' }}>
-                  <img src={imagen} alt='imagen' style={{ width: '100%', height: '100%'}}/>
-                </div>
-                
-                <div className='descripcion'>
-                  <h3 style={{ fontSize: '1.2rem' }}>{nombre}</h3>
-                  <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>${precio}</span>
-                </div>
+                  <div style={{ width: '100px', height: '100px', objectFit: 'cover', margin: '0 auto' }}>
+                    <img src={imagen} alt='imagen' style={{ width: '100%', height: '100%' }} />
+                  </div>
+
+                  <div className='descripcion'>
+                    <h3 style={{ fontSize: '1.2rem' }}>{nombre}</h3>
+                    <p style={{ fontSize: '0.8rem' }}>Stock: {stock}</p>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>${precio}</span>
+                  </div>
                 </div>
                 <Divider />
                 <div className="botones">
-                 
+
                   <IconButton
                     aria-label="delete"
                     onClick={() => {
@@ -220,11 +223,15 @@ function Productos({ selectedCategory }) {
                       color: (theme) => theme.palette.error.light,
                     }}
                   >
-                    <DeleteIcon />
+                    {user.rol === 'admin' ?
+                      <DeleteIcon />
+                      :
+                      ''
+                    }
                   </IconButton>
-                  </div>
+                </div>
               </div>
-              
+
             </div>
           );
         })}
@@ -269,23 +276,27 @@ function Productos({ selectedCategory }) {
                 color: (theme) => theme.palette.success.light,
               }}
             >
-              <EditIcon />
+              {user.rol === 'admin' ?
+                <EditIcon />
+                :
+                ''
+              }
             </IconButton>
             <Divider />
             {productos.find(p => p.id === viewDetail) ? (
               <>
-                <div className='detalles'>
+                <Stack direction={"row"} sx={{padding : "2rem"}}>
                   {/* <Image className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} /> */}
                   <img className='imagenDetail' src={productos.find(p => p.id === viewDetail).imagen} />
-                  <div>
+                  <Stack direction={"column"} sx={{width : "100%"}}>
                     <h1 style={{ marginBottom: '5%' }}>{productos.find(p => p.id === viewDetail).nombre}</h1>
                     <p style={{ marginBottom: '7%' }}>${productos.find(p => p.id === viewDetail).precio}</p>
                     <p style={{ marginBottom: '5%' }} >Stock: {productos.find(p => p.id === viewDetail).stock}</p>
                     <Divider />
                     <h2 style={{ marginTop: '5%' }}>Descripción</h2>
                     <p style={{ marginTop: '5%' }}> {productos.find(p => p.id === viewDetail).descripcion}</p>
-                  </div>
-                </div>
+                  </Stack>
+                </Stack>
               </>
             ) : (
               <p>Producto no encontrado</p>
@@ -334,7 +345,7 @@ function Productos({ selectedCategory }) {
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Precio" variant="outlined" value={precio} onChange={(event) => { setPrecio(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Stock" variant="outlined" value={stock} onChange={(event) => { setStock(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Descripcion" variant="outlined" value={descripcion} onChange={(event) => { setDescripcion(event.target.value) }} />
-                    <TextField id="outlined-basic" style={{ marginBottom: "10px"}} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
+                    <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Categoria" variant="outlined" value={categoria} onChange={(event) => { setCategoria(event.target.value) }} />
                     <TextField id="outlined-basic" style={{ marginBottom: "10px" }} label="Referencia" variant="outlined" value={referencia} onChange={(event) => { setReferencia(event.target.value) }} />
                   </div>
                 </div>

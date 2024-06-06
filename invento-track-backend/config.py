@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 os.urandom(24)
 
 #cambiar username y password según tu bd. Lo ideal seria lo mismo usuario postgrest y contraseña postgres
@@ -17,3 +18,5 @@ class Config:
     MAIL_USERNAME = 'inventotrack.mindsoft@gmail.com'
     MAIL_PASSWORD = 'cejl ynvc ktwv fzcf'
     MAIL_DEFAULT_SENDER = 'inventotrack.mindsoft@gmail.com'
+
+    GOOGLE_APPLICATION_CREDENTIALS = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')

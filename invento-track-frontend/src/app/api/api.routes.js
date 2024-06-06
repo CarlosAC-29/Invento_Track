@@ -28,13 +28,16 @@ export const registarVendedor = async (data) => {
     return response.json()
 }
 
-export const editVendedor = async (id, data) => {
+export const editVendedor = async (id, data, originalEmail) => {
     const response = await fetch(`http://localhost:5000/vendedores/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({
+            ...data,
+            originalEmail
+        })
     })
 
     if (!response.ok) {
@@ -258,10 +261,15 @@ export const listarProductos = async (data) => {
 }
 
 // invento-track-frontend/src/app/api/api.routes.js
-export const eliminarVendedor = async (id) => {
+export const eliminarVendedor = async (id, email) => {
     try {
+
         const response = await fetch(`http://localhost:5000/vendedores/${id}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
         });
         return response.json();
     } catch (error) {

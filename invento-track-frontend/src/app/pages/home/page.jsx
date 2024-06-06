@@ -9,13 +9,20 @@ import LiquorIcon from '@mui/icons-material/Liquor';
 import SpatialAudioIcon from '@mui/icons-material/SpatialAudio';
 import { Box, Typography, useTheme, useMediaQuery, Stack, Button } from '@mui/material'
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+
+import checkAuthentication from '../../hooks/useAuthentication';
 
 
 export default function page() {
-  const {user} = useAppContext();
+  const { user } = useAppContext();
   const router = useRouter();
 
+  const [rol, setRol] = React.useState(user.rol);
 
+  const handleRegistroVendedor = () => {
+    router.push("/pages/usuarios/registro-vendedor");
+  }
 
   const handleListarVendedores = () => {
     router.push("/pages/listas/vendedor");
@@ -48,18 +55,59 @@ export default function page() {
     router.push("/pages/listas/productos");
   }
 
+  // const [ isAuthenticated, setIsAuthenticated ] = useState(false)
+
+  // useEffect(() => {
+  //   const authenticate = async () => {
+  //     const authenticated = await checkAuthentication();
+  //     setIsAuthenticated(await checkAuthentication());
+  //   };
+  //   console.log('auth en effect', isAuthenticated)
+  //   authenticate();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     // console.log('estoy autenticado en el home', isAuthenticated)
+  //     router.push("/pages/login");
+  //   }
+  // }, [isAuthenticated]);
+
+  // if (!isAuthenticated) {
+  //   return null; // No renderizar nada si no se está autenticado
+  // }
+
   console.log("user info", user);
   return (
     
     <div>
-      <Navbar atras={''}/>
-      <Stack sx={{padding: "5%", width: "100%", height: '100vh'}} justifyContent={"center"} alignItems={"center"}>
-        <Stack spacing={2} direction={"column"} sx={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-          <Button variant="contained" onClick={handleListarVendedores} startIcon={<ReceiptIcon />} sx={{backgroundColor: '#7876ff', color: '#fff', '&:hover': {backgroundColor: '#090069'}, width: '30%', height: '10%', fontSize: '1.5rem', aspectRatio: 1}}>Listar Vendedores</Button>
-          <Button variant="contained" onClick={handleListarClientes} startIcon={<ReceiptIcon />} sx={{backgroundColor: '#7876ff', color: '#fff', '&:hover': {backgroundColor: '#090069'}, width: '30%', height: '10%', fontSize: '1.5rem', aspectRatio: 1}}>Listar Clientes</Button>
-          <Button variant="contained" onClick={handleRegistroPedidoVoz} sx={{backgroundColor: '#7876ff', color: '#fff', '&:hover': {backgroundColor: '#090069'}, width: '30%', height: '10%', fontSize: '1.5rem', aspectRatio: 1}}><SpatialAudioIcon sx={{marginRight : "1rem"}}/>Registo Pedido Voz</Button>
-          <Button variant="contained" onClick={handleListarPedidos} startIcon={<ReceiptIcon />}sx={{backgroundColor: '#7876ff', color: '#fff', '&:hover': {backgroundColor: '#090069'}, width: '30%', height: '10%', fontSize: '1.5rem', aspectRatio: 1}}>Listar Pedidos</Button>
-          <Button variant="contained" onClick={handleListarProductos} startIcon={<ReceiptIcon />} sx={{backgroundColor: '#7876ff', color: '#fff', '&:hover': {backgroundColor: '#090069'}, width: '30%', height: '10%', fontSize: '1.5rem', aspectRatio: 1}}>Listar Productos</Button>
+      <Navbar atras={''} />
+      <Stack sx={{ padding: "5%", width: "100%" }} justifyContent={"center"} alignItems={"center"}>
+        <Stack spacing={2} direction={"column"} >
+          {rol === "vendedor" ?
+            <Stack spacing={2} direction={"column"} >
+              <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{ marginRight: "1rem" }} />Registo Cliente</Button>
+              <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
+              <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{ marginRight: "1rem" }} />Registo Pedido</Button>
+              <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{ marginRight: "1rem" }} />Registo Pedido Voz</Button>
+              <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
+              <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
+            </Stack>
+            :
+            <Stack spacing={2} direction={"column"} >
+              <Button variant="contained" onClick={handleRegistroVendedor}><HailIcon sx={{ marginRight: "1rem" }} />Registo Vendedor</Button>
+              <Button variant="contained" onClick={handleListarVendedores}>Listar Vendedores</Button>
+              <Button variant="contained" onClick={handleRegistroCliente}><PersonAddIcon sx={{ marginRight: "1rem" }} />Registo Cliente</Button>
+              <Button variant="contained" onClick={handleListarClientes}>Listar Clientes</Button>
+              <Button variant="contained" onClick={handleRegistroPedido}><ReceiptIcon sx={{ marginRight: "1rem" }} />Registo Pedido</Button>
+              <Button variant="contained" onClick={handleRegistroPedidoVoz}><SpatialAudioIcon sx={{ marginRight: "1rem" }} />Registo Pedido Voz</Button>
+              <Button variant="contained" onClick={handleListarPedidos}>Listar Pedidos</Button>
+              <Button variant="contained" onClick={handleRegistroProducto}><LiquorIcon sx={{ marginRight: "1rem" }} />Registo Producto</Button>
+              <Button variant="contained" onClick={handleListarProductos}>Listar Productos</Button>
+            </Stack>
+          }
+
+
         </Stack>
       </Stack>
     </div>

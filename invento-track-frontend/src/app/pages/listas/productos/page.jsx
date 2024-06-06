@@ -4,12 +4,14 @@ import React, { useState } from 'react'
 import Navbar from '@/app/components/navbar'
 import Categorias from '@/app/components/categorias/categorias'
 import './styles.css'
-import { Divider, Button  } from '@mui/material'
+import { Divider, Button } from '@mui/material'
 import Productos from '@/app/components/productos/productos'
 import { useRouter } from 'next/navigation';
+import { useAppContext } from '@/app/context';
 
 function ListaProductos() {
-  
+  const { user, setUser } = useAppContext();
+
   const [selectedCategory, setSelectedCategory] = useState('Todo');
   const router = useRouter();
 
@@ -25,19 +27,23 @@ function ListaProductos() {
         <link rel="icon" href="/logo.ico" />
       </head>
       <body>
-        <Navbar atras={'../home'}/>
+        <Navbar atras={'../home'} />
 
         <div style={{ alignItems: 'center', marginRight: '5%', marginLeft: '5%', marginTop: '5%' }}>
           <div style={{ color: '#090069', marginBottom: '1%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h1>Lista de productos</h1>
-            <Button variant="contained" onClick={handleClick} sx={{backgroundColor: '#090069','&:hover': {backgroundColor: '#1d35f7',} , color: 'white'}}>Registrar Producto</Button>
+            {user.rol === 'admin' ?
+              <Button variant="contained" onClick={handleClick} sx={{ backgroundColor: '#090069', '&:hover': { backgroundColor: '#1d35f7', }, color: 'white' }}>Registrar Producto</Button>
+              :
+              ''
+            }
           </div>
 
           <Divider />
-          <div style={{display: 'flex'}}>
+          <div style={{ display: 'flex' }}>
             <Categorias selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
-            <Divider orientation='vertical'  flexItem />
-            <Productos selectedCategory={selectedCategory}/>
+            <Divider orientation='vertical' flexItem />
+            <Productos selectedCategory={selectedCategory} />
           </div>
         </div>
 
