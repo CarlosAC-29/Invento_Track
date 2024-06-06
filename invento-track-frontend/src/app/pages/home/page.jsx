@@ -9,11 +9,17 @@ import LiquorIcon from '@mui/icons-material/Liquor';
 import SpatialAudioIcon from '@mui/icons-material/SpatialAudio';
 import { Box, Typography, useTheme, useMediaQuery, Stack, Button } from '@mui/material'
 import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+
+import checkAuthentication from '../../hooks/useAuthentication';
 
 
 export default function page() {
+
   const {user} = useAppContext();
   const router = useRouter();
+
+  // useAuthentication(router,  true);
 
   const handleRegistroVendedor = () => {
     router.push("/pages/usuarios/registro-vendedor");
@@ -49,6 +55,28 @@ export default function page() {
   const handleListarProductos = () => {
     router.push("/pages/listas/productos");
   }
+
+  // const [ isAuthenticated, setIsAuthenticated ] = useState(false)
+
+  // useEffect(() => {
+  //   const authenticate = async () => {
+  //     const authenticated = await checkAuthentication();
+  //     setIsAuthenticated(await checkAuthentication());
+  //   };
+  //   console.log('auth en effect', isAuthenticated)
+  //   authenticate();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     // console.log('estoy autenticado en el home', isAuthenticated)
+  //     router.push("/pages/login");
+  //   }
+  // }, [isAuthenticated]);
+
+  // if (!isAuthenticated) {
+  //   return null; // No renderizar nada si no se está autenticado
+  // }
 
   console.log("user info", user);
   return (

@@ -43,7 +43,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
 
   const router = useRouter();
-
+  // router.push('/');
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
@@ -85,8 +85,10 @@ export default function Login() {
   };
   
 
+
   return (
     <Grid container justify="center" sx={{height: "100vh" }}>
+
       <Grid
         container
         justify="center"
