@@ -73,7 +73,7 @@ def login():
 
         vendedor = Vendedor.query.filter_by(email=email).first()
         if vendedor:
-            return jsonify({'id': vendedor.id, 'rol': 'vendedor'})
+            return jsonify({'id': vendedor.id, 'rol': vendedor.role})
 
         administrador = Administrador.query.filter_by(email=email).first()
         if administrador:
